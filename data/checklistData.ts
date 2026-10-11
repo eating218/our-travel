@@ -32,7 +32,11 @@ export type ChecklistItem = {
 
   title: string;
 
+  // 系統 / App 提供的注意事項
   note?: string;
+
+  // 使用者自己的備註
+  userNote?: string;
 
   baggage: BaggageType;
 
@@ -72,6 +76,7 @@ export type SharedChecklistData = {
     categoryId: string;
     title: string;
     note?: string;
+    userNote?: string;
     baggage: BaggageType;
   }[];
 };

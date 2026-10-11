@@ -14,7 +14,6 @@ import {
   initialChecklistData,
 } from "../data/checklistData";
 
-
 // ========================================
 // STORAGE
 // ========================================
@@ -22,14 +21,11 @@ import {
 export const CHECKLIST_STORAGE_KEY =
   "our-travel-packing-list";
 
-
 // ========================================
 // COPY INITIAL DATA
 // ========================================
 
-function createInitialData():
-  ChecklistData {
-
+function createInitialData(): ChecklistData {
   return {
     categories:
       initialChecklistData.categories.map(
@@ -45,53 +41,37 @@ function createInitialData():
         })
       ),
   };
-
 }
-
 
 // ========================================
 // HOOK
 // ========================================
 
 export function useChecklist() {
-
-  const [
-    data,
-    setData,
-  ] =
+  const [data, setData] =
     useState<ChecklistData>(
       createInitialData
     );
 
-
-  const [
-    loaded,
-    setLoaded,
-  ] =
+  const [loaded, setLoaded] =
     useState(false);
-
 
   // ========================================
   // LOAD
   // ========================================
 
   useEffect(() => {
-
     try {
-
       const saved =
         localStorage.getItem(
           CHECKLIST_STORAGE_KEY
         );
 
-
       if (saved) {
-
         const parsed =
           JSON.parse(
             saved
           ) as ChecklistData;
-
 
         if (
           Array.isArray(
@@ -101,62 +81,57 @@ export function useChecklist() {
             parsed.items
           )
         ) {
+          // 舊資料沒有 userNote 也沒關係
+          setData({
+            categories:
+              parsed.categories,
 
-          setData(parsed);
+            items:
+              parsed.items.map(
+                (item) => ({
+                  ...item,
 
+                  userNote:
+                    item.userNote ?? "",
+                })
+              ),
+          });
         }
-
       }
-
     } catch (error) {
-
       console.error(
         "Failed to load packing list:",
         error
       );
-
     }
 
-
     setLoaded(true);
-
   }, []);
-
 
   // ========================================
   // SAVE
   // ========================================
 
   useEffect(() => {
-
     if (!loaded) {
       return;
     }
 
-
     try {
-
       localStorage.setItem(
         CHECKLIST_STORAGE_KEY,
-        JSON.stringify(
-          data
-        )
+        JSON.stringify(data)
       );
-
     } catch (error) {
-
       console.error(
         "Failed to save packing list:",
         error
       );
-
     }
-
   }, [
     data,
     loaded,
   ]);
-
 
   // ========================================
   // TOGGLE ITEM
@@ -165,7 +140,6 @@ export function useChecklist() {
   function toggleItem(
     id: string
   ) {
-
     setData(
       (current) => ({
         ...current,
@@ -176,6 +150,7 @@ export function useChecklist() {
               item.id === id
                 ? {
                     ...item,
+
                     completed:
                       !item.completed,
                   }
@@ -183,9 +158,7 @@ export function useChecklist() {
           ),
       })
     );
-
   }
-
 
   // ========================================
   // ADD ITEM
@@ -195,21 +168,22 @@ export function useChecklist() {
     categoryId: string,
     title: string,
     baggage:
-      BaggageType = "either"
+      BaggageType = "either",
+    userNote:
+      string = ""
   ) {
-
     const cleanTitle =
       title.trim();
 
+    const cleanUserNote =
+      userNote.trim();
 
     if (!cleanTitle) {
       return;
     }
 
-
     const item:
       ChecklistItem = {
-
       id:
         `item-${Date.now()}-${Math.random()
           .toString(36)
@@ -225,10 +199,12 @@ export function useChecklist() {
       completed:
         false,
 
+      userNote:
+        cleanUserNote,
+
       isCustom:
         true,
     };
-
 
     setData(
       (current) => ({
@@ -240,9 +216,64 @@ export function useChecklist() {
         ],
       })
     );
-
   }
 
+  // ========================================
+  // UPDATE ITEM
+  // ========================================
+
+  function updateItem(
+    id: string,
+    updates: {
+      title?: string;
+      baggage?: BaggageType;
+      userNote?: string;
+    }
+  ) {
+    setData(
+      (current) => ({
+        ...current,
+
+        items:
+          current.items.map(
+            (item) => {
+              if (
+                item.id !== id
+              ) {
+                return item;
+              }
+
+              const nextTitle =
+                updates.title !==
+                undefined
+                  ? updates.title.trim()
+                  : item.title;
+
+              if (!nextTitle) {
+                return item;
+              }
+
+              return {
+                ...item,
+
+                title:
+                  nextTitle,
+
+                baggage:
+                  updates.baggage ??
+                  item.baggage,
+
+                userNote:
+                  updates.userNote !==
+                  undefined
+                    ? updates.userNote.trim()
+                    : item.userNote,
+              };
+            }
+          ),
+      })
+    );
+  }
 
   // ========================================
   // DELETE ITEM
@@ -251,7 +282,6 @@ export function useChecklist() {
   function deleteItem(
     id: string
   ) {
-
     setData(
       (current) => ({
         ...current,
@@ -263,9 +293,97 @@ export function useChecklist() {
           ),
       })
     );
-
   }
 
+  // ========================================
+  // REORDER ITEM
+  // 同一分類內重新排序
+  // ========================================
+
+  function reorderItems(
+    categoryId: string,
+    activeId: string,
+    overId: string
+  ) {
+    if (
+      activeId === overId
+    ) {
+      return;
+    }
+
+    setData(
+      (current) => {
+        const categoryItems =
+          current.items.filter(
+            (item) =>
+              item.categoryId ===
+              categoryId
+          );
+
+        const oldIndex =
+          categoryItems.findIndex(
+            (item) =>
+              item.id === activeId
+          );
+
+        const newIndex =
+          categoryItems.findIndex(
+            (item) =>
+              item.id === overId
+          );
+
+        if (
+          oldIndex === -1 ||
+          newIndex === -1
+        ) {
+          return current;
+        }
+
+        const reorderedItems = [
+          ...categoryItems,
+        ];
+
+        const [movedItem] =
+          reorderedItems.splice(
+            oldIndex,
+            1
+          );
+
+        reorderedItems.splice(
+          newIndex,
+          0,
+          movedItem
+        );
+
+        let categoryIndex = 0;
+
+        return {
+          ...current,
+
+          items:
+            current.items.map(
+              (item) => {
+                if (
+                  item.categoryId !==
+                  categoryId
+                ) {
+                  return item;
+                }
+
+                const nextItem =
+                  reorderedItems[
+                    categoryIndex
+                  ];
+
+                categoryIndex += 1;
+
+                return nextItem;
+              }
+            ),
+        };
+      }
+    );
+  }
 
   // ========================================
   // ADD CATEGORY
@@ -274,19 +392,15 @@ export function useChecklist() {
   function addCategory(
     title: string
   ) {
-
     const cleanTitle =
       title.trim();
-
 
     if (!cleanTitle) {
       return;
     }
 
-
     const category:
       ChecklistCategory = {
-
       id:
         `category-${Date.now()}-${Math.random()
           .toString(36)
@@ -302,7 +416,6 @@ export function useChecklist() {
         true,
     };
 
-
     setData(
       (current) => ({
         ...current,
@@ -313,9 +426,7 @@ export function useChecklist() {
         ],
       })
     );
-
   }
-
 
   // ========================================
   // DELETE CATEGORY
@@ -324,10 +435,8 @@ export function useChecklist() {
   function deleteCategory(
     categoryId: string
   ) {
-
     setData(
       (current) => ({
-
         categories:
           current.categories.filter(
             (category) =>
@@ -341,12 +450,9 @@ export function useChecklist() {
               item.categoryId !==
               categoryId
           ),
-
       })
     );
-
   }
-
 
   // ========================================
   // IMPORT
@@ -358,15 +464,9 @@ export function useChecklist() {
     mode:
       "merge" | "replace"
   ) {
-
-    // ======================================
-    // REPLACE
-    // ======================================
-
     if (
       mode === "replace"
     ) {
-
       setData({
         categories:
           incoming.categories.map(
@@ -379,50 +479,39 @@ export function useChecklist() {
           incoming.items.map(
             (item) => ({
               ...item,
+
               completed:
                 false,
+
+              userNote:
+                item.userNote ?? "",
             })
           ),
       });
 
-
       return;
-
     }
-
-
-    // ======================================
-    // MERGE
-    // ======================================
 
     setData(
       (current) => {
-
-        // 為匯入資料建立新的 ID，
-        // 避免和目前資料撞 ID。
-
         const categoryMap =
           new Map<
             string,
             string
           >();
 
-
         const newCategories =
           incoming.categories.map(
             (category) => {
-
               const newId =
                 `import-category-${Date.now()}-${Math.random()
                   .toString(36)
                   .slice(2, 8)}`;
 
-
               categoryMap.set(
                 category.id,
                 newId
               );
-
 
               return {
                 ...category,
@@ -433,15 +522,12 @@ export function useChecklist() {
                 isCustom:
                   true,
               };
-
             }
           );
-
 
         const newItems =
           incoming.items.map(
             (item) => ({
-
               ...item,
 
               id:
@@ -458,15 +544,15 @@ export function useChecklist() {
               completed:
                 false,
 
+              userNote:
+                item.userNote ?? "",
+
               isCustom:
                 true,
-
             })
           );
 
-
         return {
-
           categories: [
             ...current.categories,
             ...newCategories,
@@ -476,14 +562,10 @@ export function useChecklist() {
             ...current.items,
             ...newItems,
           ],
-
         };
-
       }
     );
-
   }
-
 
   // ========================================
   // TOTALS
@@ -491,7 +573,6 @@ export function useChecklist() {
 
   const total =
     data.items.length;
-
 
   const completed =
     useMemo(
@@ -503,7 +584,6 @@ export function useChecklist() {
       [data.items]
     );
 
-
   const percent =
     total === 0
       ? 0
@@ -513,7 +593,6 @@ export function useChecklist() {
             total
           ) * 100
         );
-
 
   // ========================================
   // BAGGAGE COUNTS
@@ -532,7 +611,6 @@ export function useChecklist() {
       [data.items]
     );
 
-
   const checkedCount =
     useMemo(
       () =>
@@ -546,13 +624,11 @@ export function useChecklist() {
       [data.items]
     );
 
-
   // ========================================
   // RETURN
   // ========================================
 
   return {
-
     loaded,
 
     categories:
@@ -569,14 +645,16 @@ export function useChecklist() {
     checkedCount,
 
     toggleItem,
+
     addItem,
+    updateItem,
     deleteItem,
+
+    reorderItems,
 
     addCategory,
     deleteCategory,
 
     importChecklist,
-
   };
-
 }
