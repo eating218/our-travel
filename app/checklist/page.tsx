@@ -3,6 +3,11 @@
 import Link from "next/link";
 
 import {
+  findBaggageRule,
+} from "../../lib/baggageRules";
+
+import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -187,6 +192,26 @@ export default function ChecklistPage() {
     newItemTitle,
     setNewItemTitle,
   ] = useState("");
+
+  const detectedBaggageRule =
+  useMemo(
+    () =>
+      findBaggageRule(
+        newItemTitle
+      ),
+    [newItemTitle]
+  );
+
+  useEffect(() => {
+    if (detectedBaggageRule) 
+      {
+        setNewItemBaggage(
+          detectedBaggageRule
+            .recommendedBaggage
+        );
+      }
+    }, [detectedBaggageRule]
+  );
 
   const [
     newItemBaggage,
@@ -462,6 +487,27 @@ export default function ChecklistPage() {
         )
       : undefined;
 
+  const editingBaggageRule =
+  useMemo(
+    () =>
+      findBaggageRule(
+        editTitle
+      ),
+    [editTitle]
+  );
+
+  useEffect(() => {
+    if (
+      editingBaggageRule
+    ) {
+      setEditBaggage(
+        editingBaggageRule
+          .recommendedBaggage
+      );
+    }
+  }, [
+    editingBaggageRule,
+  ]);
   // ========================================
   // DELETE ITEM
   // ========================================
@@ -923,6 +969,76 @@ export default function ChecklistPage() {
                 </div>
               )}
 
+              {/* AIRLINE BAGGAGE RULE */}
+
+              {editingBaggageRule && (
+                <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+
+                  <div className="flex items-start gap-3">
+
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-lg">
+                      ⚠️
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+
+                      <p className="text-[10px] font-bold tracking-[0.12em] text-amber-600">
+                        航空行李注意
+                      </p>
+
+                      <h3 className="mt-0.5 text-sm font-bold text-slate-900">
+                        {editingBaggageRule.title}
+                      </h3>
+
+                      <p className="mt-1 text-xs leading-5 text-slate-600">
+                        {editingBaggageRule.summary}
+                      </p>
+
+                      <div className="mt-3 space-y-1.5">
+
+                        {editingBaggageRule.rules.map(
+                          (rule) => (
+                            <div
+                              key={rule}
+                              className="flex items-start gap-2 text-xs leading-5 text-slate-700"
+                            >
+                              <span className="shrink-0 font-bold text-amber-600">
+                                •
+                              </span>
+
+                              <span>
+                                {rule}
+                              </span>
+                            </div>
+                          )
+                        )}
+
+                      </div>
+
+                      <div className="mt-3 border-t border-amber-200 pt-2">
+
+                        <p className="text-[10px] leading-4 text-slate-400">
+                          資料來源：
+                          {editingBaggageRule.sourceName}
+                        </p>
+
+                        <p className="text-[10px] leading-4 text-slate-400">
+                          規則更新：
+                          {editingBaggageRule.updatedAt}
+                        </p>
+
+                        <p className="mt-1 text-[10px] leading-4 text-slate-400">
+                          實際限制仍以搭乘航空公司的最新規定為準。
+                        </p>
+
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+              )}
+
               <label className="mt-5 block text-xs font-bold text-slate-500">
                 📝 我的備註
               </label>
@@ -1069,6 +1185,71 @@ export default function ChecklistPage() {
               placeholder="例如：相機"
               className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 outline-none focus:border-slate-900 focus:bg-white"
             />
+
+            {/* 航空行李安全提醒 */}
+            {detectedBaggageRule && (
+              <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                <div className="flex items-start gap-3">
+
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-lg">
+                    ⚠️
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+
+                    <p className="text-[10px] font-bold tracking-[0.12em] text-amber-600">
+                      航空行李注意
+                    </p>
+
+                    <h3 className="mt-0.5 text-sm font-bold text-slate-900">
+                      {detectedBaggageRule.title}
+                    </h3>
+
+                    <p className="mt-1 text-xs leading-5 text-slate-600">
+                      {detectedBaggageRule.summary}
+                    </p>
+
+                    <div className="mt-3 space-y-1.5">
+                      {detectedBaggageRule.rules.map(
+                        (rule) => (
+                          <div
+                            key={rule}
+                            className="flex items-start gap-2 text-xs leading-5 text-slate-700"
+                          >
+                            <span className="shrink-0 font-bold text-amber-600">
+                              •
+                            </span>
+
+                            <span>
+                              {rule}
+                            </span>
+                          </div>
+                        )
+                      )}
+                    </div>
+
+                    <div className="mt-3 border-t border-amber-200 pt-2">
+
+                      <p className="text-[10px] leading-4 text-slate-400">
+                        資料來源：
+                        {detectedBaggageRule.sourceName}
+                      </p>
+
+                      <p className="text-[10px] leading-4 text-slate-400">
+                        規則更新：
+                        {detectedBaggageRule.updatedAt}
+                      </p>
+
+                      <p className="mt-1 text-[10px] leading-4 text-slate-400">
+                        實際限制仍以搭乘航空公司的最新規定為準。
+                      </p>
+
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            )}
 
             <p className="mt-5 text-xs font-bold text-slate-500">
               放哪裡？
@@ -1526,6 +1707,11 @@ function ChecklistRow({
       item.baggage
     ];
 
+  const baggageRule =
+  findBaggageRule(
+    item.title
+  );
+
   const {
     attributes,
     listeners,
@@ -1680,6 +1866,32 @@ function ChecklistRow({
           </p>
         )}
 
+        {/* AIRLINE BAGGAGE WARNING */}
+
+        {baggageRule && (
+          <div
+            className={`mt-1.5 flex items-center gap-1.5 ${
+              item.completed
+                ? "text-slate-200"
+                : "text-amber-600"
+            }`}
+          >
+            <span className="text-[10px]">
+              ⚠️
+            </span>
+
+            <span className="text-[10px] font-bold">
+              搭機限制
+            </span>
+
+            {!item.completed && (
+              <span className="text-[9px] font-medium text-amber-500">
+                · 點擊查看
+              </span>
+            )}
+          </div>
+        )}
+
         {/* USER NOTE */}
 
         {item.userNote && (
@@ -1802,26 +2014,32 @@ function BottomSheet({
   children,
   onClose,
 }: {
-  children:
-    ReactNode;
-
-  onClose:
-    () => void;
+  children: ReactNode;
+  onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/40 px-3 backdrop-blur-[2px]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-5 backdrop-blur-[2px]">
+      {/* 點擊背景關閉 */}
       <button
         type="button"
         aria-label="關閉"
-        onClick={
-          onClose
-        }
+        onClick={onClose}
         className="absolute inset-0"
       />
 
-      <div className="relative z-10 max-h-[85vh] w-full max-w-md overflow-y-auto rounded-t-[32px] bg-white p-5 pb-8 shadow-2xl">
-        <div className="mx-auto mb-5 h-1.5 w-10 rounded-full bg-slate-200" />
-
+      {/* 中央 Modal */}
+      <div
+        className="
+          relative z-10
+          max-h-[80dvh]
+          w-full max-w-md
+          overflow-y-auto
+          rounded-[28px]
+          bg-white
+          p-5
+          shadow-2xl
+        "
+      >
         {children}
       </div>
     </div>
