@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import {
+  useEffect,
   useState,
 } from "react";
 
@@ -25,7 +26,9 @@ import {
   getLocalDateString,
 } from "../../lib/tripStatus";
 
-import AddExpenseSheet from "../components/AddExpenseSheet";
+import AddExpenseSheet, {
+  ExpenseInitialData,
+} from "../components/AddExpenseSheet";
 
 
 // ========================================
@@ -192,6 +195,13 @@ export default function ExpensePage() {
     setAddExpenseOpen,
   ] = useState(false);
 
+  const [
+    expenseInitialData,
+    setExpenseInitialData,
+  ] =
+    useState<ExpenseInitialData | undefined>(
+      undefined
+    );
 
   const [
     selectedExpense,
@@ -207,6 +217,85 @@ export default function ExpensePage() {
     setDeleteConfirmOpen,
   ] = useState(false);
 
+// ========================================
+// RECEIPT PREFILL
+// ========================================
+
+useEffect(() => {
+  if (!loaded) {
+    return;
+  }
+
+  const raw =
+    sessionStorage.getItem(
+      "our-travel-receipt-expense"
+    );
+
+  if (!raw) {
+    return;
+  }
+
+  try {
+    const receipt = JSON.parse(
+      raw
+    ) as {
+      amount?: number;
+      currency?: ExpenseCurrency;
+      title?: string;
+      note?: string;
+      categoryName?: string;
+      date?: string;
+    };
+
+    const matchedCategory =
+      categories.find(
+        (category) =>
+          category.name ===
+          receipt.categoryName
+      );
+
+    setExpenseInitialData({
+      amount:
+        receipt.amount ?? 0,
+
+      currency:
+        receipt.currency ??
+        "JPY",
+
+      title:
+        receipt.title ?? "",
+
+      note:
+        receipt.note ?? "",
+
+      categoryId:
+        matchedCategory?.id ??
+        categories[0]?.id ??
+        "",
+
+      date:
+        receipt.date,
+    });
+
+    setAddExpenseOpen(true);
+
+    sessionStorage.removeItem(
+      "our-travel-receipt-expense"
+    );
+  } catch (error) {
+    console.error(
+      "Failed to load receipt expense:",
+      error
+    );
+
+    sessionStorage.removeItem(
+      "our-travel-receipt-expense"
+    );
+  }
+}, [
+  loaded,
+  categories,
+]);
 
   // ========================================
   // LOADING
@@ -353,11 +442,15 @@ export default function ExpensePage() {
 
           <button
             type="button"
-            onClick={() =>
+            onClick={() => {
+              setExpenseInitialData(
+                undefined
+              );
+
               setAddExpenseOpen(
                 true
-              )
-            }
+              );
+            }}
             className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-xl font-light text-white"
           >
             +
@@ -568,33 +661,42 @@ export default function ExpensePage() {
         members={members}
         categories={categories}
         defaultDate={today}
-
-        onClose={() =>
-            setAddExpenseOpen(false)
+        initialData={
+          expenseInitialData
         }
+
+        onClose={() => {
+          setAddExpenseOpen(
+            false
+          );
+
+          setExpenseInitialData(
+            undefined
+          );
+        }}
 
         onSave={addExpense}
 
         onAddMember={addMember}
 
         onDeleteMember={
-            deleteMember
+          deleteMember
         }
 
         onAddCategory={
-            addCategory
+          addCategory
         }
 
         onDeleteCategory={
-            deleteCategory
+          deleteCategory
         }
 
         getMemberUsageCount={
-            getMemberUsageCount
+          getMemberUsageCount
         }
 
         getCategoryUsageCount={
-            getCategoryUsageCount
+          getCategoryUsageCount
         }
       />
 
