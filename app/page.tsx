@@ -276,9 +276,9 @@ export default function Home() {
             RECEIPT
         ======================================== */}
 
-        <button
-          type="button"
-          className="mt-3 flex w-full items-center justify-between rounded-2xl bg-white p-4 text-left shadow-sm"
+        <Link
+          href="/receipt"
+          className="mt-3 flex w-full items-center justify-between rounded-2xl bg-white p-4 text-left shadow-sm transition active:scale-[0.98]"
         >
           <div className="flex items-center gap-3">
             <span className="text-xl">
@@ -299,7 +299,7 @@ export default function Home() {
           <span className="text-slate-300">
             ›
           </span>
-        </button>
+        </Link>
 
       </div>
 
