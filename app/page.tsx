@@ -23,7 +23,7 @@ const quickTools = [
   {
     icon: "💬",
     name: "日語",
-    href: "#",
+    href: "/japanese",
   },
 ];
 
