@@ -1,8 +1,7 @@
 "use client";
 
-
-
 import Link from "next/link";
+
 import { useRouter } from "next/navigation";
 
 import {
@@ -19,26 +18,25 @@ import {
 
 } from "react";
 
-
-
 import type {
+
   Expense,
+
   ExpenseCategory,
+
   ExpenseMember,
+
   ExpenseVisibility,
+
 } from "../../data/expenseData";
 
 import { useExpenseData } from "../../hooks/useExpenseData";
-
-
 
 // ========================================
 
 // TYPES
 
 // ========================================
-
-
 
 type ReceiptAssignment =
 
@@ -58,8 +56,6 @@ type ReceiptAssignment =
 
     };
 
-
-
 type ReceiptItem = {
 
   id: string;
@@ -70,23 +66,23 @@ type ReceiptItem = {
 
   quantity?: number;
 
+  // 折扣前商品金額
+  originalAmount: number;
+
+  // 折扣金額（正數）
+  discountAmount: number;
+
   amount: number;
-
-
 
   // 商品由誰負擔
 
   assignment: ReceiptAssignment;
-
-
 
   // 是否已經由使用者手動確認過
 
   hasAssigned: boolean;
 
 };
-
-
 
 type ReceiptScanResult = {
 
@@ -100,6 +96,9 @@ type ReceiptScanResult = {
 
   total: number;
 
+  // 整張收據折扣總額（目前僅保留原始辨識資料）
+  discountTotal?: number;
+
   tax?: number;
 
   items: ReceiptItem[];
@@ -108,8 +107,6 @@ type ReceiptScanResult = {
 
 };
 
-
-
 type MemberShare = {
 
   memberId: string;
@@ -117,8 +114,6 @@ type MemberShare = {
   amount: number;
 
 };
-
-
 
 type Transfer = {
 
@@ -130,97 +125,45 @@ type Transfer = {
 
 };
 
-
-
-// ========================================
-
-// DEMO OCR DATA
-
-// ========================================
-
-
-
-const DEMO_ITEMS = [
-
-  {
-
-    id: "demo-1",
-
-    originalName: "紅しゃけおにぎり",
-
-    chineseName: "鮭魚飯糰",
-
-    quantity: 1,
-
-    amount: 178,
-
-  },
-
-  {
-
-    id: "demo-2",
-
-    originalName: "緑茶",
-
-    chineseName: "綠茶",
-
-    quantity: 1,
-
-    amount: 128,
-
-  },
-
-  {
-
-    id: "demo-3",
-
-    originalName: "カスタードプリン",
-
-    chineseName: "卡士達布丁",
-
-    quantity: 1,
-
-    amount: 238,
-
-  },
-
-];
-
-
-
 // ========================================
 
 // PAGE
 
 // ========================================
 
-
-
 export default function ReceiptPage() {
 
   const router = useRouter();
 
   const {
+
     loaded,
+
     expenses,
+
     members,
+
     categories,
+
     addExpense,
+
   } = useExpenseData();
-
-
 
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
 
   const albumInputRef = useRef<HTMLInputElement | null>(null);
 
-
-
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const [fileName, setFileName] = useState("");
 
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  // Gemini 收據辨識狀態
+
+  const [scanMessage, setScanMessage] = useState("");
+
+  const [scanError, setScanError] = useState("");
 
   const [status, setStatus] = useState<
 
@@ -228,45 +171,37 @@ export default function ReceiptPage() {
 
   >("empty");
 
-
-
   const [result, setResult] = useState<ReceiptScanResult | null>(null);
 
-
-
   const [editing, setEditing] = useState(false);
-
-
 
   // 整張收據由誰先付款
 
   const [paidBy, setPaidBy] = useState("");
 
   // 整張收據的可見性
+
   const [visibility, setVisibility] =
+
     useState<ExpenseVisibility>("shared");
 
   const [saving, setSaving] = useState(false);
 
   const [pendingExpenseCount, setPendingExpenseCount] =
+
     useState<number | null>(null);
 
   const [pendingDestination, setPendingDestination] =
+
     useState<string | null>(null);
-
-
 
   // 目前正在分配哪個商品
 
   const [assigningItemId, setAssigningItemId] = useState<string | null>(null);
 
-
-
   // 分配視窗暫存勾選
 
   const [draftMemberIds, setDraftMemberIds] = useState<string[]>([]);
-
-
 
   // ========================================
 
@@ -274,19 +209,13 @@ export default function ReceiptPage() {
 
   // ========================================
 
-
-
   const currentUser = members.find((member) => member.isCurrentUser);
-
-
 
   // ========================================
 
   // IMAGE URL CLEANUP
 
   // ========================================
-
-
 
   useEffect(() => {
 
@@ -302,15 +231,11 @@ export default function ReceiptPage() {
 
   }, [imageUrl]);
 
-
-
   // ========================================
 
   // DEFAULT PAYER = CURRENT USER
 
   // ========================================
-
-
 
   useEffect(() => {
 
@@ -320,11 +245,7 @@ export default function ReceiptPage() {
 
     }
 
-
-
     const initialPayer = currentUser ?? members[0];
-
-
 
     if (initialPayer) {
 
@@ -334,33 +255,45 @@ export default function ReceiptPage() {
 
   }, [members, currentUser, paidBy]);
 
-
-
   // ========================================
+
   // AFTER SAVE -> GO TO EXPENSE / SETTLEMENT
+
   // ========================================
 
   useEffect(() => {
+
     if (
+
       pendingExpenseCount === null ||
+
       !pendingDestination
+
     ) {
+
       return;
+
     }
 
     if (expenses.length < pendingExpenseCount) {
+
       return;
+
     }
 
     router.push(pendingDestination);
+
   }, [
+
     expenses.length,
+
     pendingExpenseCount,
+
     pendingDestination,
+
     router,
+
   ]);
-
-
 
   // ========================================
 
@@ -368,13 +301,9 @@ export default function ReceiptPage() {
 
   // ========================================
 
-
-
   function handleImage(event: ChangeEvent<HTMLInputElement>) {
 
     const file = event.target.files?.[0];
-
-
 
     if (!file) {
 
@@ -382,15 +311,11 @@ export default function ReceiptPage() {
 
     }
 
-
-
     if (!file.type.startsWith("image/")) {
 
       return;
 
     }
-
-
 
     if (imageUrl) {
 
@@ -398,17 +323,17 @@ export default function ReceiptPage() {
 
     }
 
-
-
     const nextUrl = URL.createObjectURL(file);
-
-
 
     setImageUrl(nextUrl);
 
     setFileName(file.name);
 
+    setSelectedFile(file);
 
+    setScanError("");
+
+    setScanMessage("");
 
     setResult(null);
 
@@ -420,17 +345,11 @@ export default function ReceiptPage() {
 
     setDraftMemberIds([]);
 
-
-
     setStatus("ready");
-
-
 
     event.target.value = "";
 
   }
-
-
 
   function resetReceipt() {
 
@@ -440,11 +359,15 @@ export default function ReceiptPage() {
 
     }
 
-
-
     setImageUrl(null);
 
     setFileName("");
+
+    setSelectedFile(null);
+
+    setScanError("");
+
+    setScanMessage("");
 
     setResult(null);
 
@@ -456,173 +379,247 @@ export default function ReceiptPage() {
 
     setDraftMemberIds([]);
 
-
-
     const payer = currentUser ?? members[0];
 
-
-
     setPaidBy(payer?.id ?? "");
-
-
 
     setStatus("empty");
 
   }
 
+  // ========================================
 
+  // GEMINI RECEIPT SCAN
 
   // ========================================
 
-  // DEMO SCAN
+  async function scanReceipt() {
 
-  // ========================================
-
-
-
-  function scanReceipt() {
-
-    if (!imageUrl) {
-
-      return;
-
-    }
-
-
-
-    if (members.length === 0) {
-
-      return;
-
-    }
-
-
+    if (!selectedFile) return;
 
     setStatus("scanning");
 
+    setScanError("");
 
+    setScanMessage("正在安全上傳收據給 Gemini 辨識...");
 
-    const allMemberIds = members.map((member) => member.id);
+    try {
 
+      const formData = new FormData();
 
+      formData.append("image", selectedFile);
 
-    setTimeout(() => {
+      const response = await fetch("/api/receipt-scan", {
 
-      const demoItems: ReceiptItem[] = DEMO_ITEMS.map((item) => {
+        method: "POST",
 
-        const assignment: ReceiptAssignment =
-
-          allMemberIds.length === 1
-
-            ? {
-
-                type: "personal",
-
-                memberIds: [allMemberIds[0]],
-
-              }
-
-            : {
-
-                type: "shared",
-
-                memberIds: [...allMemberIds],
-
-              };
-
-
-
-        return {
-
-          ...item,
-
-
-
-          // 剛辨識完還沒有人工確認
-
-          hasAssigned: false,
-
-
-
-          // 暫時保留全員共同作為 fallback
-
-          // 但第一次開啟分配視窗時不會打勾
-
-          assignment,
-
-        };
+        body: formData,
 
       });
 
+      const payload = await response.json();
 
+      if (!response.ok) {
 
-      const demo: ReceiptScanResult = {
+        throw new Error(
 
-        merchant: "セブン‐イレブン",
+          payload?.detail || payload?.error || "Gemini 收據辨識失敗"
 
-        date: "2027-03-01",
-
-        time: "18:42",
-
-
-
-        currency: "JPY",
-
-
-
-        total: 544,
-
-        tax: 40,
-
-
-
-        suggestedCategory: "飲食",
-
-
-
-        items: demoItems,
-
-      };
-
-
-
-      setResult(demo);
-
-      setVisibility("shared");
-
-
-
-      // 每次新掃描
-
-      // 預設付款人 = 本人
-
-      const payer = currentUser ?? members[0];
-
-
-
-      if (payer) {
-
-        setPaidBy(payer.id);
+        );
 
       }
 
+      const gemini = payload?.result;
 
+      if (!gemini || !Array.isArray(gemini.items)) {
+
+        throw new Error("Gemini 回傳格式不正確");
+
+      }
+
+      const fallbackMemberId = currentUser?.id ?? members[0]?.id ?? "";
+
+      if (!fallbackMemberId) {
+
+        throw new Error("目前沒有旅行成員，請先新增成員。");
+
+      }
+
+      const mappedItems: ReceiptItem[] = gemini.items.map(
+
+        (
+
+          item: {
+
+            originalName?: string;
+
+            chineseName?: string;
+
+            quantity?: number;
+
+            amount?: number;
+
+          },
+
+          index: number
+
+        ) => ({
+
+          id:
+
+            typeof crypto !== "undefined" && "randomUUID" in crypto
+
+              ? `receipt-item-${crypto.randomUUID()}`
+
+              : `receipt-item-${Date.now()}-${index}`,
+
+          originalName:
+
+            typeof item.originalName === "string" ? item.originalName : "",
+
+          chineseName:
+
+            typeof item.chineseName === "string" ? item.chineseName : "",
+
+          quantity:
+
+            typeof item.quantity === "number" ? item.quantity : 1,
+
+          amount:
+
+            typeof item.amount === "number" && Number.isFinite(item.amount)
+
+              ? item.amount
+
+              : 0,
+
+          assignment: {
+
+            type: "personal",
+
+            memberIds: [fallbackMemberId],
+
+          },
+
+          // 共同收據仍要求使用者逐項確認，避免 AI 自動決定誰負擔
+
+          hasAssigned: false,
+
+        })
+
+      );
+
+      if (mappedItems.length === 0) {
+
+        throw new Error("Gemini 沒有辨識到任何收據品項。");
+
+      }
+
+      const merchantOriginal =
+
+        typeof gemini.merchantOriginal === "string"
+
+          ? gemini.merchantOriginal.trim()
+
+          : "";
+
+      const merchantTranslated =
+
+        typeof gemini.merchantTranslated === "string"
+
+          ? gemini.merchantTranslated.trim()
+
+          : "";
+
+      const calculatedTotal = mappedItems.reduce(
+
+        (sum, item) => sum + item.amount,
+
+        0
+
+      );
+
+      const nextResult: ReceiptScanResult = {
+
+        merchant: merchantOriginal || merchantTranslated || "未辨識店家",
+
+        date:
+
+          typeof gemini.date === "string" && gemini.date.trim()
+
+            ? gemini.date.trim()
+
+            : undefined,
+
+        time:
+
+          typeof gemini.time === "string" && gemini.time.trim()
+
+            ? gemini.time.trim()
+
+            : undefined,
+
+        currency: "JPY",
+
+        total:
+
+          typeof gemini.total === "number" && Number.isFinite(gemini.total)
+
+            ? gemini.total
+
+            : calculatedTotal,
+
+        tax:
+
+          typeof gemini.tax === "number" && Number.isFinite(gemini.tax)
+
+            ? gemini.tax
+
+            : undefined,
+
+        items: mappedItems,
+
+        suggestedCategory:
+
+          typeof gemini.suggestedCategory === "string"
+
+            ? gemini.suggestedCategory
+
+            : "其他",
+
+      };
+
+      setResult(nextResult);
+
+      setEditing(false);
+
+      setScanMessage("");
 
       setStatus("result");
 
-    }, 900);
+    } catch (error) {
+
+      console.error("Gemini receipt scan failed:", error);
+
+      setScanError(
+
+        error instanceof Error ? error.message : "Gemini 收據辨識失敗"
+
+      );
+
+      setScanMessage("");
+
+      setStatus("ready");
+
+    }
 
   }
-
-
 
   // ========================================
 
   // EDIT RESULT
 
   // ========================================
-
-
 
   function updateMerchant(value: string) {
 
@@ -633,8 +630,6 @@ export default function ReceiptPage() {
         return current;
 
       }
-
-
 
       return {
 
@@ -648,8 +643,6 @@ export default function ReceiptPage() {
 
   }
 
-
-
   function updateDate(value: string) {
 
     setResult((current) => {
@@ -659,8 +652,6 @@ export default function ReceiptPage() {
         return current;
 
       }
-
-
 
       return {
 
@@ -674,8 +665,6 @@ export default function ReceiptPage() {
 
   }
 
-
-
   function updateTime(value: string) {
 
     setResult((current) => {
@@ -685,8 +674,6 @@ export default function ReceiptPage() {
         return current;
 
       }
-
-
 
       return {
 
@@ -700,8 +687,6 @@ export default function ReceiptPage() {
 
   }
 
-
-
   function updateItemChineseName(id: string, value: string) {
 
     setResult((current) => {
@@ -712,13 +697,9 @@ export default function ReceiptPage() {
 
       }
 
-
-
       return {
 
         ...current,
-
-
 
         items: current.items.map((item) =>
 
@@ -742,13 +723,9 @@ export default function ReceiptPage() {
 
   }
 
-
-
   function updateItemAmount(id: string, value: string) {
 
     const parsed = Number(value);
-
-
 
     setResult((current) => {
 
@@ -758,13 +735,9 @@ export default function ReceiptPage() {
 
       }
 
-
-
       return {
 
         ...current,
-
-
 
         items: current.items.map((item) =>
 
@@ -774,9 +747,12 @@ export default function ReceiptPage() {
 
                 ...item,
 
-
-
                 amount: Number.isFinite(parsed) ? parsed : 0,
+                discountAmount: Math.max(
+                  0,
+                  item.originalAmount -
+                    (Number.isFinite(parsed) ? parsed : 0)
+                ),
 
               }
 
@@ -790,21 +766,15 @@ export default function ReceiptPage() {
 
   }
 
-
-
   // ========================================
 
   // ASSIGNMENT
 
   // ========================================
 
-
-
   function openAssignment(item: ReceiptItem) {
 
     setAssigningItemId(item.id);
-
-
 
     // 第一次開啟商品：
 
@@ -818,8 +788,6 @@ export default function ReceiptPage() {
 
     }
 
-
-
     // 已經分配過：
 
     // 再次進入時保留原本設定
@@ -828,8 +796,6 @@ export default function ReceiptPage() {
 
   }
 
-
-
   function closeAssignment() {
 
     setAssigningItemId(null);
@@ -837,8 +803,6 @@ export default function ReceiptPage() {
     setDraftMemberIds([]);
 
   }
-
-
 
   function toggleDraftMember(memberId: string) {
 
@@ -850,23 +814,17 @@ export default function ReceiptPage() {
 
       }
 
-
-
       return [...current, memberId];
 
     });
 
   }
 
-
-
   function selectAllMembers() {
 
     setDraftMemberIds(members.map((member) => member.id));
 
   }
-
-
 
   function saveAssignment() {
 
@@ -876,8 +834,6 @@ export default function ReceiptPage() {
 
     }
 
-
-
     setResult((current) => {
 
       if (!current) {
@@ -886,8 +842,6 @@ export default function ReceiptPage() {
 
       }
 
-
-
       const updatedItems: ReceiptItem[] = current.items.map((item) => {
 
         if (item.id !== assigningItemId) {
@@ -895,8 +849,6 @@ export default function ReceiptPage() {
           return item;
 
         }
-
-
 
         // 一個人 → 個人用品
 
@@ -910,8 +862,6 @@ export default function ReceiptPage() {
 
           };
 
-
-
           return {
 
             ...item,
@@ -924,8 +874,6 @@ export default function ReceiptPage() {
 
         }
 
-
-
         // 多人 → 平均分攤
 
         const assignment: ReceiptAssignment = {
@@ -935,8 +883,6 @@ export default function ReceiptPage() {
           memberIds: [...draftMemberIds],
 
         };
-
-
 
         return {
 
@@ -950,8 +896,6 @@ export default function ReceiptPage() {
 
       });
 
-
-
       return {
 
         ...current,
@@ -962,27 +906,19 @@ export default function ReceiptPage() {
 
     });
 
-
-
     closeAssignment();
 
   }
 
-
-
   function setAllShared() {
 
     const ids = members.map((member) => member.id);
-
-
 
     if (ids.length === 0) {
 
       return;
 
     }
-
-
 
     setResult((current) => {
 
@@ -991,8 +927,6 @@ export default function ReceiptPage() {
         return current;
 
       }
-
-
 
       const updatedItems: ReceiptItem[] = current.items.map((item) => {
 
@@ -1016,13 +950,9 @@ export default function ReceiptPage() {
 
               };
 
-
-
         return {
 
           ...item,
-
-
 
           // 使用者主動按了「全部全員共同」
 
@@ -1030,15 +960,11 @@ export default function ReceiptPage() {
 
           hasAssigned: true,
 
-
-
           assignment,
 
         };
 
       });
-
-
 
       return {
 
@@ -1052,8 +978,6 @@ export default function ReceiptPage() {
 
   }
 
-
-
   // ========================================
 
   // MEMBER SHARES
@@ -1066,69 +990,75 @@ export default function ReceiptPage() {
 
   // ========================================
 
-
-
   const memberShares = useMemo<MemberShare[]>(() => {
-
     if (!result) {
-
       return [];
-
     }
 
-
-
-    const map = new Map<string, number>();
-
-
+    // 先用精確小數算出每個人的理論負擔，最後才一次轉成整數日圓。
+    // 這樣不會因為每個區塊各自 Math.round() 而出現 ±1 円的帳差。
+    const rawMap = new Map<string, number>();
 
     members.forEach((member) => {
-
-      map.set(member.id, 0);
-
+      rawMap.set(member.id, 0);
     });
 
-
-
     result.items.forEach((item) => {
-
       const ids = item.assignment.memberIds;
 
-
-
       if (ids.length === 0) {
-
         return;
-
       }
-
-
 
       const share = item.amount / ids.length;
 
-
-
       ids.forEach((memberId) => {
-
-        map.set(memberId, (map.get(memberId) ?? 0) + share);
-
+        rawMap.set(memberId, (rawMap.get(memberId) ?? 0) + share);
       });
-
     });
 
+    // 每個人先無條件捨去到整數日圓。
+    const integerMap = new Map<string, number>();
 
+    members.forEach((member) => {
+      integerMap.set(member.id, Math.floor(rawMap.get(member.id) ?? 0));
+    });
+
+    // 需要分配的剩餘日圓 = 品項總額 - 已分配整數總額。
+    // 規則：若付款人本來就有負擔，餘數由付款人吸收。
+    // 若付款人完全沒有負擔，才交給實際有負擔的成員。
+    const roundedItemTotal = Math.round(
+      result.items.reduce((sum, item) => sum + item.amount, 0)
+    );
+
+    const allocatedTotal = Array.from(integerMap.values()).reduce(
+      (sum, amount) => sum + amount,
+      0
+    );
+
+    const remainder = roundedItemTotal - allocatedTotal;
+
+    if (remainder > 0) {
+      const payerRawShare = rawMap.get(paidBy) ?? 0;
+
+      const remainderReceiver =
+        payerRawShare > 0
+          ? paidBy
+          : members.find((member) => (rawMap.get(member.id) ?? 0) > 0)?.id;
+
+      if (remainderReceiver) {
+        integerMap.set(
+          remainderReceiver,
+          (integerMap.get(remainderReceiver) ?? 0) + remainder
+        );
+      }
+    }
 
     return members.map((member) => ({
-
       memberId: member.id,
-
-      amount: map.get(member.id) ?? 0,
-
+      amount: integerMap.get(member.id) ?? 0,
     }));
-
-  }, [result, members]);
-
-
+  }, [result, members, paidBy]);
 
   // ========================================
 
@@ -1136,19 +1066,58 @@ export default function ReceiptPage() {
 
   // ========================================
 
-
-
+  // 分帳只使用每個品項的最終實付
   const itemTotal =
-
     result?.items.reduce((sum, item) => sum + item.amount, 0) ?? 0;
 
+  const originalItemTotal =
+    result?.items.reduce(
+      (sum, item) =>
+        sum +
+        (Number.isFinite(item.originalAmount)
+          ? item.originalAmount
+          : item.amount),
+      0
+    ) ?? 0;
 
+  const itemDiscountTotal =
+    result?.items.reduce(
+      (sum, item) =>
+        sum +
+        (Number.isFinite(item.discountAmount)
+          ? item.discountAmount
+          : 0),
+      0
+    ) ?? 0;
+
+  const receiptDiscountTotal = itemDiscountTotal;
+
+  const itemDiscountsMatch =
+    !!result &&
+    result.items.every((item) => {
+      const originalAmount = Number.isFinite(item.originalAmount)
+        ? item.originalAmount
+        : item.amount;
+
+      const discountAmount = Number.isFinite(item.discountAmount)
+        ? item.discountAmount
+        : 0;
+
+      return (
+        Math.abs(
+          originalAmount - discountAmount - item.amount
+        ) < 0.01
+      );
+    });
 
   const totalMatches =
-
     !!result && Math.abs(itemTotal - result.total) < 0.01;
 
-
+  const receiptDiscountMatches =
+    !!result &&
+    Math.abs(
+      originalItemTotal - receiptDiscountTotal - result.total
+    ) < 0.01;
 
   // ========================================
 
@@ -1156,20 +1125,15 @@ export default function ReceiptPage() {
 
   // ========================================
 
-
-
   const unassignedCount =
 
     result?.items.filter((item) => !item.hasAssigned).length ?? 0;
 
-
-
   const allItemsAssigned = result ? unassignedCount === 0 : false;
 
   const receiptReady =
+
     visibility === "private" ? true : allItemsAssigned;
-
-
 
   // ========================================
 
@@ -1183,8 +1147,6 @@ export default function ReceiptPage() {
 
   // ========================================
 
-
-
   const transfers = useMemo<Transfer[]>(() => {
 
     if (!result || !paidBy || visibility === "private") {
@@ -1192,8 +1154,6 @@ export default function ReceiptPage() {
       return [];
 
     }
-
-
 
     return memberShares
 
@@ -1219,13 +1179,9 @@ export default function ReceiptPage() {
 
   }, [result, paidBy, memberShares, visibility]);
 
-
-
   const payerShare =
 
     memberShares.find((share) => share.memberId === paidBy)?.amount ?? 0;
-
-
 
   const payerReceivable = transfers.reduce(
 
@@ -1235,15 +1191,11 @@ export default function ReceiptPage() {
 
   );
 
-
-
   // ========================================
 
   // CURRENT ASSIGNING ITEM
 
   // ========================================
-
-
 
   const assigningItem = result?.items.find(
 
@@ -1251,95 +1203,140 @@ export default function ReceiptPage() {
 
   );
 
-
-
   // ========================================
 
   // TEST CONFIRM
 
   // ========================================
 
-
-
   function handleContinue() {
+
   if (!result || saving || !loaded) {
+
     return;
+
   }
 
   if (!currentUser) {
+
     alert("找不到目前使用者，請先確認旅行成員設定。");
+
     return;
+
   }
 
   if (visibility === "shared") {
+
     if (!paidBy) {
+
       return;
+
     }
 
     if (!allItemsAssigned) {
+
       alert(`還有 ${unassignedCount} 個商品尚未分配。`);
+
       return;
+
     }
 
     const memberIds = new Set(
+
       members.map((member) => member.id)
+
     );
 
     const invalidAssignment = result.items.some(
+
       (item) =>
+
         !item.hasAssigned ||
+
         item.assignment.memberIds.length === 0 ||
+
         item.assignment.memberIds.some(
+
           (memberId) => !memberIds.has(memberId)
+
         )
+
     );
 
     if (invalidAssignment) {
+
       alert("有商品的分配成員已不存在，請重新分配。");
+
       return;
+
     }
+
   }
 
   const itemTotal = result.items.reduce(
+
     (sum, item) => sum + item.amount,
+
     0
+
   );
 
   if (Math.round(itemTotal) !== Math.round(result.total)) {
+
     alert("品項合計與收據總額不同，請先確認金額。");
+
     return;
+
   }
 
   if (!result.date) {
+
     alert("請先確認收據日期。");
+
     return;
+
   }
 
   const receiptDate = result.date;
 
   const categoryId = getReceiptCategoryId(
+
     result.suggestedCategory,
+
     categories
+
   );
 
   if (!categoryId) {
+
     alert("找不到可用的記帳分類。");
+
     return;
+
   }
 
   const createdAt = Date.now();
 
   const newExpenses: Expense[] = result.items.map(
+
     (item, index) => ({
+
       id:
+
         typeof crypto !== "undefined" &&
+
         "randomUUID" in crypto
+
           ? `receipt-${crypto.randomUUID()}`
+
           : `receipt-${createdAt}-${index}`,
 
       title:
+
         item.chineseName.trim() ||
+
         item.originalName.trim() ||
+
         "收據品項",
 
       note: `${result.merchant}・收據辨識`,
@@ -1353,52 +1350,68 @@ export default function ReceiptPage() {
       visibility,
 
       paidBy:
+
         visibility === "private"
+
           ? currentUser.id
+
           : paidBy,
 
       splitBetween:
+
         visibility === "private"
+
           ? [currentUser.id]
+
           : [...item.assignment.memberIds],
 
       date: receiptDate,
 
       ...(result.time
+
         ? {
+
             time: result.time,
+
           }
+
         : {}),
+
     })
+
   );
 
   setSaving(true);
 
   const targetCount =
+
     expenses.length + newExpenses.length;
 
   newExpenses.forEach((expense) => {
+
     addExpense(expense);
+
   });
 
   setPendingExpenseCount(targetCount);
 
   setPendingDestination(
+
     visibility === "private"
+
       ? "/expenses"
+
       : "/expenses/settlement"
+
   );
+
 }
-
-
 
 // ========================================
 
   // LOADING
 
   // ========================================
-
-
 
   if (!loaded) {
 
@@ -1410,8 +1423,6 @@ export default function ReceiptPage() {
 
           <div className="h-16 animate-pulse rounded-2xl bg-slate-200" />
 
-
-
           <div className="mt-5 h-72 animate-pulse rounded-[26px] bg-slate-200" />
 
         </div>
@@ -1422,23 +1433,17 @@ export default function ReceiptPage() {
 
   }
 
-
-
   // ========================================
 
   // UI
 
   // ========================================
 
-
-
   return (
 
     <main className="min-h-screen bg-slate-50">
 
       {/* HEADER */}
-
-
 
       <header className="sticky top-0 z-30 border-b border-slate-100 bg-white/95 backdrop-blur">
 
@@ -1456,8 +1461,6 @@ export default function ReceiptPage() {
 
           </Link>
 
-
-
           <div className="text-center">
 
             <p className="text-[10px] font-bold tracking-[0.2em] text-slate-400">
@@ -1466,8 +1469,6 @@ export default function ReceiptPage() {
 
             </p>
 
-
-
             <h1 className="text-sm font-bold text-slate-900">
 
               收據辨識
@@ -1475,8 +1476,6 @@ export default function ReceiptPage() {
             </h1>
 
           </div>
-
-
 
           {status !== "empty" ? (
 
@@ -1504,13 +1503,9 @@ export default function ReceiptPage() {
 
       </header>
 
-
-
       <div className="mx-auto max-w-md px-5 pb-28 pt-5">
 
         {/* EMPTY */}
-
-
 
         {status === "empty" && (
 
@@ -1524,23 +1519,17 @@ export default function ReceiptPage() {
 
               </div>
 
-
-
               <h3 className="mt-4 text-base font-bold text-slate-900">
 
                 掃描日本收據
 
               </h3>
 
-
-
               <p className="mx-auto mt-2 max-w-[250px] text-xs leading-5 text-slate-400">
 
                 收據盡量攤平，避免反光並讓文字保持清楚。
 
               </p>
-
-
 
               <div className="mt-6 grid grid-cols-2 gap-3">
 
@@ -1557,8 +1546,6 @@ export default function ReceiptPage() {
                   📷 拍照
 
                 </button>
-
-
 
                 <button
 
@@ -1578,21 +1565,17 @@ export default function ReceiptPage() {
 
             </section>
 
-
-
             <section className="mt-4 rounded-[22px] bg-blue-50 px-4 py-4">
 
               <p className="text-xs font-bold text-blue-900">
 
-                V1 測試模式
+                Gemini Vision 測試
 
               </p>
 
-
-
               <p className="mt-1 text-[11px] leading-5 text-blue-700">
 
-                辨識目前仍使用測試資料。這一版先測試「誰付款、商品是誰的、誰該還誰」。
+                照片會透過 Our Travel 的 Server API 傳給 Gemini 進行收據理解。API Key 只存在伺服器端，目前先在 localhost 測試辨識準確率。
 
               </p>
 
@@ -1602,11 +1585,7 @@ export default function ReceiptPage() {
 
         )}
 
-
-
         {/* IMAGE */}
-
-
 
         {imageUrl && status !== "empty" && (
 
@@ -1624,8 +1603,6 @@ export default function ReceiptPage() {
 
                   </p>
 
-
-
                   <p className="mt-0.5 truncate text-xs font-bold text-slate-700">
 
                     {fileName || "收據照片"}
@@ -1633,8 +1610,6 @@ export default function ReceiptPage() {
                   </p>
 
                 </div>
-
-
 
                 {status !== "scanning" && (
 
@@ -1656,8 +1631,6 @@ export default function ReceiptPage() {
 
               </div>
 
-
-
               <div className="flex max-h-[360px] justify-center overflow-hidden bg-slate-100">
 
                 <img
@@ -1678,11 +1651,7 @@ export default function ReceiptPage() {
 
         )}
 
-
-
         {/* READY */}
-
-
 
         {status === "ready" && (
 
@@ -1694,25 +1663,35 @@ export default function ReceiptPage() {
 
               onClick={scanReceipt}
 
-              disabled={members.length === 0}
+              disabled={!selectedFile}
 
               className="w-full rounded-2xl bg-slate-900 py-4 text-sm font-bold text-white disabled:bg-slate-300"
 
             >
 
-              ✨ 開始辨識
+              ✨ 使用 Gemini 辨識收據
 
             </button>
 
+            <p className="mt-2 text-center text-[10px] leading-4 text-slate-400">
 
+              照片會送到 Gemini API 辨識；API Key 只存在 Server 端。
 
-            {members.length === 0 && (
+            </p>
 
-              <p className="mt-2 text-center text-[10px] text-rose-500">
+            {scanError && (
 
-                目前沒有旅行成員，請先新增成員。
+              <div className="mt-3 rounded-2xl bg-rose-50 px-4 py-3">
 
-              </p>
+                <p className="text-xs font-bold text-rose-700">辨識失敗</p>
+
+                <p className="mt-1 break-words text-[10px] leading-5 text-rose-600">
+
+                  {scanError}
+
+                </p>
+
+              </div>
 
             )}
 
@@ -1720,11 +1699,7 @@ export default function ReceiptPage() {
 
         )}
 
-
-
         {/* SCANNING */}
-
-
 
         {status === "scanning" && (
 
@@ -1732,19 +1707,15 @@ export default function ReceiptPage() {
 
             <div className="mx-auto h-7 w-7 animate-spin rounded-full border-[3px] border-slate-200 border-t-slate-900" />
 
-
-
             <p className="mt-4 text-sm font-bold text-slate-800">
 
-              正在讀懂這張收據...
+              Gemini 正在讀收據...
 
             </p>
 
-
-
             <p className="mt-1 text-[11px] text-slate-400">
 
-              辨識日文、商品與金額
+              {scanMessage || "正在辨識店家、日期、商品與金額..."}
 
             </p>
 
@@ -1752,19 +1723,13 @@ export default function ReceiptPage() {
 
         )}
 
-
-
         {/* RESULT */}
-
-
 
         {status === "result" && result && (
 
           <>
 
             {/* RESULT HEADER */}
-
-
 
             <section className="mt-5">
 
@@ -1778,8 +1743,6 @@ export default function ReceiptPage() {
 
                   </p>
 
-
-
                   <h2 className="mt-1 text-base font-bold text-slate-900">
 
                     辨識完成 ✓
@@ -1787,8 +1750,6 @@ export default function ReceiptPage() {
                   </h2>
 
                 </div>
-
-
 
                 <button
 
@@ -1814,11 +1775,7 @@ export default function ReceiptPage() {
 
               </div>
 
-
-
               {/* MERCHANT */}
-
-
 
               <div className="rounded-[26px] bg-white p-4 shadow-sm shadow-slate-200/50">
 
@@ -1831,8 +1788,6 @@ export default function ReceiptPage() {
                       店家
 
                     </p>
-
-
 
                     {editing ? (
 
@@ -1862,8 +1817,6 @@ export default function ReceiptPage() {
 
                         </h3>
 
-
-
                         <p className="mt-1 text-xs font-medium text-slate-400">
 
                           {getMerchantDisplayName(result.merchant)}
@@ -1876,8 +1829,6 @@ export default function ReceiptPage() {
 
                   </div>
 
-
-
                   <div className="rounded-2xl bg-emerald-50 px-3 py-2 text-center">
 
                     <p className="text-[9px] font-bold text-emerald-600">
@@ -1885,8 +1836,6 @@ export default function ReceiptPage() {
                       分類
 
                     </p>
-
-
 
                     <p className="mt-0.5 text-xs font-bold text-emerald-800">
 
@@ -1898,8 +1847,6 @@ export default function ReceiptPage() {
 
                 </div>
 
-
-
                 <div className="mt-4 grid grid-cols-2 gap-3">
 
                   <div className="rounded-2xl bg-slate-50 px-3 py-3">
@@ -1909,8 +1856,6 @@ export default function ReceiptPage() {
                       日期
 
                     </p>
-
-
 
                     {editing ? (
 
@@ -1942,8 +1887,6 @@ export default function ReceiptPage() {
 
                   </div>
 
-
-
                   <div className="rounded-2xl bg-slate-50 px-3 py-3">
 
                     <p className="text-[9px] font-bold text-slate-400">
@@ -1951,8 +1894,6 @@ export default function ReceiptPage() {
                       時間
 
                     </p>
-
-
 
                     {editing ? (
 
@@ -1990,11 +1931,10 @@ export default function ReceiptPage() {
 
             </section>
 
-
-
             {/* PAYER */}
 
             {visibility === "shared" && (
+
             <section className="mt-4 rounded-[26px] bg-white p-4 shadow-sm shadow-slate-200/50">
 
               <p className="text-[10px] font-bold tracking-[0.14em] text-slate-400">
@@ -2003,15 +1943,11 @@ export default function ReceiptPage() {
 
               </p>
 
-
-
               <h3 className="mt-1 text-sm font-bold text-slate-900">
 
                 誰先結帳？
 
               </h3>
-
-
 
               <p className="mt-1 text-[10px] leading-4 text-slate-400">
 
@@ -2019,15 +1955,11 @@ export default function ReceiptPage() {
 
               </p>
 
-
-
               <div className="mt-4 flex flex-wrap gap-2">
 
                 {members.map((member) => {
 
                   const selected = paidBy === member.id;
-
-
 
                   return (
 
@@ -2066,56 +1998,90 @@ export default function ReceiptPage() {
               </div>
 
             </section>
+
             )}
 
-
-
-            
             {/* VISIBILITY */}
 
             <section className="mt-4 rounded-[26px] bg-white p-4 shadow-sm shadow-slate-200/50">
+
               <p className="text-[10px] font-bold tracking-[0.14em] text-slate-400">VISIBILITY</p>
+
               <h3 className="mt-1 text-sm font-bold text-slate-900">這張收據要一起分帳嗎？</h3>
+
               <p className="mt-1 text-[10px] leading-4 text-slate-400">共同收據會進入分帳；私人收據只有自己可見。</p>
 
               <div className="mt-3 grid grid-cols-2 gap-2">
+
                 <button
+
                   type="button"
+
                   onClick={() => setVisibility("shared")}
+
                   className={`flex min-h-[64px] items-center gap-3 rounded-2xl border px-3 py-2 text-left transition ${
+
                     visibility === "shared"
+
                       ? "border-slate-900 bg-slate-900 text-white"
+
                       : "border-slate-200 bg-white text-slate-500"
+
                   }`}
+
                 >
+
                   <span className="text-lg leading-none">👥</span>
+
                   <span>
+
                     <span className="block text-xs font-bold">共同</span>
+
                     <span className="mt-0.5 block text-[9px] opacity-70">
+
                       同行旅伴分帳
+
                     </span>
+
                   </span>
+
                 </button>
 
                 <button
-                  type="button"
-                  onClick={() => setVisibility("private")}
-                  className={`flex min-h-[64px] items-center gap-3 rounded-2xl border px-3 py-2 text-left transition ${
-                    visibility === "private"
-                      ? "border-slate-900 bg-slate-900 text-white"
-                      : "border-slate-200 bg-white text-slate-500"
-                  }`}
-                >
-                  <span className="text-lg leading-none">🔒</span>
-                  <span>
-                    <span className="block text-xs font-bold">私人</span>
-                    <span className="mt-0.5 block text-[9px] opacity-70">
-                      只有自己可見
-                    </span>
-                  </span>
-                </button>
-              </div>
 
+                  type="button"
+
+                  onClick={() => setVisibility("private")}
+
+                  className={`flex min-h-[64px] items-center gap-3 rounded-2xl border px-3 py-2 text-left transition ${
+
+                    visibility === "private"
+
+                      ? "border-slate-900 bg-slate-900 text-white"
+
+                      : "border-slate-200 bg-white text-slate-500"
+
+                  }`}
+
+                >
+
+                  <span className="text-lg leading-none">🔒</span>
+
+                  <span>
+
+                    <span className="block text-xs font-bold">私人</span>
+
+                    <span className="mt-0.5 block text-[9px] opacity-70">
+
+                      只有自己可見
+
+                    </span>
+
+                  </span>
+
+                </button>
+
+              </div>
 
             {/* ITEMS */}
 
@@ -2131,17 +2097,17 @@ export default function ReceiptPage() {
 
                   </p>
 
-
-
                   <h3 className="mt-1 text-sm font-bold text-slate-900">
+
                     {visibility === "private"
+
                       ? "辨識到的品項"
+
                       : "這些東西是誰的？"}
+
                   </h3>
 
                 </div>
-
-
 
                 <span className="text-[11px] font-bold text-slate-400">
 
@@ -2150,7 +2116,6 @@ export default function ReceiptPage() {
                 </span>
 
               </div>
-
 
             {!editing && visibility === "shared" && (
 
@@ -2174,8 +2139,6 @@ export default function ReceiptPage() {
 
                   )}
 
-
-
                   <button
 
                     type="button"
@@ -2193,8 +2156,6 @@ export default function ReceiptPage() {
                 </div>
 
               )}
-
-
 
               <div className="mt-3 divide-y divide-slate-100">
 
@@ -2246,15 +2207,11 @@ export default function ReceiptPage() {
 
                         )}
 
-
-
                         <p className="mt-1 text-[10px] text-slate-400">
 
                           {item.originalName}
 
                         </p>
-
-
 
                         {!editing && visibility === "shared" && (
 
@@ -2282,8 +2239,6 @@ export default function ReceiptPage() {
 
                               : "＋ 分給誰？"}
 
-
-
                             <span className="ml-1.5 opacity-60">
 
                               ›
@@ -2296,8 +2251,6 @@ export default function ReceiptPage() {
 
                       </div>
 
-
-
                       {editing ? (
 
                         <div className="flex shrink-0 items-center rounded-xl border border-slate-200 px-2">
@@ -2307,8 +2260,6 @@ export default function ReceiptPage() {
                             ¥
 
                           </span>
-
-
 
                           <input
 
@@ -2337,13 +2288,21 @@ export default function ReceiptPage() {
                         </div>
 
                       ) : (
-
-                        <p className="shrink-0 text-sm font-black text-slate-900">
-
-                          ¥{formatMoney(item.amount)}
-
-                        </p>
-
+                        <div className="shrink-0 text-right">
+                          {item.discountAmount > 0 && (
+                            <>
+                              <p className="text-[10px] font-bold text-slate-400 line-through">
+                                ¥{formatMoney(item.originalAmount)}
+                              </p>
+                              <p className="text-[9px] font-bold text-rose-500">
+                                -¥{formatMoney(item.discountAmount)}
+                              </p>
+                            </>
+                          )}
+                          <p className="mt-0.5 text-sm font-black text-slate-900">
+                            ¥{formatMoney(item.amount)}
+                          </p>
+                        </div>
                       )}
 
                     </div>
@@ -2356,13 +2315,10 @@ export default function ReceiptPage() {
 
             </section>
 
-
-
             {/* SETTLEMENT */}
 
-
-
             {visibility === "shared" && (
+
             <section className="mt-4 rounded-[26px] bg-slate-900 p-5 text-white">
 
               <div className="flex items-start justify-between gap-4">
@@ -2375,8 +2331,6 @@ export default function ReceiptPage() {
 
                   </p>
 
-
-
                   <h3 className="mt-1 text-base font-bold">
 
                     誰要給誰錢？
@@ -2385,8 +2339,6 @@ export default function ReceiptPage() {
 
                 </div>
 
-
-
                 <div className="text-right">
 
                   <p className="text-[9px] text-slate-400">
@@ -2394,8 +2346,6 @@ export default function ReceiptPage() {
                     付款人
 
                   </p>
-
-
 
                   <p className="mt-0.5 text-xs font-bold">
 
@@ -2407,8 +2357,6 @@ export default function ReceiptPage() {
 
               </div>
 
-
-
               {!allItemsAssigned ? (
 
                 <div className="mt-4 rounded-2xl bg-amber-400/10 px-4 py-4">
@@ -2418,8 +2366,6 @@ export default function ReceiptPage() {
                     還有 {unassignedCount} 個商品尚未分配
 
                   </p>
-
-
 
                   <p className="mt-1 text-[10px] leading-4 text-slate-400">
 
@@ -2455,15 +2401,11 @@ export default function ReceiptPage() {
 
                           )}
 
-
-
                           <span className="mx-2 text-slate-500">
 
                             →
 
                           </span>
-
-
 
                           {getMemberName(
 
@@ -2475,8 +2417,6 @@ export default function ReceiptPage() {
 
                         </p>
 
-
-
                         <p className="mt-1 text-[9px] text-slate-400">
 
                           應付
@@ -2484,8 +2424,6 @@ export default function ReceiptPage() {
                         </p>
 
                       </div>
-
-
 
                       <p className="shrink-0 text-lg font-black">
 
@@ -2509,8 +2447,6 @@ export default function ReceiptPage() {
 
                   </p>
 
-
-
                   <p className="mt-1 text-[10px] text-slate-400">
 
                     目前所有負擔都由付款人自己承擔
@@ -2520,8 +2456,6 @@ export default function ReceiptPage() {
                 </div>
 
               )}
-
-
 
               {allItemsAssigned && (
 
@@ -2535,8 +2469,6 @@ export default function ReceiptPage() {
 
                     </p>
 
-
-
                     <p className="mt-1 text-sm font-black">
 
                       ¥{formatMoney(payerShare)}
@@ -2545,8 +2477,6 @@ export default function ReceiptPage() {
 
                   </div>
 
-
-
                   <div className="text-right">
 
                     <p className="text-[9px] text-slate-400">
@@ -2554,8 +2484,6 @@ export default function ReceiptPage() {
                       付款人應收
 
                     </p>
-
-
 
                     <p className="mt-1 text-sm font-black text-emerald-300">
 
@@ -2570,43 +2498,41 @@ export default function ReceiptPage() {
               )}
 
             </section>
+
             )}
-
-
 
             {/* RECEIPT CHECK */}
 
-
-
             <section className="mt-3">
 
-              {!totalMatches && (
-
+              {(!totalMatches ||
+                !itemDiscountsMatch ||
+                !receiptDiscountMatches) && (
                 <div className="rounded-2xl bg-amber-50 px-4 py-3">
-
                   <p className="text-[10px] font-bold text-amber-700">
-
-                    ⚠ 品項金額與收據總額不同
-
+                    ⚠ 收據金額需要確認
                   </p>
 
+                  {!totalMatches && (
+                    <p className="mt-2 text-[10px] leading-4 text-amber-600">
+                      品項實付加總 ¥{formatMoney(itemTotal)}
+                      ，收據合計 ¥{formatMoney(result.total)}。
+                    </p>
+                  )}
 
+                  {!itemDiscountsMatch && (
+                    <p className="mt-1 text-[10px] leading-4 text-amber-600">
+                      有品項的金額辨識結果不一致，請確認商品金額。
+                    </p>
+                  )}
 
-                  <p className="mt-1 text-[10px] leading-4 text-amber-600">
-
-                    品項加總 ¥{formatMoney(itemTotal)}
-
-                    ，收據合計 ¥{formatMoney(result.total)}
-
-                    。可能有折扣、稅額或辨識誤差。
-
-                  </p>
-
+                  {!receiptDiscountMatches && (
+                    <p className="mt-1 text-[10px] leading-4 text-amber-600">
+                      折扣與收據最終總額目前無法完全對上。
+                    </p>
+                  )}
                 </div>
-
               )}
-
-
 
               {typeof result.tax === "number" && (
 
@@ -2622,11 +2548,7 @@ export default function ReceiptPage() {
 
             </section>
 
-
-
             {/* CONFIRM */}
-
-
 
             <section className="mt-5">
 
@@ -2637,33 +2559,47 @@ export default function ReceiptPage() {
                 onClick={handleContinue}
 
                 disabled={
+
                 saving ||
+
                 result.total <= 0 ||
+
                 result.merchant.trim() === "" ||
+
                 (visibility === "private"
+
                   ? !currentUser
+
                   : !paidBy || !allItemsAssigned)
+
               }
+
               className="w-full rounded-2xl bg-slate-900 py-4 text-sm font-bold text-white disabled:bg-slate-300"
 
               >
 
                 {saving
+
                 ? "寫入記帳中..."
+
                 : visibility === "private"
+
                   ? "🔒 記入私人帳本"
+
                   : receiptReady
+
                     ? "✓ 確認並記入分帳"
+
                     : `還有 ${unassignedCount} 項未分配`}
 
               </button>
 
-
-
               <p className="mt-2 text-center text-[10px] leading-4 text-slate-400">
 
                 {visibility === "private"
+
                 ? "確認後會寫入私人支出，不參與共同結算"
+
                 : "確認後會寫入共同帳本，並直接前往結算頁"}
 
               </p>
@@ -2676,15 +2612,11 @@ export default function ReceiptPage() {
 
       </div>
 
-
-
       {/* ======================================== */}
 
       {/* ASSIGNMENT SHEET */}
 
       {/* ======================================== */}
-
-
 
       {visibility === "shared" && assigningItem && assigningItemId && (
 
@@ -2702,13 +2634,9 @@ export default function ReceiptPage() {
 
           />
 
-
-
           <div className="relative z-10 w-full max-w-md rounded-t-[30px] bg-white p-5 pb-7 shadow-2xl sm:rounded-[30px]">
 
             <div className="mx-auto mb-5 h-1.5 w-12 rounded-full bg-slate-200" />
-
-
 
             <p className="text-[10px] font-bold tracking-[0.15em] text-slate-400">
 
@@ -2716,19 +2644,13 @@ export default function ReceiptPage() {
 
             </p>
 
-
-
             <h3 className="mt-1 text-lg font-black text-slate-900">
 
               這項是誰的？
 
             </h3>
 
-
-
             {/* ITEM */}
-
-
 
             <div className="mt-3 rounded-2xl bg-slate-50 px-4 py-3">
 
@@ -2742,8 +2664,6 @@ export default function ReceiptPage() {
 
                   </p>
 
-
-
                   <p className="mt-1 truncate text-[10px] text-slate-400">
 
                     {assigningItem.originalName}
@@ -2751,8 +2671,6 @@ export default function ReceiptPage() {
                   </p>
 
                 </div>
-
-
 
                 <p className="shrink-0 text-base font-black text-slate-900">
 
@@ -2764,15 +2682,9 @@ export default function ReceiptPage() {
 
             </div>
 
-
-
             {/* QUICK ACTIONS */}
 
-
-
             {/* QUICK ACTION */}
-
-
 
             <div className="mt-4">
 
@@ -2792,11 +2704,7 @@ export default function ReceiptPage() {
 
             </div>
 
-
-
             {/* MEMBERS */}
-
-
 
             <div className="mt-5">
 
@@ -2806,8 +2714,6 @@ export default function ReceiptPage() {
 
               </p>
 
-
-
               <p className="mt-1 text-[10px] text-slate-400">
 
                 選 1 人＝個人用品；選多人＝這些人平均分攤。
@@ -2816,15 +2722,11 @@ export default function ReceiptPage() {
 
             </div>
 
-
-
             <div className="mt-3 space-y-2">
 
               {members.map((member) => {
 
                 const selected = draftMemberIds.includes(member.id);
-
-
 
                 return (
 
@@ -2858,8 +2760,6 @@ export default function ReceiptPage() {
 
                     </span>
 
-
-
                     <span
 
                       className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-black ${
@@ -2886,11 +2786,7 @@ export default function ReceiptPage() {
 
             </div>
 
-
-
             {/* SAVE */}
-
-
 
             <button
 
@@ -2922,15 +2818,11 @@ export default function ReceiptPage() {
 
       )}
 
-
-
       {/* ======================================== */}
 
       {/* FILE INPUTS */}
 
       {/* ======================================== */}
-
-
 
       <input
 
@@ -2947,8 +2839,6 @@ export default function ReceiptPage() {
         className="hidden"
 
       />
-
-
 
       <input
 
@@ -2970,47 +2860,63 @@ export default function ReceiptPage() {
 
 }
 
-
-
 // ========================================
 
 // HELPERS
 
 // ========================================
 
-
-
 function getReceiptCategoryId(
+
   suggestedCategory: string | undefined,
+
   categories: ExpenseCategory[]
+
 ) {
+
   const value = suggestedCategory?.trim();
 
   const aliases: Record<string, string> = {
+
     飲食: "餐飲",
+
     餐飲: "餐飲",
+
     交通: "交通",
+
     購物: "購物",
+
     門票: "門票",
+
     住宿: "住宿",
+
   };
 
   const targetName =
+
     value ? aliases[value] ?? value : "";
 
   return (
+
     categories.find(
+
       (category) => category.name === targetName
+
     )?.id ??
+
     categories.find(
+
       (category) => category.id === "food"
+
     )?.id ??
+
     categories[0]?.id ??
+
     ""
+
   );
+
 }
-
-
 
 function getMemberName(
 
@@ -3026,15 +2932,11 @@ function getMemberName(
 
   );
 
-
-
   if (!member) {
 
     return "未知";
 
   }
-
-
 
   return member.isCurrentUser
 
@@ -3043,8 +2945,6 @@ function getMemberName(
     : member.name;
 
 }
-
-
 
 function getAssignmentLabel(
 
@@ -3056,15 +2956,11 @@ function getAssignmentLabel(
 
   const ids = item.assignment.memberIds;
 
-
-
   if (ids.length === 0) {
 
     return "⚠️ 尚未分配";
 
   }
-
-
 
   if (ids.length === 1) {
 
@@ -3078,15 +2974,11 @@ function getAssignmentLabel(
 
   }
 
-
-
   if (ids.length === members.length) {
 
     return "👥 全員共同";
 
   }
-
-
 
   if (ids.length === 2) {
 
@@ -3108,13 +3000,9 @@ function getAssignmentLabel(
 
   }
 
-
-
   return `👥 ${ids.length} 人共同`;
 
 }
-
-
 
 function getMerchantDisplayName(
 
@@ -3128,15 +3016,11 @@ function getMerchantDisplayName(
 
     .toLowerCase();
 
-
-
   if (normalized.includes("セブン")) {
 
     return "7-ELEVEN";
 
   }
-
-
 
   if (
 
@@ -3150,8 +3034,6 @@ function getMerchantDisplayName(
 
   }
 
-
-
   if (
 
     normalized.includes("ローソン") ||
@@ -3164,19 +3046,13 @@ function getMerchantDisplayName(
 
   }
 
-
-
   return merchant.trim();
 
 }
 
-
-
 function formatMoney(value: number) {
 
   const rounded = Math.round(value);
-
-
 
   return new Intl.NumberFormat("ja-JP", {
 
