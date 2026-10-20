@@ -92,7 +92,7 @@ type ReceiptScanResult = {
 
   time?: string;
 
-  currency: "JPY";
+  currency: "JPY" | "TWD";
 
   total: number;
 
@@ -457,6 +457,10 @@ export default function ReceiptPage() {
 
             quantity?: number;
 
+            originalAmount?: number;
+
+            discountAmount?: number;
+
             amount?: number;
 
           },
@@ -484,6 +488,26 @@ export default function ReceiptPage() {
           quantity:
 
             typeof item.quantity === "number" ? item.quantity : 1,
+
+          originalAmount:
+
+            typeof item.originalAmount === "number" && Number.isFinite(item.originalAmount)
+
+              ? item.originalAmount
+
+              : typeof item.amount === "number" && Number.isFinite(item.amount)
+
+                ? item.amount
+
+                : 0,
+
+          discountAmount:
+
+            typeof item.discountAmount === "number" && Number.isFinite(item.discountAmount)
+
+              ? item.discountAmount
+
+              : 0,
 
           amount:
 
@@ -559,7 +583,13 @@ export default function ReceiptPage() {
 
             : undefined,
 
-        currency: "JPY",
+        currency:
+
+          gemini.currency === "TWD" || gemini.currency === "JPY"
+
+            ? gemini.currency
+
+            : "JPY",
 
         total:
 
@@ -568,6 +598,14 @@ export default function ReceiptPage() {
             ? gemini.total
 
             : calculatedTotal,
+
+        discountTotal:
+
+          typeof gemini.discountTotal === "number" && Number.isFinite(gemini.discountTotal)
+
+            ? gemini.discountTotal
+
+            : undefined,
 
         tax:
 
@@ -680,6 +718,28 @@ export default function ReceiptPage() {
         ...current,
 
         time: value,
+
+      };
+
+    });
+
+  }
+
+  function updateCurrency(value: "JPY" | "TWD") {
+
+    setResult((current) => {
+
+      if (!current) {
+
+        return current;
+
+      }
+
+      return {
+
+        ...current,
+
+        currency: value,
 
       };
 
@@ -1521,7 +1581,7 @@ export default function ReceiptPage() {
 
               <h3 className="mt-4 text-base font-bold text-slate-900">
 
-                掃描日本收據
+                掃描旅遊收據
 
               </h3>
 
@@ -1575,7 +1635,7 @@ export default function ReceiptPage() {
 
               <p className="mt-1 text-[11px] leading-5 text-blue-700">
 
-                照片會透過 Our Travel 的 Server API 傳給 Gemini 進行收據理解。API Key 只存在伺服器端，目前先在 localhost 測試辨識準確率。
+                照片會透過 Our Travel 的 Server API 傳給 Gemini 進行收據理解。API Key 只存在伺服器端。
 
               </p>
 
@@ -1844,6 +1904,40 @@ export default function ReceiptPage() {
                     </p>
 
                   </div>
+
+                </div>
+
+                <div className="mt-4 flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-3">
+
+                  <div>
+
+                    <p className="text-[9px] font-bold text-slate-400">幣別</p>
+
+                    <p className="mt-1 text-xs font-bold text-slate-800">
+
+                      {result.currency === "TWD" ? "🇹🇼 TWD 新台幣" : "🇯🇵 JPY 日圓"}
+
+                    </p>
+
+                  </div>
+
+                  <select
+
+                    value={result.currency}
+
+                    onChange={(event) => updateCurrency(event.target.value as "JPY" | "TWD")}
+
+                    className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 outline-none"
+
+                    aria-label="收據幣別"
+
+                  >
+
+                    <option value="JPY">JPY 日圓</option>
+
+                    <option value="TWD">TWD 新台幣</option>
+
+                  </select>
 
                 </div>
 
@@ -2257,7 +2351,7 @@ export default function ReceiptPage() {
 
                           <span className="text-xs font-bold text-slate-400">
 
-                            ¥
+                            {getCurrencySymbol(result.currency)}
 
                           </span>
 
@@ -2292,15 +2386,15 @@ export default function ReceiptPage() {
                           {item.discountAmount > 0 && (
                             <>
                               <p className="text-[10px] font-bold text-slate-400 line-through">
-                                ¥{formatMoney(item.originalAmount)}
+                                {formatCurrency(item.originalAmount, result.currency)}
                               </p>
                               <p className="text-[9px] font-bold text-rose-500">
-                                -¥{formatMoney(item.discountAmount)}
+                                -{formatCurrency(item.discountAmount, result.currency)}
                               </p>
                             </>
                           )}
                           <p className="mt-0.5 text-sm font-black text-slate-900">
-                            ¥{formatMoney(item.amount)}
+                            {formatCurrency(item.amount, result.currency)}
                           </p>
                         </div>
                       )}
@@ -2427,7 +2521,7 @@ export default function ReceiptPage() {
 
                       <p className="shrink-0 text-lg font-black">
 
-                        ¥{formatMoney(transfer.amount)}
+                        {formatCurrency(transfer.amount, result.currency)}
 
                       </p>
 
@@ -2471,7 +2565,7 @@ export default function ReceiptPage() {
 
                     <p className="mt-1 text-sm font-black">
 
-                      ¥{formatMoney(payerShare)}
+                      {formatCurrency(payerShare, result.currency)}
 
                     </p>
 
@@ -2487,7 +2581,7 @@ export default function ReceiptPage() {
 
                     <p className="mt-1 text-sm font-black text-emerald-300">
 
-                      ¥{formatMoney(payerReceivable)}
+                      {formatCurrency(payerReceivable, result.currency)}
 
                     </p>
 
@@ -2498,6 +2592,34 @@ export default function ReceiptPage() {
               )}
 
             </section>
+
+            )}
+
+            {visibility === "private" && (
+
+              <section className="mt-4 rounded-[26px] bg-slate-900 p-5 text-white">
+
+                <p className="text-[10px] font-bold tracking-[0.14em] text-blue-300">MY SPENDING</p>
+
+                <div className="mt-2 flex items-end justify-between gap-4">
+
+                  <div>
+
+                    <h3 className="text-base font-bold">本次私人支出</h3>
+
+                    <p className="mt-1 text-[10px] leading-4 text-slate-400">會計入我的旅行支出，不參與旅伴結算。</p>
+
+                  </div>
+
+                  <p className="shrink-0 text-xl font-black">
+
+                    {formatCurrency(result.total, result.currency)}
+
+                  </p>
+
+                </div>
+
+              </section>
 
             )}
 
@@ -2515,8 +2637,8 @@ export default function ReceiptPage() {
 
                   {!totalMatches && (
                     <p className="mt-2 text-[10px] leading-4 text-amber-600">
-                      品項實付加總 ¥{formatMoney(itemTotal)}
-                      ，收據合計 ¥{formatMoney(result.total)}。
+                      品項實付加總 {formatCurrency(itemTotal, result.currency)}
+                      ，收據合計 {formatCurrency(result.total, result.currency)}。
                     </p>
                   )}
 
@@ -2534,11 +2656,11 @@ export default function ReceiptPage() {
                 </div>
               )}
 
-              {typeof result.tax === "number" && (
+              {typeof result.tax === "number" && result.tax > 0 && (
 
                 <p className="mt-3 text-center text-[10px] text-slate-400">
 
-                  收據稅額 ¥{formatMoney(result.tax)}
+                  收據稅額 {formatCurrency(result.tax, result.currency)}
 
                   ・目前僅作資訊顯示
 
@@ -2674,8 +2796,8 @@ export default function ReceiptPage() {
 
                 <p className="shrink-0 text-base font-black text-slate-900">
 
-                  ¥{formatMoney(assigningItem.amount)}
-
+                  {formatCurrency(assigningItem.amount, result?.currency ?? "JPY")}
+                  
                 </p>
 
               </div>
@@ -3054,10 +3176,22 @@ function formatMoney(value: number) {
 
   const rounded = Math.round(value);
 
-  return new Intl.NumberFormat("ja-JP", {
+  return new Intl.NumberFormat("en-US", {
 
     maximumFractionDigits: 0,
 
   }).format(rounded);
+
+}
+
+function getCurrencySymbol(currency: "JPY" | "TWD") {
+
+  return currency === "TWD" ? "NT$" : "¥";
+
+}
+
+function formatCurrency(value: number, currency: "JPY" | "TWD") {
+
+  return `${getCurrencySymbol(currency)}${formatMoney(value)}`;
 
 }

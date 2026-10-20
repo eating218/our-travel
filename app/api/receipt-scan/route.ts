@@ -10,8 +10,18 @@ const PRIMARY_MODEL = "gemini-3.8-flash";
 const FALLBACK_MODEL = "gemini-3.5-flash-lite";
 
 const RECEIPT_PROMPT = `
-你是一個日本旅遊收據辨識器。只根據照片中實際看得到的內容輸出資料，不要猜測照片外的商品。
-將日文商品名稱翻譯成繁體中文。最重要的是金額忠實與折扣正確歸屬。
+你是一個旅遊消費收據辨識器，目前支援日本與台灣收據。
+只根據照片中實際看得到的內容輸出資料，不要猜測照片外的商品。
+將日文商品名稱翻譯成繁體中文；中文商品名稱維持繁體中文。
+最重要的是金額忠實、折扣正確歸屬，以及幣別正確。
+
+幣別規則：
+- 日本收據輸出 JPY。
+- 台灣收據輸出 TWD。
+- 根據店家名稱、語言、地址、電話格式、貨幣符號與收據內容綜合判斷。
+- 不要因為這是旅遊 App 就預設 JPY。
+- 明顯台灣商家，例如全聯福利中心，應輸出 TWD。
+- 明顯日本商家與日本收據應輸出 JPY。
 
 每個商品輸出：
 - originalAmount：折扣前、已包含數量後的商品總價。
@@ -47,7 +57,7 @@ const RECEIPT_SCHEMA = {
     merchantTranslated: { type: Type.STRING },
     date: { type: Type.STRING },
     time: { type: Type.STRING },
-    currency: { type: Type.STRING, enum: ["JPY"] },
+    currency: { type: Type.STRING, enum: ["JPY", "TWD"] },
     items: {
       type: Type.ARRAY,
       items: {
