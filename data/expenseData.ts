@@ -62,6 +62,50 @@ export type Expense = {
 
 
 // ========================================
+// SETTLEMENT PAYMENT
+// ========================================
+//
+// 這不是「消費」，而是旅伴之間實際發生的還款。
+//
+// 例如：
+// 重谷原本欠芳誼 ¥8,679
+// 重谷途中先還芳誼 ¥3,000
+//
+// 就新增：
+// {
+//   from: "chonggu",
+//   to: "fangyi",
+//   amount: 3000,
+//   currency: "JPY"
+// }
+//
+// 之後 Settlement 會用：
+// 原始債務 - 已還款
+// 算出目前真正還欠多少。
+// ========================================
+
+export type SettlementPayment = {
+  id: string;
+
+  // 付款的人
+  from: string;
+
+  // 收款的人
+  to: string;
+
+  amount: number;
+
+  currency: ExpenseCurrency;
+
+  date: string;
+
+  time?: string;
+
+  note?: string;
+};
+
+
+// ========================================
 // INITIAL MEMBERS
 // ========================================
 
@@ -273,3 +317,15 @@ export const initialExpenses:
   },
 
 ];
+
+
+// ========================================
+// INITIAL SETTLEMENT PAYMENTS
+// ========================================
+//
+// 預設沒有任何還款。
+// 使用者旅途中記錄的還款會存進 LocalStorage。
+// ========================================
+
+export const initialSettlementPayments:
+  SettlementPayment[] = [];

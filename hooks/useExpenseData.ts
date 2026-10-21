@@ -9,9 +9,11 @@ import {
   Expense,
   ExpenseCategory,
   ExpenseMember,
+  SettlementPayment,
   initialExpenseCategories,
   initialExpenseMembers,
   initialExpenses,
+  initialSettlementPayments,
 } from "../data/expenseData";
 
 
@@ -31,6 +33,9 @@ type ExpenseStorageData = {
   expenses: Expense[];
   members: ExpenseMember[];
   categories: ExpenseCategory[];
+
+  // 旅伴之間實際發生的還款
+  settlementPayments?: SettlementPayment[];
 };
 
 
@@ -82,6 +87,14 @@ export function useExpenseData() {
     setCategories,
   ] = useState<ExpenseCategory[]>(
     initialExpenseCategories
+  );
+
+
+  const [
+    settlementPayments,
+    setSettlementPayments,
+  ] = useState<SettlementPayment[]>(
+    initialSettlementPayments
   );
 
 
@@ -153,6 +166,28 @@ export function useExpenseData() {
 
         }
 
+
+        // 舊版 LocalStorage 沒有 settlementPayments
+        // 就自動當成空陣列，不影響原本資料
+
+        if (
+          Array.isArray(
+            data.settlementPayments
+          )
+        ) {
+
+          setSettlementPayments(
+            data.settlementPayments
+          );
+
+        } else {
+
+          setSettlementPayments(
+            []
+          );
+
+        }
+
       }
 
     } catch (error) {
@@ -190,6 +225,8 @@ export function useExpenseData() {
 
       categories,
 
+      settlementPayments,
+
     };
 
 
@@ -216,6 +253,7 @@ export function useExpenseData() {
     expenses,
     members,
     categories,
+    settlementPayments,
   ]);
 
 
@@ -251,6 +289,44 @@ export function useExpenseData() {
           (expense) =>
             expense.id !==
             expenseId
+        )
+    );
+
+  }
+
+
+  // ========================================
+  // ADD SETTLEMENT PAYMENT
+  // ========================================
+
+  function addSettlementPayment(
+    payment: SettlementPayment
+  ) {
+
+    setSettlementPayments(
+      (current) => [
+        ...current,
+        payment,
+      ]
+    );
+
+  }
+
+
+  // ========================================
+  // DELETE SETTLEMENT PAYMENT
+  // ========================================
+
+  function deleteSettlementPayment(
+    paymentId: string
+  ) {
+
+    setSettlementPayments(
+      (current) =>
+        current.filter(
+          (payment) =>
+            payment.id !==
+            paymentId
         )
     );
 
@@ -303,7 +379,7 @@ export function useExpenseData() {
     // 有任何歷史支出使用這個人
     // 就不允許刪除
 
-    const isUsed =
+    const isUsedByExpense =
       expenses.some(
         (expense) =>
           expense.paidBy ===
@@ -314,7 +390,23 @@ export function useExpenseData() {
       );
 
 
-    if (isUsed) {
+    // 有還款紀錄也不能刪除，
+    // 否則歷史還款會找不到對應的人
+
+    const isUsedByPayment =
+      settlementPayments.some(
+        (payment) =>
+          payment.from ===
+            memberId ||
+          payment.to ===
+            memberId
+      );
+
+
+    if (
+      isUsedByExpense ||
+      isUsedByPayment
+    ) {
       return false;
     }
 
@@ -396,14 +488,31 @@ export function useExpenseData() {
     memberId: string
   ) {
 
-    return expenses.filter(
-      (expense) =>
-        expense.paidBy ===
-          memberId ||
-        expense.splitBetween.includes(
-          memberId
-        )
-    ).length;
+    const expenseCount =
+      expenses.filter(
+        (expense) =>
+          expense.paidBy ===
+            memberId ||
+          expense.splitBetween.includes(
+            memberId
+          )
+      ).length;
+
+
+    const paymentCount =
+      settlementPayments.filter(
+        (payment) =>
+          payment.from ===
+            memberId ||
+          payment.to ===
+            memberId
+      ).length;
+
+
+    return (
+      expenseCount +
+      paymentCount
+    );
 
   }
 
@@ -435,9 +544,15 @@ export function useExpenseData() {
 
     categories,
 
+    settlementPayments,
+
     addExpense,
 
     deleteExpense,
+
+    addSettlementPayment,
+
+    deleteSettlementPayment,
 
     addMember,
 

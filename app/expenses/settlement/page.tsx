@@ -24,6 +24,8 @@ import {
 
   ExpenseMember,
 
+  SettlementPayment,
+
 } from "../../../data/expenseData";
 
 
@@ -221,7 +223,9 @@ function calculateBalances(
 
   members: ExpenseMember[],
 
-  currency: ExpenseCurrency
+  currency: ExpenseCurrency,
+
+  settlementPayments: SettlementPayment[]
 
 ) {
 
@@ -314,6 +318,26 @@ function calculateBalances(
 
     );
 
+
+
+  // 已經實際發生的還款，直接沖銷雙方 balance。
+  // from 付款後：欠款減少，所以 balance 增加。
+  // to 收款後：應收減少，所以 balance 減少。
+  settlementPayments
+    .filter((payment) => payment.currency === currency)
+    .forEach((payment) => {
+      const amount = Math.round(payment.amount);
+
+      balanceMap.set(
+        payment.from,
+        (balanceMap.get(payment.from) ?? 0) + amount
+      );
+
+      balanceMap.set(
+        payment.to,
+        (balanceMap.get(payment.to) ?? 0) - amount
+      );
+    });
 
 
   return Array.from(
@@ -778,7 +802,13 @@ export default function SettlementPage() {
 
     categories,
 
+    settlementPayments,
+
     deleteExpense,
+
+    addSettlementPayment,
+
+    deleteSettlementPayment,
 
   } =
 
@@ -1158,7 +1188,9 @@ export default function SettlementPage() {
 
         members,
 
-        "JPY"
+        "JPY",
+
+        settlementPayments
 
       )
 
@@ -1176,7 +1208,9 @@ export default function SettlementPage() {
 
         members,
 
-        "TWD"
+        "TWD",
+
+        settlementPayments
 
       )
 
@@ -1732,6 +1766,14 @@ export default function SettlementPage() {
 
           }
 
+          currentUserId={currentUser.id}
+
+          settlementPayments={settlementPayments}
+
+          onAddPayment={addSettlementPayment}
+
+          onDeletePayment={deleteSettlementPayment}
+
         />
 
 
@@ -1759,6 +1801,14 @@ export default function SettlementPage() {
               members
 
             }
+
+            currentUserId={currentUser.id}
+
+            settlementPayments={settlementPayments}
+
+            onAddPayment={addSettlementPayment}
+
+            onDeletePayment={deleteSettlementPayment}
 
           />
 
@@ -2284,7 +2334,7 @@ export default function SettlementPage() {
 
               <p className="mt-1 text-[11px] leading-5 text-blue-700/70">
 
-                共同支出會依照每筆設定的分攤人數計算每個人的實際負擔，再扣除已經代墊的金額。私人支出只計入你的旅行花費，不會影響其他人的結算。
+                共同支出會依照每筆設定的分攤人數計算每個人的實際負擔，再扣除已經代墊與旅途中已還款的金額。私人支出只計入你的旅行花費，不會影響其他人的結算。
 
               </p>
 
@@ -2506,6 +2556,14 @@ function SettlementSection({
 
   members,
 
+  currentUserId,
+
+  settlementPayments,
+
+  onAddPayment,
+
+  onDeletePayment,
+
 }: {
 
   title: string;
@@ -2516,318 +2574,152 @@ function SettlementSection({
 
   members: ExpenseMember[];
 
+  currentUserId: string;
+
+  settlementPayments: SettlementPayment[];
+
+  onAddPayment: (payment: SettlementPayment) => void;
+
+  onDeletePayment: (paymentId: string) => void;
+
 }) {
 
-
-
-  const [
-
-    expanded,
-
-    setExpanded,
-
-  ] = useState(
-
+  const [expanded, setExpanded] = useState(
     settlements.length > 0
-
   );
 
+  const [selectedSettlement, setSelectedSettlement] =
+    useState<Settlement | null>(null);
 
-
-
+  const payments = useMemo(
+    () =>
+      settlementPayments
+        .filter((payment) => payment.currency === currency)
+        .sort((a, b) =>
+          `${b.date}T${b.time ?? "00:00"}`.localeCompare(
+            `${a.date}T${a.time ?? "00:00"}`
+          )
+        ),
+    [settlementPayments, currency]
+  );
 
   return (
-
-
-
-    <section className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm">
-
-
-
-
-
-      {/* =================================
-
-          HEADER
-
-      ================================= */}
-
-
-
-      <button
-
-        type="button"
-
-        onClick={() =>
-
-          setExpanded(
-
-            (current) =>
-
-              !current
-
-          )
-
-        }
-
-        className="flex w-full items-center gap-3 px-5 py-4 text-left active:bg-slate-50"
-
-      >
-
-
-
-
-
-        {/* ARROW */}
-
-
-
-        <div
-
-          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition ${
-
-            expanded
-
-              ? "bg-slate-900 text-white"
-
-              : "bg-slate-100 text-slate-400"
-
-          }`}
-
+    <>
+      <section className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm">
+        <button
+          type="button"
+          onClick={() => setExpanded((current) => !current)}
+          className="flex w-full items-center gap-3 px-5 py-4 text-left active:bg-slate-50"
         >
-
-
-
-          <span
-
-            className={`text-xs transition-transform duration-200 ${
-
+          <div
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition ${
               expanded
-
-                ? "rotate-90"
-
-                : ""
-
+                ? "bg-slate-900 text-white"
+                : "bg-slate-100 text-slate-400"
             }`}
-
           >
+            <span
+              className={`text-xs transition-transform duration-200 ${
+                expanded ? "rotate-90" : ""
+              }`}
+            >
+              ›
+            </span>
+          </div>
 
-            ›
+          <p className="min-w-0 flex-1 text-sm font-bold text-slate-900">
+            {title}
+          </p>
 
+          <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[9px] font-bold text-slate-500">
+            {settlements.length} 筆待結算
           </span>
-
-
-
-        </div>
-
-
-
-
-
-        {/* CURRENCY */}
-
-
-
-        <p className="min-w-0 flex-1 text-sm font-bold text-slate-900">
-
-          {title}
-
-        </p>
-
-
-
-
-
-        {/* COUNT */}
-
-
-
-        <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[9px] font-bold text-slate-500">
-
-
-
-          {settlements.length}
-
-
-
-          {" "}筆轉帳
-
-
-
-        </span>
-
-
-
-
-
-      </button>
-
-
-
-
-
-      {/* =================================
-
-          CONTENT
-
-      ================================= */}
-
-
-
-      {expanded && (
-
-
-
-        <div className="border-t border-slate-100">
-
-
-
-
-
-          {/* EMPTY */}
-
-
-
-          {settlements.length ===
-
-          0 ? (
-
-
-
-            <div className="px-5 py-6 text-center">
-
-
-
-              <div className="text-xl">
-
-                ✨
-
+        </button>
+
+        {expanded && (
+          <div className="border-t border-slate-100">
+            {settlements.length === 0 ? (
+              <div className="px-5 py-6 text-center">
+                <div className="text-xl">✨</div>
+                <p className="mt-2 text-sm font-bold text-slate-700">
+                  目前已經扯平啦
+                </p>
+                <p className="mt-1 text-[11px] text-slate-400">
+                  目前沒有需要互相轉帳的金額
+                </p>
               </div>
-
-
-
-              <p className="mt-2 text-sm font-bold text-slate-700">
-
-                已經扯平啦
-
-              </p>
-
-
-
-              <p className="mt-1 text-[11px] text-slate-400">
-
-                目前沒有需要互相轉帳的金額
-
-              </p>
-
-
-
-            </div>
-
-
-
-          ) : (
-
-
-
-            /* SETTLEMENTS */
-
-
-
-            <div>
-
-
-
-              {settlements.map(
-
-                (
-
-                  settlement,
-
-                  index
-
-                ) => (
-
-
-
+            ) : (
+              <div>
+                {settlements.map((settlement, index) => (
                   <SettlementRow
-
-                    key={
-
-                      `${currency}-${settlement.from}-${settlement.to}-${index}`
-
-                    }
-
-                    settlement={
-
-                      settlement
-
-                    }
-
-                    currency={
-
-                      currency
-
-                    }
-
-                    members={
-
-                      members
-
-                    }
-
-                    isLast={
-
-                      index ===
-
-                      settlements.length -
-
-                        1
-
-                    }
-
+                    key={`${currency}-${settlement.from}-${settlement.to}-${index}`}
+                    settlement={settlement}
+                    currency={currency}
+                    members={members}
+                    currentUserId={currentUserId}
+                    isLast={index === settlements.length - 1}
+                    onRecord={() => {
+                      if (
+                        settlement.from === currentUserId ||
+                        settlement.to === currentUserId
+                      ) {
+                        setSelectedSettlement(settlement);
+                      }
+                    }}
                   />
+                ))}
+              </div>
+            )}
 
+            {payments.length > 0 && (
+              <div className="border-t border-slate-100 bg-slate-50/70 px-5 py-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[9px] font-bold tracking-[0.14em] text-slate-400">
+                      PAYMENT HISTORY
+                    </p>
+                    <p className="mt-1 text-xs font-bold text-slate-700">
+                      旅途中已記錄還款
+                    </p>
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-400">
+                    {payments.length} 筆
+                  </span>
+                </div>
 
+                <div className="mt-3 space-y-2">
+                  {payments.map((payment) => (
+                    <PaymentHistoryRow
+                      key={payment.id}
+                      payment={payment}
+                      members={members}
+                      currentUserId={currentUserId}
+                      onDelete={() => onDeletePayment(payment.id)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
 
-                )
-
-              )}
-
-
-
-            </div>
-
-
-
-          )}
-
-
-
-
-
-        </div>
-
-
-
+      {selectedSettlement && (
+        <RecordPaymentSheet
+          settlement={selectedSettlement}
+          currency={currency}
+          members={members}
+          currentUserId={currentUserId}
+          onClose={() => setSelectedSettlement(null)}
+          onConfirm={(payment) => {
+            onAddPayment(payment);
+            setSelectedSettlement(null);
+          }}
+        />
       )}
-
-
-
-
-
-    </section>
-
-
-
+    </>
   );
-
-
-
 }
-
-
-
 
 
 // ========================================
@@ -2837,169 +2729,358 @@ function SettlementSection({
 // ========================================
 
 
-
 function SettlementRow({
-
   settlement,
-
   currency,
-
   members,
-
+  currentUserId,
   isLast,
-
+  onRecord,
 }: {
-
   settlement: Settlement;
-
   currency: ExpenseCurrency;
-
   members: ExpenseMember[];
-
+  currentUserId: string;
   isLast: boolean;
-
+  onRecord: () => void;
 }) {
+  const fromName = getMemberName(settlement.from, members);
+  const toName = getMemberName(settlement.to, members);
 
-  const fromName =
+  const isReceiving = settlement.to === currentUserId;
+  const isPaying = settlement.from === currentUserId;
+  const canRecord = isReceiving || isPaying;
 
-    getMemberName(
+  const actionLabel = isReceiving
+    ? "＋ 記錄收款"
+    : "＋ 記錄付款";
 
-      settlement.from,
-
-      members
-
-    );
-
-
-
-  const toName =
-
-    getMemberName(
-
-      settlement.to,
-
-      members
-
-    );
-
-
+  const statusLabel = isReceiving
+    ? "目前待收"
+    : isPaying
+      ? "目前待付"
+      : "目前待結算";
 
   return (
-
     <div
-
       className={`px-5 py-4 ${
-
-        !isLast
-
-          ? "border-b border-slate-100"
-
-          : ""
-
+        !isLast ? "border-b border-slate-100" : ""
       }`}
-
     >
-
-
-
       <div className="flex items-center gap-3">
-
-
-
         <div className="min-w-0 flex-1">
-
-
-
           <p className="text-[9px] font-bold tracking-[0.1em] text-slate-400">
-
             FROM
-
           </p>
-
-
-
           <p className="mt-1 truncate text-sm font-bold text-slate-900">
-
             {fromName}
-
           </p>
-
-
-
         </div>
 
-
-
-
-
-        <div className="flex shrink-0 flex-col items-center">
-
-
-
-          <p className="rounded-full bg-slate-900 px-3 py-1.5 text-[11px] font-bold text-white">
-
-            {formatMoney(
-
-              settlement.amount,
-
-              currency
-
-            )}
-
-          </p>
-
-
-
-          <div className="mt-1 text-sm text-slate-300">
-
-            →
-
-          </div>
-
-
-
-        </div>
-
-
-
-
+        <div className="shrink-0 text-lg text-slate-300">→</div>
 
         <div className="min-w-0 flex-1 text-right">
-
-
-
           <p className="text-[9px] font-bold tracking-[0.1em] text-slate-400">
-
             TO
-
           </p>
-
-
-
           <p className="mt-1 truncate text-sm font-bold text-slate-900">
-
             {toName}
-
           </p>
-
-
-
         </div>
-
-
-
       </div>
 
+      <div className="mt-3 flex items-end justify-between gap-3 border-t border-slate-100 pt-3">
+        <div>
+          <p className="text-[10px] font-medium text-slate-400">
+            {statusLabel}
+          </p>
+          <p className="mt-0.5 text-base font-bold text-slate-900">
+            {formatMoney(settlement.amount, currency)}
+          </p>
+        </div>
 
-
+        {canRecord && (
+          <button
+            type="button"
+            onClick={onRecord}
+            className="shrink-0 rounded-xl bg-blue-50 px-3 py-2 text-[11px] font-bold text-blue-600 active:scale-[0.98]"
+          >
+            {actionLabel}
+          </button>
+        )}
+      </div>
     </div>
-
   );
-
 }
 
 
+// ========================================
 
+// RECORD PAYMENT SHEET
+
+// ========================================
+
+
+function RecordPaymentSheet({
+  settlement,
+  currency,
+  members,
+  currentUserId,
+  onClose,
+  onConfirm,
+}: {
+  settlement: Settlement;
+  currency: ExpenseCurrency;
+  members: ExpenseMember[];
+  currentUserId: string;
+  onClose: () => void;
+  onConfirm: (payment: SettlementPayment) => void;
+}) {
+  const [amount, setAmount] = useState(
+    String(Math.round(settlement.amount))
+  );
+
+  const now = new Date();
+  const defaultDate = `${now.getFullYear()}-${String(
+    now.getMonth() + 1
+  ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  const defaultTime = `${String(now.getHours()).padStart(2, "0")}:${String(
+    now.getMinutes()
+  ).padStart(2, "0")}`;
+
+  const [date, setDate] = useState(defaultDate);
+  const [time, setTime] = useState(defaultTime);
+  const [note, setNote] = useState("");
+
+  const numericAmount = Math.round(Number(amount));
+  const maxAmount = Math.round(settlement.amount);
+  const validAmount =
+    Number.isFinite(numericAmount) &&
+    numericAmount > 0 &&
+    numericAmount <= maxAmount;
+
+  const fromName = getMemberName(settlement.from, members);
+  const toName = getMemberName(settlement.to, members);
+
+  const isReceiving = settlement.to === currentUserId;
+  const isPaying = settlement.from === currentUserId;
+
+  const title = isReceiving
+    ? "記錄收款"
+    : isPaying
+      ? "記錄付款"
+      : "記錄還款";
+
+  const amountLabel = isReceiving
+    ? "本次收到"
+    : isPaying
+      ? "本次支付"
+      : "本次還款";
+
+  function handleConfirm() {
+    if (!validAmount || !date) return;
+
+    onConfirm({
+      id: `settlement-payment-${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2, 8)}`,
+      from: settlement.from,
+      to: settlement.to,
+      amount: numericAmount,
+      currency,
+      date,
+      time: time || undefined,
+      note: note.trim() || undefined,
+    });
+  }
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-end justify-center">
+      <button
+        type="button"
+        aria-label="關閉"
+        onClick={onClose}
+        className="absolute inset-0 bg-slate-950/40 backdrop-blur-[1px]"
+      />
+
+      <section className="relative z-10 w-full max-w-md rounded-t-[32px] bg-white px-5 pb-7 shadow-2xl">
+        <div className="flex justify-center pt-3">
+          <div className="h-1 w-10 rounded-full bg-slate-200" />
+        </div>
+
+        <div className="mt-3 flex items-start justify-between">
+          <div>
+            <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
+              SETTLEMENT PAYMENT
+            </p>
+            <h2 className="mt-1 text-xl font-bold text-slate-900">
+              {title}
+            </h2>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-500"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="mt-5 rounded-3xl bg-slate-900 px-5 py-4 text-white">
+          <div className="flex items-center justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold text-slate-400">
+                {fromName} → {toName}
+              </p>
+              <p className="mt-1 text-sm font-bold">
+                目前待結算
+              </p>
+            </div>
+            <p className="shrink-0 text-xl font-bold">
+              {formatMoney(settlement.amount, currency)}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5">
+          <label className="text-xs font-bold text-slate-700">
+            {amountLabel}
+          </label>
+
+          <div className="mt-2 flex items-center rounded-2xl border border-slate-200 bg-slate-50 px-4">
+            <span className="mr-2 text-lg font-bold text-slate-400">
+              {currency === "JPY" ? "¥" : "NT$"}
+            </span>
+            <input
+              type="number"
+              inputMode="numeric"
+              min="1"
+              max={maxAmount}
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+              className="min-w-0 flex-1 bg-transparent py-4 text-xl font-bold text-slate-900 outline-none"
+            />
+          </div>
+
+          {!validAmount && amount !== "" && (
+            <p className="mt-2 text-[11px] font-medium text-red-500">
+              金額需大於 0，且不能超過目前待結算的 {formatMoney(maxAmount, currency)}。
+            </p>
+          )}
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <div>
+            <label className="text-xs font-bold text-slate-700">日期</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(event) => setDate(event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-bold text-slate-700 outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-700">時間</label>
+            <input
+              type="time"
+              value={time}
+              onChange={(event) => setTime(event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-bold text-slate-700 outline-none"
+            />
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <label className="text-xs font-bold text-slate-700">
+            備註（選填）
+          </label>
+          <input
+            type="text"
+            value={note}
+            onChange={(event) => setNote(event.target.value)}
+            placeholder="例如：現金、轉帳、LINE Pay"
+            className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm font-medium text-slate-700 outline-none placeholder:text-slate-300"
+          />
+        </div>
+
+        <button
+          type="button"
+          disabled={!validAmount || !date}
+          onClick={handleConfirm}
+          className={`mt-5 w-full rounded-2xl py-4 text-sm font-bold text-white transition ${
+            validAmount && date
+              ? "bg-slate-900 active:scale-[0.99]"
+              : "cursor-not-allowed bg-slate-300"
+          }`}
+        >
+          {validAmount
+            ? `確認 ${title} ${formatMoney(numericAmount, currency)}`
+            : `確認${title}`}
+        </button>
+      </section>
+    </div>
+  );
+}
+
+
+// ========================================
+
+// PAYMENT HISTORY ROW
+
+// ========================================
+
+
+function PaymentHistoryRow({
+  payment,
+  members,
+  currentUserId,
+  onDelete,
+}: {
+  payment: SettlementPayment;
+  members: ExpenseMember[];
+  currentUserId: string;
+  onDelete: () => void;
+}) {
+  const fromName = getMemberName(payment.from, members);
+  const toName = getMemberName(payment.to, members);
+  const canDelete =
+    payment.from === currentUserId ||
+    payment.to === currentUserId;
+
+  return (
+    <div className="rounded-2xl bg-white px-3.5 py-3 shadow-sm ring-1 ring-slate-100">
+      <div className="flex items-start gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[11px] font-bold text-slate-700">
+            {fromName} → {toName}
+          </p>
+          <p className="mt-1 text-[10px] text-slate-400">
+            {formatDisplayDate(payment.date)}
+            {payment.time ? ` · ${payment.time}` : ""}
+            {payment.note ? ` · ${payment.note}` : ""}
+          </p>
+        </div>
+
+        <div className="shrink-0 text-right">
+          <p className="text-xs font-bold text-emerald-600">
+            {formatMoney(payment.amount, payment.currency)}
+          </p>
+          {canDelete && (
+            <button
+              type="button"
+              onClick={onDelete}
+              className="mt-1 text-[9px] font-bold text-slate-300 active:text-red-500"
+            >
+              刪除
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 
 // ========================================
