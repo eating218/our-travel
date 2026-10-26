@@ -1,13 +1,20 @@
 export type TripItemType =
   | "sightseeing"
   | "food"
-  | "transport";
+  | "transport"
+  | "hotel";
 
 export type SightseeingGuide = {
   introduction: string;
   highlights: string;
   story: string;
   tips: string;
+};
+
+export type PlaceInfoSource = {
+  name: string;
+  url?: string;
+  checkedAt: string;
 };
 
 export type TripItem = {
@@ -19,6 +26,13 @@ export type TripItem = {
 
   name: string;
   detail?: string;
+
+  // 景點營業 / 參拜資訊
+  openingHours?: string;
+  closedDays?: string;
+
+  // AI / 官方資料來源
+  placeInfoSource?: PlaceInfoSource;
 
   location?: {
     name: string;
@@ -69,8 +83,10 @@ export const tripData = {
         {
           id: "kiyomizudera",
           type: "sightseeing",
+
           startTime: "09:00",
           endTime: "11:00",
+
           name: "清水寺",
           detail: "參拜・散策",
 
@@ -98,8 +114,10 @@ export const tripData = {
         {
           id: "ninenzaka",
           type: "sightseeing",
+
           startTime: "11:30",
           endTime: "12:30",
+
           name: "二年坂・三年坂",
           detail: "京都老街散策",
 
@@ -127,8 +145,10 @@ export const tripData = {
         {
           id: "lunch",
           type: "food",
+
           startTime: "13:00",
           endTime: "14:00",
+
           name: "午餐",
           detail: "祇園周邊用餐",
 
@@ -141,8 +161,10 @@ export const tripData = {
         {
           id: "yasaka",
           type: "sightseeing",
+
           startTime: "15:00",
           endTime: "16:30",
+
           name: "八坂神社",
           detail: "參拜・祇園散策",
 

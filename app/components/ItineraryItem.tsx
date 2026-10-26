@@ -20,9 +20,11 @@ type Props = {
   day: TripDay;
   now: Date;
   isLast: boolean;
+  note: string;
   onOpenGuide: (item: TripItem) => void;
+  onEdit: (item: TripItem) => void;
+  onDelete: (item: TripItem) => void;
 };
-
 
 const typeConfig = {
   sightseeing: {
@@ -48,19 +50,31 @@ const typeConfig = {
     badge:
       "text-blue-700 bg-blue-50",
   },
-};
 
+  hotel: {
+    label: "HOTEL",
+    icon: "🏨",
+    dot: "bg-violet-500",
+    badge:
+      "text-violet-700 bg-violet-50",
+  },
+};
 
 export default function ItineraryItem({
   item,
   day,
   now,
   isLast,
+  note,
   onOpenGuide,
+  onEdit,
+  onDelete,
 }: Props) {
 
   const config =
     typeConfig[item.type];
+
+  const [menuOpen, setMenuOpen] = useState(false);
 
 
   // ========================================
@@ -498,22 +512,63 @@ export default function ItineraryItem({
               TYPE
           ================================= */}
 
-          <div className="flex items-center justify-between gap-2">
+          <div className="relative flex items-center justify-between gap-2">
 
             <span
               className={`rounded-md px-2 py-1 text-[9px] font-bold tracking-wider ${config.badge}`}
             >
-
               {config.label}
-
             </span>
 
+            <div className="flex items-center gap-1">
+              <span className="text-sm">{config.icon}</span>
 
-            <span className="text-sm">
+              <button
+                type="button"
+                onClick={() => setMenuOpen((current) => !current)}
+                className="flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold text-slate-400 transition active:bg-slate-100"
+                aria-label="行程選單"
+              >
+                •••
+              </button>
+            </div>
 
-              {config.icon}
+            {menuOpen && (
+              <>
+                <button
+                  type="button"
+                  aria-label="關閉行程選單"
+                  onClick={() => setMenuOpen(false)}
+                  className="fixed inset-0 z-40 cursor-default"
+                />
 
-            </span>
+                <div className="absolute right-0 top-9 z-50 w-36 overflow-hidden rounded-2xl border border-slate-100 bg-white p-1.5 shadow-xl">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      onEdit(item);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-slate-700 transition active:bg-slate-100"
+                  >
+                    <span>✏️</span>
+                    編輯行程
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      onDelete(item);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-rose-600 transition active:bg-rose-50"
+                  >
+                    <span>🗑️</span>
+                    刪除行程
+                  </button>
+                </div>
+              </>
+            )}
 
           </div>
 
@@ -559,6 +614,62 @@ export default function ItineraryItem({
               </span>
 
             </div>
+
+          )}
+
+
+          {/* =================================
+              OPENING HOURS
+          ================================= */}
+
+          {item.openingHours && (
+
+            <div className="mt-3 flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-800">
+
+              <span>◷</span>
+
+              <span>
+                營業／參拜時間 {item.openingHours}
+              </span>
+
+            </div>
+
+          )}
+
+
+          {/* =================================
+              USER NOTE PREVIEW
+          ================================= */}
+
+          {note && (
+
+            <button
+              type="button"
+              onClick={() => onOpenGuide(item)}
+              className="mt-3 w-full rounded-xl bg-slate-50 px-3 py-2.5 text-left transition active:scale-[0.99]"
+            >
+
+              <div className="flex items-start gap-2">
+
+                <span className="mt-0.5 text-xs">📝</span>
+
+                <div className="min-w-0 flex-1">
+
+                  <p className="text-[10px] font-bold tracking-wider text-slate-400">
+                    我的景點備註
+                  </p>
+
+                  <p className="mt-1 line-clamp-2 whitespace-pre-line text-xs leading-5 text-slate-600">
+                    {note}
+                  </p>
+
+                </div>
+
+                <span className="text-xs text-slate-300">›</span>
+
+              </div>
+
+            </button>
 
           )}
 

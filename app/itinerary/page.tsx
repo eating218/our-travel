@@ -23,6 +23,17 @@ import {
   useTripClock,
 } from "../../hooks/useTripClock";
 
+import {
+  useTripNotes,
+} from "../../hooks/useTripNotes";
+
+import {
+  useCustomItinerary,
+} from "../../hooks/useCustomItinerary";
+
+import AddItinerarySheet from "../components/AddItinerarySheet";
+import EditItinerarySheet from "../components/EditItinerarySheet";
+
 import ItineraryItem from "../components/ItineraryItem";
 import SightseeingSheet from "../components/SightseeingSheet";
 
@@ -39,6 +50,30 @@ export default function ItineraryPage() {
 
   const now = useTripClock();
 
+  // ========================================
+  // TRIP NOTES
+  // ========================================
+
+  const {
+    notes,
+    saveNote,
+    deleteNote,
+  } = useTripNotes();
+
+// ========================================
+// CUSTOM ITINERARY
+// ========================================
+
+const {
+  customItemsByDay,
+  baseItemOverrides,
+  hiddenBaseItemIds,
+  addCustomItem,
+  updateCustomItem,
+  deleteCustomItem,
+  updateBaseItem,
+  hideBaseItem,
+} = useCustomItinerary();
 
   // ========================================
   // STATE
@@ -60,6 +95,25 @@ export default function ItineraryPage() {
       null
     );
 
+  const [
+    isAddSheetOpen,
+    setIsAddSheetOpen,
+  ] = useState(false);
+
+  const [
+    editingItem,
+    setEditingItem,
+  ] = useState<TripItem | null>(null);
+
+  const [
+    editingDay,
+    setEditingDay,
+  ] = useState<number | null>(null);
+
+  const [
+    editingSource,
+    setEditingSource,
+  ] = useState<"base" | "custom" | null>(null);
 
   // ========================================
   // INITIAL DAY CONTROL
@@ -307,13 +361,101 @@ export default function ItineraryPage() {
   // CURRENT DAY
   // ========================================
 
-  const currentDay =
-    tripData.days.find(
-      (day) =>
-        day.day ===
-        selectedDay
-    ) ??
-    tripData.days[0];
+const baseCurrentDay =
+  tripData.days.find(
+    (day) =>
+      day.day ===
+      selectedDay
+  ) ??
+  tripData.days[0];
+
+const visibleBaseItems =
+  tripData.days.flatMap((sourceDay) =>
+    sourceDay.items.flatMap((item) => {
+      if (hiddenBaseItemIds.includes(item.id)) {
+        return [];
+      }
+
+      const override = baseItemOverrides[item.id];
+      const targetDay = override?.day ?? sourceDay.day;
+
+      if (targetDay !== baseCurrentDay.day) {
+        return [];
+      }
+
+      return [override?.item ?? item];
+    })
+  );
+
+const customItems =
+  customItemsByDay[
+    baseCurrentDay.day
+  ] ?? [];
+
+const currentDay = {
+  ...baseCurrentDay,
+
+  items: [
+    ...visibleBaseItems,
+    ...customItems,
+  ].sort((a, b) =>
+    a.startTime.localeCompare(
+      b.startTime
+    )
+  ),
+};
+
+function getItemSource(itemId: string) {
+  const isBase = tripData.days.some((day) =>
+    day.items.some((item) => item.id === itemId)
+  );
+
+  return isBase ? "base" as const : "custom" as const;
+}
+
+function handleEditItem(item: TripItem) {
+  setEditingItem(item);
+  setEditingDay(currentDay.day);
+  setEditingSource(getItemSource(item.id));
+}
+
+function handleDeleteItem(item: TripItem) {
+  const confirmed = window.confirm(`確定要刪除「${item.name}」嗎？`);
+
+  if (!confirmed) return;
+
+  const source = getItemSource(item.id);
+
+  if (source === "base") {
+    hideBaseItem(item.id);
+    return;
+  }
+
+  deleteCustomItem(currentDay.day, item.id);
+}
+
+function handleSaveEditedItem(
+  newDay: number,
+  updatedItem: TripItem
+) {
+  if (editingDay === null || editingSource === null) {
+    return;
+  }
+
+  if (editingSource === "base") {
+    updateBaseItem(updatedItem.id, newDay, updatedItem);
+  } else {
+    updateCustomItem(editingDay, newDay, updatedItem);
+  }
+
+  setEditingItem(null);
+  setEditingDay(null);
+  setEditingSource(null);
+
+  if (newDay !== currentDay.day) {
+    setSelectedDay(newDay);
+  }
+}
 
 
   // ========================================
@@ -699,32 +841,23 @@ export default function ItineraryPage() {
               ) => (
 
                 <ItineraryItem
-                  key={
-                    item.id
-                  }
-
-                  item={
-                    item
-                  }
-
-                  day={
-                    currentDay
-                  }
-
-                  now={
-                    now
-                  }
-
+                  key={item.id}
+                  item={item}
+                  day={currentDay}
+                  now={now}
                   isLast={
                     index ===
-                    currentDay
-                      .items
-                      .length -
-                      1
+                    currentDay.items.length - 1
                   }
-
+                  note={notes[item.id] ?? ""}
                   onOpenGuide={
                     setSelectedItem
+                  }
+                  onEdit={
+                    handleEditItem
+                  }
+                  onDelete={
+                    handleDeleteItem
                   }
                 />
 
@@ -765,6 +898,17 @@ export default function ItineraryPage() {
 
           )}
 
+          <button
+            type="button"
+            onClick={() =>
+              setIsAddSheetOpen(
+                true
+              )
+            }
+            className="mt-3 flex w-full items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-4 text-xs font-bold text-slate-500 transition active:scale-[0.99]"
+          >
+            ＋ 新增行程
+          </button>
 
         </section>
 
@@ -781,6 +925,20 @@ export default function ItineraryPage() {
           selectedItem
         }
 
+        note={
+          selectedItem
+            ? notes[selectedItem.id] ?? ""
+            : ""
+        }
+
+        onSaveNote={
+          saveNote
+        }
+
+        onDeleteNote={
+          deleteNote
+        }
+
         onClose={() =>
           setSelectedItem(
             null
@@ -788,6 +946,37 @@ export default function ItineraryPage() {
         }
       />
 
+      <AddItinerarySheet
+        isOpen={
+          isAddSheetOpen
+        }
+
+        day={
+          currentDay.day
+        }
+
+        onClose={() =>
+          setIsAddSheetOpen(
+            false
+          )
+        }
+
+        onAdd={
+          addCustomItem
+        }
+      />
+
+      <EditItinerarySheet
+        isOpen={editingItem !== null}
+        item={editingItem}
+        currentDay={editingDay ?? currentDay.day}
+        onClose={() => {
+          setEditingItem(null);
+          setEditingDay(null);
+          setEditingSource(null);
+        }}
+        onSave={handleSaveEditedItem}
+      />
 
     </main>
 
