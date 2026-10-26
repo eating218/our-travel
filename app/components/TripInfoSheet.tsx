@@ -93,24 +93,30 @@ export default function TripInfoSheet({
         </div>
 
         {/* Date */}
-        <div className="mt-6 rounded-3xl bg-slate-900 p-5 text-white">
-          <p className="text-[10px] font-bold tracking-[0.2em] text-blue-300">
-            TRAVEL PERIOD
-          </p>
+        <div className="mt-6 rounded-3xl bg-slate-900 px-5 py-4 text-white">
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-bold tracking-[0.2em] text-blue-300">
+              TRAVEL PERIOD
+            </p>
 
-          <p className="mt-3 text-lg font-bold">
-            {formatDate(tripData.startDate)}
-          </p>
+            <p className="text-xs font-bold text-slate-300">
+              {tripData.duration}
+            </p>
+          </div>
 
-          <div className="my-2 h-px w-6 bg-slate-600" />
+          <div className="mt-3 flex items-center gap-2">
+            <p className="text-base font-bold tracking-tight">
+              {formatDate(tripData.startDate)}
+            </p>
 
-          <p className="text-lg font-bold">
-            {formatDate(tripData.endDate)}
-          </p>
+            <span className="text-slate-500">
+              —
+            </span>
 
-          <p className="mt-4 text-xs font-bold text-slate-300">
-            {tripData.duration}
-          </p>
+            <p className="text-base font-bold tracking-tight">
+              {formatDate(tripData.endDate)}
+            </p>
+          </div>
         </div>
 
         {/* Route */}
@@ -126,7 +132,7 @@ export default function TripInfoSheet({
 
             <div>
               <p className="text-sm font-bold text-slate-900">
-                台灣 → 日本
+                台灣 → 大阪
               </p>
 
               <p className="mt-0.5 text-xs text-slate-400">
@@ -144,7 +150,7 @@ export default function TripInfoSheet({
 
             <div>
               <p className="text-sm font-bold text-slate-900">
-                日本 → 台灣
+                大阪 → 台灣
               </p>
 
               <p className="mt-0.5 text-xs text-slate-400">

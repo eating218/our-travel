@@ -1,8 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
-export type WeatherLocationSource = "fallback" | "device";
+export type WeatherLocationSource =
+  | "fallback"
+  | "device";
 
 export type HourlyWeather = {
   time: string;
@@ -24,24 +31,28 @@ export type WeatherData = {
   locationName: string;
   locationSource: WeatherLocationSource;
   timezone: string;
+
   current: {
     time: string;
     temperature: number;
     apparentTemperature: number;
     weatherCode: number;
   };
+
   hourly: HourlyWeather[];
   daily: DailyWeather[];
 };
 
 type WeatherApiResponse = {
   timezone: string;
+
   current: {
     time: string;
     temperature_2m: number;
     apparent_temperature: number;
     weather_code: number;
   };
+
   hourly: {
     time: string[];
     temperature_2m: number[];
@@ -49,6 +60,7 @@ type WeatherApiResponse = {
     precipitation_probability: number[];
     weather_code: number[];
   };
+
   daily: {
     time: string[];
     weather_code: number[];
@@ -76,25 +88,34 @@ async function fetchWeather(
   locationSource: WeatherLocationSource
 ): Promise<WeatherData> {
   const params = new URLSearchParams({
-    latitude: String(roundCoordinate(latitude)),
-    longitude: String(roundCoordinate(longitude)),
+    latitude: String(
+      roundCoordinate(latitude)
+    ),
+
+    longitude: String(
+      roundCoordinate(longitude)
+    ),
+
     current: [
       "temperature_2m",
       "apparent_temperature",
       "weather_code",
     ].join(","),
+
     hourly: [
       "temperature_2m",
       "apparent_temperature",
       "precipitation_probability",
       "weather_code",
     ].join(","),
+
     daily: [
       "weather_code",
       "temperature_2m_max",
       "temperature_2m_min",
       "precipitation_probability_max",
     ].join(","),
+
     timezone: "auto",
     forecast_days: "7",
   });
@@ -107,42 +128,86 @@ async function fetchWeather(
   );
 
   if (!response.ok) {
-    throw new Error("無法取得天氣資料");
+    throw new Error(
+      "無法取得天氣資料"
+    );
   }
 
-  const result = (await response.json()) as WeatherApiResponse;
+  const result =
+    (await response.json()) as WeatherApiResponse;
 
   return {
     locationName,
     locationSource,
     timezone: result.timezone,
+
     current: {
       time: result.current.time,
-      temperature: result.current.temperature_2m,
-      apparentTemperature: result.current.apparent_temperature,
-      weatherCode: result.current.weather_code,
-    },
-    hourly: result.hourly.time.map((time, index) => ({
-      time,
-      temperature: result.hourly.temperature_2m[index],
+
+      temperature:
+        result.current.temperature_2m,
+
       apparentTemperature:
-        result.hourly.apparent_temperature[index],
-      precipitationProbability:
-        result.hourly.precipitation_probability[index] ?? 0,
-      weatherCode: result.hourly.weather_code[index],
-    })),
-    daily: result.daily.time.map((date, index) => ({
-      date,
-      weatherCode: result.daily.weather_code[index],
-      maxTemperature: result.daily.temperature_2m_max[index],
-      minTemperature: result.daily.temperature_2m_min[index],
-      precipitationProbability:
-        result.daily.precipitation_probability_max[index] ?? 0,
-    })),
+        result.current
+          .apparent_temperature,
+
+      weatherCode:
+        result.current.weather_code,
+    },
+
+    hourly: result.hourly.time.map(
+      (time, index) => ({
+        time,
+
+        temperature:
+          result.hourly
+            .temperature_2m[index],
+
+        apparentTemperature:
+          result.hourly
+            .apparent_temperature[index],
+
+        precipitationProbability:
+          result.hourly
+            .precipitation_probability[
+            index
+          ] ?? 0,
+
+        weatherCode:
+          result.hourly
+            .weather_code[index],
+      })
+    ),
+
+    daily: result.daily.time.map(
+      (date, index) => ({
+        date,
+
+        weatherCode:
+          result.daily
+            .weather_code[index],
+
+        maxTemperature:
+          result.daily
+            .temperature_2m_max[index],
+
+        minTemperature:
+          result.daily
+            .temperature_2m_min[index],
+
+        precipitationProbability:
+          result.daily
+            .precipitation_probability_max[
+            index
+          ] ?? 0,
+      })
+    ),
   };
 }
 
-export function getWeatherMeta(code: number) {
+export function getWeatherMeta(
+  code: number
+) {
   if (code === 0) {
     return {
       icon: "☀️",
@@ -164,42 +229,60 @@ export function getWeatherMeta(code: number) {
     };
   }
 
-  if (code === 45 || code === 48) {
+  if (
+    code === 45 ||
+    code === 48
+  ) {
     return {
       icon: "🌫️",
       label: "有霧",
     };
   }
 
-  if (code >= 51 && code <= 57) {
+  if (
+    code >= 51 &&
+    code <= 57
+  ) {
     return {
       icon: "🌦️",
       label: "毛毛雨",
     };
   }
 
-  if (code >= 61 && code <= 67) {
+  if (
+    code >= 61 &&
+    code <= 67
+  ) {
     return {
       icon: "🌧️",
       label: "下雨",
     };
   }
 
-  if (code >= 71 && code <= 77) {
+  if (
+    code >= 71 &&
+    code <= 77
+  ) {
     return {
       icon: "🌨️",
       label: "降雪",
     };
   }
 
-  if (code >= 80 && code <= 82) {
+  if (
+    code >= 80 &&
+    code <= 82
+  ) {
     return {
       icon: "🌦️",
       label: "陣雨",
     };
   }
 
-  if (code >= 85 && code <= 86) {
+  if (
+    code >= 85 &&
+    code <= 86
+  ) {
     return {
       icon: "🌨️",
       label: "陣雪",
@@ -219,94 +302,200 @@ export function getWeatherMeta(code: number) {
   };
 }
 
-export function useWeather() {
-  const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [loaded, setLoaded] = useState(false);
-  const [locating, setLocating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+function getLocationErrorMessage(
+  error: GeolocationPositionError
+) {
+  console.error(
+    "Geolocation failed:",
+    {
+      code: error.code,
+      message: error.message,
+    }
+  );
 
-  const loadFallbackWeather = useCallback(async () => {
-    try {
-      setError(null);
-
-      const data = await fetchWeather(
-        KYOTO.latitude,
-        KYOTO.longitude,
-        KYOTO.name,
-        "fallback"
+  switch (error.code) {
+    case 1:
+      return (
+        "定位失敗 [1]：Safari 拒絕了定位請求"
       );
 
-      setWeather(data);
-    } catch {
-      setError("暫時無法取得天氣");
-    } finally {
-      setLoaded(true);
-    }
-  }, []);
+    case 2:
+      return (
+        "定位失敗 [2]：目前無法取得裝置位置"
+      );
+
+    case 3:
+      return (
+        "定位失敗 [3]：取得位置逾時，請再試一次"
+      );
+
+    default:
+      return `定位失敗 [${error.code}]：${error.message || "未知錯誤"}`;
+  }
+}
+
+export function useWeather() {
+  const [weather, setWeather] =
+    useState<WeatherData | null>(
+      null
+    );
+
+  const [loaded, setLoaded] =
+    useState(false);
+
+  const [locating, setLocating] =
+    useState(false);
+
+  const [error, setError] =
+    useState<string | null>(null);
+
+  const loadFallbackWeather =
+    useCallback(async () => {
+      try {
+        setError(null);
+
+        const data =
+          await fetchWeather(
+            KYOTO.latitude,
+            KYOTO.longitude,
+            KYOTO.name,
+            "fallback"
+          );
+
+        setWeather(data);
+      } catch {
+        setError(
+          "暫時無法取得天氣"
+        );
+      } finally {
+        setLoaded(true);
+      }
+    }, []);
 
   useEffect(() => {
     loadFallbackWeather();
   }, [loadFallbackWeather]);
 
-  const requestCurrentLocation = useCallback(() => {
-    if (!navigator.geolocation) {
-      setError("這個瀏覽器不支援定位");
-      return;
-    }
+  const requestCurrentLocation =
+    useCallback(() => {
+      setError(null);
 
-    setLocating(true);
-    setError(null);
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const latitude = roundCoordinate(
-            position.coords.latitude
-          );
-          const longitude = roundCoordinate(
-            position.coords.longitude
-          );
-
-          const data = await fetchWeather(
-            latitude,
-            longitude,
-            "目前位置附近",
-            "device"
-          );
-
-          setWeather(data);
-        } catch {
-          setError("取得目前位置天氣失敗");
-        } finally {
-          setLocating(false);
-        }
-      },
-      () => {
-        setError("未取得定位權限，繼續顯示京都天氣");
-        setLocating(false);
-      },
-      {
-        enableHighAccuracy: false,
-        timeout: 10000,
-        maximumAge: 10 * 60 * 1000,
+      // 確認目前網頁環境
+      if (
+        typeof window ===
+        "undefined"
+      ) {
+        return;
       }
-    );
-  }, []);
 
-  const today = weather?.daily[0] ?? null;
+      if (!window.isSecureContext) {
+        setError(
+          "定位失敗：目前網頁不是安全的 HTTPS 連線"
+        );
 
-  const todayHourly = useMemo(() => {
-    if (!weather) {
-      return [];
-    }
+        return;
+      }
 
-    const todayDate =
-      weather.current.time.split("T")[0];
+      if (
+        !navigator.geolocation
+      ) {
+        setError(
+          "定位失敗：這個瀏覽器不支援定位"
+        );
 
-    return weather.hourly.filter((hour) =>
-      hour.time.startsWith(todayDate)
-    );
-  }, [weather]);
+        return;
+      }
+
+      setLocating(true);
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          console.log(
+            "Geolocation success"
+          );
+
+          try {
+            const latitude =
+              roundCoordinate(
+                position.coords.latitude
+              );
+
+            const longitude =
+              roundCoordinate(
+                position.coords.longitude
+              );
+
+            const data =
+              await fetchWeather(
+                latitude,
+                longitude,
+                "目前位置附近",
+                "device"
+              );
+
+            setWeather(data);
+            setError(null);
+          } catch (weatherError) {
+            console.error(
+              "Weather fetch failed:",
+              weatherError
+            );
+
+            setError(
+              "已取得位置，但目前位置的天氣資料讀取失敗"
+            );
+          } finally {
+            setLocating(false);
+          }
+        },
+
+        (
+          geolocationError
+        ) => {
+          setError(
+            getLocationErrorMessage(
+              geolocationError
+            )
+          );
+
+          setLocating(false);
+        },
+
+        {
+          // 不要求 GPS 高精度。
+          enableHighAccuracy: false,
+
+          // 先給 Safari 多一點時間。
+          timeout: 20000,
+
+          // 可接受最近 10 分鐘的位置。
+          maximumAge:
+            10 * 60 * 1000,
+        }
+      );
+    }, []);
+
+  const today =
+    weather?.daily[0] ?? null;
+
+  const todayHourly =
+    useMemo(() => {
+      if (!weather) {
+        return [];
+      }
+
+      const todayDate =
+        weather.current.time.split(
+          "T"
+        )[0];
+
+      return weather.hourly.filter(
+        (hour) =>
+          hour.time.startsWith(
+            todayDate
+          )
+      );
+    }, [weather]);
 
   return {
     weather,
@@ -316,6 +505,8 @@ export function useWeather() {
     locating,
     error,
     requestCurrentLocation,
-    reloadFallback: loadFallbackWeather,
+
+    reloadFallback:
+      loadFallbackWeather,
   };
 }
