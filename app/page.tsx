@@ -1,8 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+
 import TripStatusCard from "./components/TripStatusCard";
+import TripInfoSheet from "./components/TripInfoSheet";
+import WeatherAdviceBar from "./components/WeatherAdviceBar";
+
 import { useChecklist } from "../hooks/useChecklist";
+import { tripData } from "../data/tripData";
 
 const quickTools = [
   {
@@ -27,7 +33,17 @@ const quickTools = [
   },
 ];
 
+function formatDateRange() {
+  const start = tripData.startDate.split("-");
+  const end = tripData.endDate.split("-");
+
+  return `${start[0]}/${start[1]}/${start[2]} - ${end[1]}/${end[2]}`;
+}
+
 export default function Home() {
+  const [isTripInfoOpen, setIsTripInfoOpen] =
+    useState(false);
+
   const {
     loaded: checklistLoaded,
     total,
@@ -42,12 +58,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-50 pb-24">
-
       <div className="mx-auto max-w-md px-5 pt-7">
-
-        {/* ========================================
-            HEADER
-        ======================================== */}
+        {/* HEADER */}
 
         <header className="flex items-center justify-between">
           <div>
@@ -56,28 +68,35 @@ export default function Home() {
             </p>
 
             <h1 className="mt-1 text-2xl font-bold text-slate-900">
-              🇯🇵 京阪7日遊
+              🇯🇵 {tripData.name}
             </h1>
 
             <p className="mt-1 text-xs text-slate-400">
-              2027/02/28 - 03/06
+              {formatDateRange()}
             </p>
           </div>
 
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-xl shadow-sm">
+          <button
+            type="button"
+            onClick={() =>
+              setIsTripInfoOpen(true)
+            }
+            aria-label="查看旅程資訊"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-xl shadow-sm transition active:scale-95"
+          >
             ✈️
-          </div>
+          </button>
         </header>
 
-        {/* ========================================
-            SMART TRIP CARD
-        ======================================== */}
+        {/* SMART TRIP CARD */}
 
         <TripStatusCard />
 
-        {/* ========================================
-            TRAVEL TOOLS
-        ======================================== */}
+        {/* WEATHER */}
+
+        <WeatherAdviceBar />
+
+        {/* TRAVEL TOOLS */}
 
         <section className="mt-7">
           <div className="flex items-center justify-between">
@@ -124,15 +143,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ========================================
-            INFORMATION CARDS
-        ======================================== */}
+        {/* INFORMATION CARDS */}
 
         <section className="mt-5 grid grid-cols-2 gap-3">
-
-          {/* ========================================
-              CHECKLIST
-          ======================================== */}
+          {/* CHECKLIST */}
 
           <Link
             href="/checklist"
@@ -180,7 +194,6 @@ export default function Home() {
               )}
             </div>
 
-            {/* Progress Bar */}
             <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-slate-100">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${
@@ -189,15 +202,17 @@ export default function Home() {
                     : "bg-slate-900"
                 }`}
                 style={{
-                  width: `${checklistLoaded ? percent : 0}%`,
+                  width: `${
+                    checklistLoaded
+                      ? percent
+                      : 0
+                  }%`,
                 }}
               />
             </div>
           </Link>
 
-          {/* ========================================
-              EXPENSES
-          ======================================== */}
+          {/* EXPENSES */}
 
           <Link
             href="/expenses"
@@ -220,37 +235,7 @@ export default function Home() {
             </p>
           </Link>
 
-          {/* ========================================
-              WEATHER
-          ======================================== */}
-
-          <div className="rounded-3xl bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-xl">
-                ☀️
-              </span>
-
-              <span className="text-xs text-slate-400">
-                京都
-              </span>
-            </div>
-
-            <h3 className="mt-4 font-bold text-slate-900">
-              天氣
-            </h3>
-
-            <p className="mt-2 text-xl font-bold text-slate-900">
-              16°C
-            </p>
-
-            <p className="mt-1 text-xs text-slate-400">
-              晴時多雲
-            </p>
-          </div>
-
-          {/* ========================================
-              COUPONS
-          ======================================== */}
+          {/* COUPONS */}
 
           <div className="rounded-3xl bg-white p-5 shadow-sm">
             <span className="text-xl">
@@ -269,12 +254,9 @@ export default function Home() {
               張優惠券
             </p>
           </div>
-
         </section>
 
-        {/* ========================================
-            RECEIPT
-        ======================================== */}
+        {/* RECEIPT */}
 
         <Link
           href="/receipt"
@@ -300,72 +282,61 @@ export default function Home() {
             ›
           </span>
         </Link>
-
       </div>
 
-      {/* ========================================
-          BOTTOM NAVIGATION
-      ======================================== */}
+      {/* BOTTOM NAVIGATION */}
 
       <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto grid max-w-md grid-cols-4 px-4 pb-5 pt-3">
-
-          {/* HOME */}
           <div className="text-center">
-            <div>
-              🏠
-            </div>
+            <div>🏠</div>
 
             <p className="mt-1 text-[10px] font-bold text-slate-900">
               首頁
             </p>
           </div>
 
-          {/* ITINERARY */}
           <Link
             href="/itinerary"
             className="text-center"
           >
-            <div>
-              🗺️
-            </div>
+            <div>🗺️</div>
 
             <p className="mt-1 text-[10px] text-slate-400">
               行程
             </p>
           </Link>
 
-          {/* EXPENSES */}
           <Link
             href="/expenses"
             className="text-center"
           >
-            <div>
-              💰
-            </div>
+            <div>💰</div>
 
             <p className="mt-1 text-[10px] text-slate-400">
               分帳
             </p>
           </Link>
 
-          {/* CHECKLIST */}
           <Link
             href="/checklist"
             className="text-center"
           >
-            <div>
-              🧳
-            </div>
+            <div>🧳</div>
 
             <p className="mt-1 text-[10px] text-slate-400">
               準備
             </p>
           </Link>
-
         </div>
       </nav>
 
+      <TripInfoSheet
+        isOpen={isTripInfoOpen}
+        onClose={() =>
+          setIsTripInfoOpen(false)
+        }
+      />
     </main>
   );
 }

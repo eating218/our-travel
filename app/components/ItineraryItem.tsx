@@ -529,7 +529,7 @@ export default function ItineraryItem({
                 className="flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold text-slate-400 transition active:bg-slate-100"
                 aria-label="行程選單"
               >
-                •••
+                ⋮
               </button>
             </div>
 
