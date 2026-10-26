@@ -51,6 +51,57 @@ export type TripDay = {
   items: TripItem[];
 };
 
+
+// ========================================
+// FLIGHT
+// ========================================
+
+export type FlightInfo = {
+  id: string;
+
+  direction:
+    | "outbound"
+    | "return";
+
+  date: string;
+
+  from: {
+    city: string;
+
+    // 例如 TPE
+    airportCode?: string;
+
+    // 例如 桃園國際機場
+    airportName?: string;
+
+    // 例如 1
+    terminal?: string;
+  };
+
+  to: {
+    city: string;
+
+    airportCode?: string;
+    airportName?: string;
+    terminal?: string;
+  };
+
+  // 例如 MM028
+  flightNumber?: string;
+
+  // 例如 樂桃航空
+  airline?: string;
+
+  // 當地時間 HH:mm
+  departureTime?: string;
+  arrivalTime?: string;
+};
+
+
+// ========================================
+// TRIP DATA
+// ========================================
+
 export const tripData = {
   name: "京都・大阪",
   country: "日本",
@@ -59,10 +110,82 @@ export const tripData = {
   startDate: "2027-02-28",
   endDate: "2027-03-06",
 
+  // 這兩個仍然代表整趟旅行的生命週期，
+  // 不與航班時間綁定。
   departAt: "2027-02-28T07:40:00",
   tripEnd: "2027-03-06T23:59:59",
 
   duration: "7 天 6 夜",
+
+
+  // ========================================
+  // FLIGHTS
+  // ========================================
+
+  flights: [
+    {
+      id: "outbound-flight",
+      direction: "outbound",
+
+      date: "2027-02-28",
+
+      from: {
+        city: "台灣",
+      },
+
+      to: {
+        city: "大阪",
+      },
+
+      // 確定航班後再填：
+      //
+      // airline: "樂桃航空",
+      // flightNumber: "MM000",
+      // departureTime: "08:40",
+      // arrivalTime: "12:15",
+      //
+      // from: {
+      //   city: "台灣",
+      //   airportCode: "TPE",
+      //   airportName: "桃園國際機場",
+      //   terminal: "1",
+      // },
+      //
+      // to: {
+      //   city: "大阪",
+      //   airportCode: "KIX",
+      //   airportName: "關西國際機場",
+      //   terminal: "2",
+      // },
+    },
+
+    {
+      id: "return-flight",
+      direction: "return",
+
+      date: "2027-03-06",
+
+      from: {
+        city: "大阪",
+      },
+
+      to: {
+        city: "台灣",
+      },
+
+      // 確定航班後再填：
+      //
+      // airline: "樂桃航空",
+      // flightNumber: "MM000",
+      // departureTime: "19:20",
+      // arrivalTime: "21:30",
+    },
+  ] satisfies FlightInfo[],
+
+
+  // ========================================
+  // DAYS
+  // ========================================
 
   days: [
     {
@@ -92,7 +215,8 @@ export const tripData = {
 
           location: {
             name: "清水寺",
-            address: "京都府京都市東山区清水1丁目294",
+            address:
+              "京都府京都市東山区清水1丁目294",
             mapQuery: "清水寺 京都",
           },
 
@@ -123,7 +247,8 @@ export const tripData = {
 
           location: {
             name: "二年坂",
-            address: "京都府京都市東山区桝屋町",
+            address:
+              "京都府京都市東山区桝屋町",
             mapQuery: "二年坂 京都",
           },
 
@@ -170,7 +295,8 @@ export const tripData = {
 
           location: {
             name: "八坂神社",
-            address: "京都府京都市東山区祇園町北側625",
+            address:
+              "京都府京都市東山区祇園町北側625",
             mapQuery: "八坂神社 京都",
           },
 
@@ -211,7 +337,8 @@ export const tripData = {
       day: 5,
       date: "2027-03-04",
       title: "大阪",
-      subtitle: "大阪城・心齋橋・道頓堀",
+      subtitle:
+        "大阪城・心齋橋・道頓堀",
       items: [],
     },
 
@@ -227,7 +354,8 @@ export const tripData = {
       day: 7,
       date: "2027-03-06",
       title: "返回台灣",
-      subtitle: "大阪 → 關西機場 → 台灣",
+      subtitle:
+        "大阪 → 關西機場 → 台灣",
       items: [],
     },
   ] satisfies TripDay[],

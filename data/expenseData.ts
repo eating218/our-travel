@@ -5,6 +5,14 @@
 export type ExpenseMember = {
   id: string;
   name: string;
+
+  /**
+   * 相容舊版程式。
+   *
+   * 新版不再把 current user 寫死在資料裡，
+   * useExpenseData 會依照這台裝置選擇的使用者
+   * 動態產生 isCurrentUser。
+   */
   isCurrentUser?: boolean;
 };
 
@@ -64,25 +72,6 @@ export type Expense = {
 // ========================================
 // SETTLEMENT PAYMENT
 // ========================================
-//
-// 這不是「消費」，而是旅伴之間實際發生的還款。
-//
-// 例如：
-// 重谷原本欠芳誼 ¥8,679
-// 重谷途中先還芳誼 ¥3,000
-//
-// 就新增：
-// {
-//   from: "chonggu",
-//   to: "fangyi",
-//   amount: 3000,
-//   currency: "JPY"
-// }
-//
-// 之後 Settlement 會用：
-// 原始債務 - 已還款
-// 算出目前真正還欠多少。
-// ========================================
 
 export type SettlementPayment = {
   id: string;
@@ -111,24 +100,21 @@ export type SettlementPayment = {
 
 export const initialExpenseMembers:
   ExpenseMember[] = [
+    {
+      id: "fangyi",
+      name: "芳誼",
+    },
 
-  {
-    id: "fangyi",
-    name: "芳誼",
-    isCurrentUser: true,
-  },
+    {
+      id: "chonggu",
+      name: "重谷",
+    },
 
-  {
-    id: "chonggu",
-    name: "重谷",
-  },
-
-  {
-    id: "mom",
-    name: "媽媽",
-  },
-
-];
+    {
+      id: "mom",
+      name: "媽媽",
+    },
+  ];
 
 
 // ========================================
@@ -137,38 +123,36 @@ export const initialExpenseMembers:
 
 export const initialExpenseCategories:
   ExpenseCategory[] = [
+    {
+      id: "food",
+      name: "餐飲",
+      icon: "🍜",
+    },
 
-  {
-    id: "food",
-    name: "餐飲",
-    icon: "🍜",
-  },
+    {
+      id: "transport",
+      name: "交通",
+      icon: "🚆",
+    },
 
-  {
-    id: "transport",
-    name: "交通",
-    icon: "🚆",
-  },
+    {
+      id: "shopping",
+      name: "購物",
+      icon: "🛍️",
+    },
 
-  {
-    id: "shopping",
-    name: "購物",
-    icon: "🛍️",
-  },
+    {
+      id: "ticket",
+      name: "門票",
+      icon: "🎫",
+    },
 
-  {
-    id: "ticket",
-    name: "門票",
-    icon: "🎫",
-  },
-
-  {
-    id: "hotel",
-    name: "住宿",
-    icon: "🏨",
-  },
-
-];
+    {
+      id: "hotel",
+      name: "住宿",
+      icon: "🏨",
+    },
+  ];
 
 
 // ========================================
@@ -177,154 +161,143 @@ export const initialExpenseCategories:
 
 export const initialExpenses:
   Expense[] = [
+    {
+      id: "expense-1",
 
-  {
-    id: "expense-1",
+      title: "午餐",
 
-    title: "午餐",
+      note: "祇園周邊",
 
-    note: "祇園周邊",
+      amount: 2400,
 
-    amount: 2400,
+      currency: "JPY",
 
-    currency: "JPY",
+      categoryId: "food",
 
-    categoryId: "food",
+      visibility: "shared",
 
-    visibility: "shared",
+      paidBy: "fangyi",
 
-    paidBy: "fangyi",
+      splitBetween: [
+        "fangyi",
+        "chonggu",
+      ],
 
-    splitBetween: [
-      "fangyi",
-      "chonggu",
-    ],
+      date: "2027-03-01",
 
-    date: "2027-03-01",
+      time: "13:05",
+    },
 
-    time: "13:05",
-  },
+    {
+      id: "expense-2",
 
+      title: "京都市巴士",
 
-  {
-    id: "expense-2",
+      amount: 460,
 
-    title: "京都市巴士",
+      currency: "JPY",
 
-    amount: 460,
+      categoryId: "transport",
 
-    currency: "JPY",
+      visibility: "shared",
 
-    categoryId: "transport",
+      paidBy: "chonggu",
 
-    visibility: "shared",
+      splitBetween: [
+        "fangyi",
+        "chonggu",
+      ],
 
-    paidBy: "chonggu",
+      date: "2027-03-01",
 
-    splitBetween: [
-      "fangyi",
-      "chonggu",
-    ],
+      time: "14:20",
+    },
 
-    date: "2027-03-01",
+    {
+      id: "expense-3",
 
-    time: "14:20",
-  },
+      title: "咖啡",
 
+      note: "% Arabica",
 
-  {
-    id: "expense-3",
+      amount: 1200,
 
-    title: "咖啡",
+      currency: "JPY",
 
-    note: "% Arabica",
+      categoryId: "food",
 
-    amount: 1200,
+      visibility: "shared",
 
-    currency: "JPY",
+      paidBy: "fangyi",
 
-    categoryId: "food",
+      splitBetween: [
+        "fangyi",
+        "chonggu",
+      ],
 
-    visibility: "shared",
+      date: "2027-03-01",
 
-    paidBy: "fangyi",
+      time: "16:40",
+    },
 
-    splitBetween: [
-      "fangyi",
-      "chonggu",
-    ],
+    {
+      id: "expense-4",
 
-    date: "2027-03-01",
+      title: "晚餐",
 
-    time: "16:40",
-  },
+      note: "京都車站",
 
+      amount: 6000,
 
-  {
-    id: "expense-4",
+      currency: "JPY",
 
-    title: "晚餐",
+      categoryId: "food",
 
-    note: "京都車站",
+      visibility: "shared",
 
-    amount: 6000,
+      paidBy: "mom",
 
-    currency: "JPY",
+      splitBetween: [
+        "fangyi",
+        "chonggu",
+        "mom",
+      ],
 
-    categoryId: "food",
+      date: "2027-03-01",
 
-    visibility: "shared",
+      time: "19:00",
+    },
 
-    paidBy: "mom",
+    {
+      id: "expense-private-1",
 
-    splitBetween: [
-      "fangyi",
-      "chonggu",
-      "mom",
-    ],
+      title: "御守",
 
-    date: "2027-03-01",
+      note: "清水寺",
 
-    time: "19:00",
-  },
+      amount: 1500,
 
+      currency: "JPY",
 
-  // 私人支出範例
-  {
-    id: "expense-private-1",
+      categoryId: "shopping",
 
-    title: "御守",
+      visibility: "private",
 
-    note: "清水寺",
+      paidBy: "fangyi",
 
-    amount: 1500,
+      splitBetween: [
+        "fangyi",
+      ],
 
-    currency: "JPY",
+      date: "2027-03-01",
 
-    categoryId: "shopping",
-
-    visibility: "private",
-
-    paidBy: "fangyi",
-
-    splitBetween: [
-      "fangyi",
-    ],
-
-    date: "2027-03-01",
-
-    time: "15:30",
-  },
-
-];
+      time: "15:30",
+    },
+  ];
 
 
 // ========================================
 // INITIAL SETTLEMENT PAYMENTS
-// ========================================
-//
-// 預設沒有任何還款。
-// 使用者旅途中記錄的還款會存進 LocalStorage。
 // ========================================
 
 export const initialSettlementPayments:

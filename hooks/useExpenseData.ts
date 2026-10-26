@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -24,6 +25,9 @@ import {
 const STORAGE_KEY =
   "our-travel-expense-data";
 
+const CURRENT_MEMBER_STORAGE_KEY =
+  "our-travel-current-member-id";
+
 
 // ========================================
 // STORAGE TYPE
@@ -33,8 +37,6 @@ type ExpenseStorageData = {
   expenses: Expense[];
   members: ExpenseMember[];
   categories: ExpenseCategory[];
-
-  // 旅伴之間實際發生的還款
   settlementPayments?: SettlementPayment[];
 };
 
@@ -46,7 +48,6 @@ type ExpenseStorageData = {
 function migrateExpenses(
   expenses: Expense[]
 ): Expense[] {
-
   return expenses.map(
     (expense) => ({
       ...expense,
@@ -56,7 +57,18 @@ function migrateExpenses(
         "shared",
     })
   );
+}
 
+
+function migrateMembers(
+  members: ExpenseMember[]
+): ExpenseMember[] {
+  return members.map(
+    (member) => ({
+      id: member.id,
+      name: member.name,
+    })
+  );
 }
 
 
@@ -65,20 +77,19 @@ function migrateExpenses(
 // ========================================
 
 export function useExpenseData() {
+  const [
+    storedMembers,
+    setStoredMembers,
+  ] = useState<ExpenseMember[]>(
+    initialExpenseMembers
+  );
+
 
   const [
     expenses,
     setExpenses,
   ] = useState<Expense[]>(
     initialExpenses
-  );
-
-
-  const [
-    members,
-    setMembers,
-  ] = useState<ExpenseMember[]>(
-    initialExpenseMembers
   );
 
 
@@ -99,9 +110,60 @@ export function useExpenseData() {
 
 
   const [
+    currentMemberId,
+    setCurrentMemberIdState,
+  ] = useState<string | null>(
+    null
+  );
+
+
+  const [
     loaded,
     setLoaded,
   ] = useState(false);
+
+
+  // ========================================
+  // MEMBERS WITH CURRENT USER
+  // ========================================
+
+  const members =
+    useMemo(
+      () =>
+        storedMembers.map(
+          (member) => ({
+            ...member,
+
+            isCurrentUser:
+              currentMemberId ===
+              member.id,
+          })
+        ),
+      [
+        storedMembers,
+        currentMemberId,
+      ]
+    );
+
+
+  const currentMember =
+    useMemo(
+      () =>
+        members.find(
+          (member) =>
+            member.id ===
+            currentMemberId
+        ) ?? null,
+      [
+        members,
+        currentMemberId,
+      ]
+    );
+
+
+  const needsIdentitySetup =
+    loaded &&
+    !currentMember;
 
 
   // ========================================
@@ -109,9 +171,7 @@ export function useExpenseData() {
   // ========================================
 
   useEffect(() => {
-
     try {
-
       const saved =
         localStorage.getItem(
           STORAGE_KEY
@@ -119,7 +179,6 @@ export function useExpenseData() {
 
 
       if (saved) {
-
         const data =
           JSON.parse(
             saved
@@ -131,13 +190,11 @@ export function useExpenseData() {
             data.expenses
           )
         ) {
-
           setExpenses(
             migrateExpenses(
               data.expenses
             )
           );
-
         }
 
 
@@ -146,11 +203,11 @@ export function useExpenseData() {
             data.members
           )
         ) {
-
-          setMembers(
-            data.members
+          setStoredMembers(
+            migrateMembers(
+              data.members
+            )
           );
-
         }
 
 
@@ -159,58 +216,58 @@ export function useExpenseData() {
             data.categories
           )
         ) {
-
           setCategories(
             data.categories
           );
-
         }
 
-
-        // 舊版 LocalStorage 沒有 settlementPayments
-        // 就自動當成空陣列，不影響原本資料
 
         if (
           Array.isArray(
             data.settlementPayments
           )
         ) {
-
           setSettlementPayments(
             data.settlementPayments
           );
-
         } else {
-
           setSettlementPayments(
             []
           );
-
         }
-
       }
 
-    } catch (error) {
 
+      const savedCurrentMemberId =
+        localStorage.getItem(
+          CURRENT_MEMBER_STORAGE_KEY
+        );
+
+
+      if (
+        savedCurrentMemberId
+      ) {
+        setCurrentMemberIdState(
+          savedCurrentMemberId
+        );
+      }
+    } catch (error) {
       console.error(
         "讀取記帳資料失敗：",
         error
       );
-
     }
 
 
     setLoaded(true);
-
   }, []);
 
 
   // ========================================
-  // SAVE
+  // SAVE EXPENSE DATA
   // ========================================
 
   useEffect(() => {
-
     if (!loaded) {
       return;
     }
@@ -218,43 +275,228 @@ export function useExpenseData() {
 
     const data:
       ExpenseStorageData = {
+        expenses,
 
-      expenses,
+        members:
+          migrateMembers(
+            storedMembers
+          ),
 
-      members,
+        categories,
 
-      categories,
-
-      settlementPayments,
-
-    };
+        settlementPayments,
+      };
 
 
     try {
-
       localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify(
           data
         )
       );
-
     } catch (error) {
-
       console.error(
         "儲存記帳資料失敗：",
         error
       );
-
     }
-
   }, [
     loaded,
     expenses,
-    members,
+    storedMembers,
     categories,
     settlementPayments,
   ]);
+
+
+  // ========================================
+  // CURRENT MEMBER
+  // ========================================
+
+  function setCurrentMember(
+    memberId: string
+  ) {
+    const exists =
+      storedMembers.some(
+        (member) =>
+          member.id ===
+          memberId
+      );
+
+
+    if (!exists) {
+      return false;
+    }
+
+
+    setCurrentMemberIdState(
+      memberId
+    );
+
+
+    try {
+      localStorage.setItem(
+        CURRENT_MEMBER_STORAGE_KEY,
+        memberId
+      );
+    } catch (error) {
+      console.error(
+        "儲存目前使用者失敗：",
+        error
+      );
+    }
+
+
+    return true;
+  }
+
+
+  function clearCurrentMember() {
+    setCurrentMemberIdState(
+      null
+    );
+
+
+    try {
+      localStorage.removeItem(
+        CURRENT_MEMBER_STORAGE_KEY
+      );
+    } catch (error) {
+      console.error(
+        "清除目前使用者失敗：",
+        error
+      );
+    }
+  }
+
+
+  // ========================================
+  // ADD + SELECT MEMBER
+  // ========================================
+
+  function addAndSelectMember(
+    member: ExpenseMember
+  ) {
+    const cleanName =
+      member.name.trim();
+
+
+    if (!cleanName) {
+      return false;
+    }
+
+
+    const exists =
+      storedMembers.some(
+        (item) =>
+          item.id ===
+          member.id
+      );
+
+
+    if (exists) {
+      return false;
+    }
+
+
+    const cleanMember:
+      ExpenseMember = {
+      id: member.id,
+      name: cleanName,
+    };
+
+
+    /**
+     * 同一次操作完成：
+     *
+     * 1. 加入旅伴
+     * 2. 設成這台裝置的 Identity
+     */
+    setStoredMembers(
+      (current) => [
+        ...current,
+        cleanMember,
+      ]
+    );
+
+
+    setCurrentMemberIdState(
+      cleanMember.id
+    );
+
+
+    try {
+      localStorage.setItem(
+        CURRENT_MEMBER_STORAGE_KEY,
+        cleanMember.id
+      );
+    } catch (error) {
+      console.error(
+        "儲存目前使用者失敗：",
+        error
+      );
+    }
+
+
+    return true;
+  }
+
+
+  // ========================================
+  // UPDATE MEMBER NAME
+  // ========================================
+
+  function updateMemberName(
+    memberId: string,
+    name: string
+  ) {
+    const cleanName =
+      name.trim();
+
+
+    if (!cleanName) {
+      return false;
+    }
+
+
+    const exists =
+      storedMembers.some(
+        (member) =>
+          member.id ===
+          memberId
+      );
+
+
+    if (!exists) {
+      return false;
+    }
+
+
+    /**
+     * 只改顯示名稱。
+     *
+     * member.id 不變，
+     * 所以既有 Expense / SettlementPayment
+     * 全部仍然指向同一個人。
+     */
+    setStoredMembers(
+      (current) =>
+        current.map(
+          (member) =>
+            member.id ===
+            memberId
+              ? {
+                  ...member,
+                  name: cleanName,
+                }
+              : member
+        )
+    );
+
+
+    return true;
+  }
 
 
   // ========================================
@@ -264,14 +506,12 @@ export function useExpenseData() {
   function addExpense(
     expense: Expense
   ) {
-
     setExpenses(
       (current) => [
         ...current,
         expense,
       ]
     );
-
   }
 
 
@@ -282,7 +522,6 @@ export function useExpenseData() {
   function deleteExpense(
     expenseId: string
   ) {
-
     setExpenses(
       (current) =>
         current.filter(
@@ -291,7 +530,6 @@ export function useExpenseData() {
             expenseId
         )
     );
-
   }
 
 
@@ -302,14 +540,12 @@ export function useExpenseData() {
   function addSettlementPayment(
     payment: SettlementPayment
   ) {
-
     setSettlementPayments(
       (current) => [
         ...current,
         payment,
       ]
     );
-
   }
 
 
@@ -320,7 +556,6 @@ export function useExpenseData() {
   function deleteSettlementPayment(
     paymentId: string
   ) {
-
     setSettlementPayments(
       (current) =>
         current.filter(
@@ -329,7 +564,6 @@ export function useExpenseData() {
             paymentId
         )
     );
-
   }
 
 
@@ -340,14 +574,44 @@ export function useExpenseData() {
   function addMember(
     member: ExpenseMember
   ) {
+    const cleanName =
+      member.name.trim();
 
-    setMembers(
+
+    if (!cleanName) {
+      return false;
+    }
+
+
+    const exists =
+      storedMembers.some(
+        (item) =>
+          item.id ===
+          member.id
+      );
+
+
+    if (exists) {
+      return false;
+    }
+
+
+    const cleanMember:
+      ExpenseMember = {
+      id: member.id,
+      name: cleanName,
+    };
+
+
+    setStoredMembers(
       (current) => [
         ...current,
-        member,
+        cleanMember,
       ]
     );
 
+
+    return true;
   }
 
 
@@ -358,26 +622,30 @@ export function useExpenseData() {
   function deleteMember(
     memberId: string
   ) {
-
-    // current user 不允許刪除
-
     const member =
-      members.find(
+      storedMembers.find(
         (item) =>
-          item.id === memberId
+          item.id ===
+          memberId
       );
 
 
-    if (
-      !member ||
-      member.isCurrentUser
-    ) {
+    if (!member) {
       return false;
     }
 
 
-    // 有任何歷史支出使用這個人
-    // 就不允許刪除
+    /**
+     * 目前這台裝置的使用者
+     * 不允許直接刪除。
+     */
+    if (
+      memberId ===
+      currentMemberId
+    ) {
+      return false;
+    }
+
 
     const isUsedByExpense =
       expenses.some(
@@ -389,9 +657,6 @@ export function useExpenseData() {
           )
       );
 
-
-    // 有還款紀錄也不能刪除，
-    // 否則歷史還款會找不到對應的人
 
     const isUsedByPayment =
       settlementPayments.some(
@@ -411,7 +676,7 @@ export function useExpenseData() {
     }
 
 
-    setMembers(
+    setStoredMembers(
       (current) =>
         current.filter(
           (item) =>
@@ -422,7 +687,6 @@ export function useExpenseData() {
 
 
     return true;
-
   }
 
 
@@ -433,14 +697,12 @@ export function useExpenseData() {
   function addCategory(
     category: ExpenseCategory
   ) {
-
     setCategories(
       (current) => [
         ...current,
         category,
       ]
     );
-
   }
 
 
@@ -451,7 +713,6 @@ export function useExpenseData() {
   function deleteCategory(
     categoryId: string
   ) {
-
     const isUsed =
       expenses.some(
         (expense) =>
@@ -476,7 +737,6 @@ export function useExpenseData() {
 
 
     return true;
-
   }
 
 
@@ -487,7 +747,6 @@ export function useExpenseData() {
   function getMemberUsageCount(
     memberId: string
   ) {
-
     const expenseCount =
       expenses.filter(
         (expense) =>
@@ -513,20 +772,17 @@ export function useExpenseData() {
       expenseCount +
       paymentCount
     );
-
   }
 
 
   function getCategoryUsageCount(
     categoryId: string
   ) {
-
     return expenses.filter(
       (expense) =>
         expense.categoryId ===
         categoryId
     ).length;
-
   }
 
 
@@ -535,7 +791,6 @@ export function useExpenseData() {
   // ========================================
 
   return {
-
     loaded,
 
     expenses,
@@ -546,26 +801,50 @@ export function useExpenseData() {
 
     settlementPayments,
 
+
+    // Identity
+    currentMemberId,
+
+    currentMember,
+
+    needsIdentitySetup,
+
+    setCurrentMember,
+
+    clearCurrentMember,
+
+    addAndSelectMember,
+
+    updateMemberName,
+
+
+    // Expense
     addExpense,
 
     deleteExpense,
 
+
+    // Settlement
     addSettlementPayment,
 
     deleteSettlementPayment,
 
+
+    // Members
     addMember,
 
     deleteMember,
 
+
+    // Categories
     addCategory,
 
     deleteCategory,
 
+
+    // Usage
     getMemberUsageCount,
 
     getCategoryUsageCount,
-
   };
-
 }
