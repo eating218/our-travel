@@ -12,6 +12,7 @@ import { useExpenseData } from "../hooks/useExpenseData";
 
 import { tripData } from "../data/tripData";
 
+import { useTripSettings } from "../hooks/useTripSettings";
 
 // ========================================
 // QUICK TOOLS
@@ -48,12 +49,15 @@ const quickTools = [
 // DATE
 // ========================================
 
-function formatDateRange() {
+function formatDateRange(
+  startDate: string,
+  endDate: string
+) {
   const start =
-    tripData.startDate.split("-");
+    startDate.split("-");
 
   const end =
-    tripData.endDate.split("-");
+    endDate.split("-");
 
   return `${start[0]}/${start[1]}/${start[2]} - ${end[1]}/${end[2]}`;
 }
@@ -133,6 +137,10 @@ export default function Home() {
     updateMemberName,
   } = useExpenseData();
 
+  const {
+    loaded: tripSettingsLoaded,
+    settings: tripSettings,
+  } = useTripSettings();
 
   // ========================================
   // CHECKLIST STATUS
@@ -447,13 +455,23 @@ export default function Home() {
 
             <h1 className="mt-1 text-2xl font-bold text-slate-900">
               🇯🇵{" "}
-              {tripData.name}
+              {tripSettingsLoaded
+                ? tripSettings.name
+                : tripData.name}
             </h1>
 
 
             <div className="mt-1 flex items-center gap-2">
               <p className="text-xs text-slate-400">
-                {formatDateRange()}
+                {formatDateRange(
+                  tripSettingsLoaded
+                    ? tripSettings.startDate
+                    : tripData.startDate,
+
+                  tripSettingsLoaded
+                    ? tripSettings.endDate
+                    : tripData.endDate
+                )}
               </p>
 
 

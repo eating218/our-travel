@@ -1,9 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 
 import { useTripClock } from "../../hooks/useTripClock";
+import { useTripSettings } from "../../hooks/useTripSettings";
 
 import {
   tripData,
@@ -35,6 +39,88 @@ type TripStatus =
 
 
 // ========================================
+// DATE HELPERS
+// ========================================
+
+function formatShortDateRange(
+  startDate: string,
+  endDate: string
+) {
+  const start =
+    startDate.split("-");
+
+  const end =
+    endDate.split("-");
+
+
+  if (
+    start.length !== 3 ||
+    end.length !== 3
+  ) {
+    return "";
+  }
+
+
+  return `${start[1]}/${start[2]} - ${end[1]}/${end[2]}`;
+}
+
+
+function getTripDuration(
+  startDate: string,
+  endDate: string
+) {
+  if (
+    !startDate ||
+    !endDate
+  ) {
+    return "";
+  }
+
+
+  const start =
+    new Date(
+      `${startDate}T00:00:00`
+    );
+
+  const end =
+    new Date(
+      `${endDate}T00:00:00`
+    );
+
+
+  const difference =
+    end.getTime() -
+    start.getTime();
+
+
+  const days =
+    Math.floor(
+      difference /
+        (
+          1000 *
+          60 *
+          60 *
+          24
+        )
+    ) + 1;
+
+
+  if (
+    !Number.isFinite(days) ||
+    days <= 0
+  ) {
+    return "";
+  }
+
+
+  return `${days} 天 ${Math.max(
+    days - 1,
+    0
+  )} 夜`;
+}
+
+
+// ========================================
 // TRIP STATUS CARD
 // ========================================
 
@@ -42,24 +128,104 @@ export default function TripStatusCard() {
 
   // 全 App 共用時間
   // 測試時間 / 真實時間都由 useTripClock 處理
-  const now = useTripClock();
+  const now =
+    useTripClock();
+
+
+  // ========================================
+  // TRIP SETTINGS
+  // ========================================
+
+  const {
+    loaded:
+      tripSettingsLoaded,
+
+    settings:
+      tripSettings,
+  } = useTripSettings();
+
+
+  const activeTripName =
+    tripSettingsLoaded
+      ? tripSettings.name
+      : tripData.name;
+
+
+  const activeStartDate =
+    tripSettingsLoaded
+      ? tripSettings.startDate
+      : tripData.startDate;
+
+
+  const activeEndDate =
+    tripSettingsLoaded
+      ? tripSettings.endDate
+      : tripData.endDate;
+
+
+  // 旅程生命週期：
+  // startDate 00:00 → 正式開始
+  // endDate 23:59:59 → 正式結束
+
+  const activeDepartAt =
+    `${activeStartDate}T00:00:00`;
+
+  const activeTripEnd =
+    `${activeEndDate}T23:59:59`;
+
+
+  const activeDuration =
+    getTripDuration(
+      activeStartDate,
+      activeEndDate
+    );
+
+
+  const activeDateRange =
+    formatShortDateRange(
+      activeStartDate,
+      activeEndDate
+    );
 
 
   // ========================================
   // STATE
   // ========================================
 
-  const [status, setStatus] =
-    useState<TripStatus>("loading");
+  const [
+    status,
+    setStatus,
+  ] =
+    useState<TripStatus>(
+      "loading"
+    );
 
-  const [currentDay, setCurrentDay] =
-    useState<TripDay | null>(null);
 
-  const [nextItem, setNextItem] =
-    useState<TripItem | null>(null);
+  const [
+    currentDay,
+    setCurrentDay,
+  ] =
+    useState<TripDay | null>(
+      null
+    );
 
-  const [countdown, setCountdown] =
-    useState<Countdown | null>(null);
+
+  const [
+    nextItem,
+    setNextItem,
+  ] =
+    useState<TripItem | null>(
+      null
+    );
+
+
+  const [
+    countdown,
+    setCountdown,
+  ] =
+    useState<Countdown | null>(
+      null
+    );
 
 
   // ========================================
@@ -68,50 +234,85 @@ export default function TripStatusCard() {
 
   useEffect(() => {
 
-    // useTripClock 第一次 render 時可能還沒有時間
-    if (!now) return;
+    // useTripClock 第一次 render
+    // 時可能還沒有時間
+    if (!now) {
+      return;
+    }
 
 
-    const phase = getTripPhase(
-      now,
-      tripData.departAt,
-      tripData.tripEnd
-    );
+    const phase =
+      getTripPhase(
+        now,
+        activeDepartAt,
+        activeTripEnd
+      );
 
 
     // ======================================
     // 旅行前
     // ======================================
 
-    if (phase === "before") {
+    if (
+      phase === "before"
+    ) {
 
       const departAt =
-        new Date(tripData.departAt);
+        new Date(
+          activeDepartAt
+        );
+
 
       const diff =
         departAt.getTime() -
         now.getTime();
 
 
-      setCountdown({
-        days: Math.floor(
-          diff /
-            (1000 * 60 * 60 * 24)
-        ),
+      const safeDiff =
+        Math.max(
+          diff,
+          0
+        );
 
-        hours: Math.floor(
-          (diff /
-            (1000 * 60 * 60)) %
-            24
-        ),
+
+      setCountdown({
+        days:
+          Math.floor(
+            safeDiff /
+              (
+                1000 *
+                60 *
+                60 *
+                24
+              )
+          ),
+
+        hours:
+          Math.floor(
+            (
+              safeDiff /
+                (
+                  1000 *
+                  60 *
+                  60
+                )
+            ) %
+              24
+          ),
       });
 
 
-      setCurrentDay(null);
+      setCurrentDay(
+        null
+      );
 
-      setNextItem(null);
+      setNextItem(
+        null
+      );
 
-      setStatus("before");
+      setStatus(
+        "before"
+      );
 
       return;
     }
@@ -121,7 +322,9 @@ export default function TripStatusCard() {
     // 旅行中
     // ======================================
 
-    if (phase === "during") {
+    if (
+      phase === "during"
+    ) {
 
       const todayDay =
         getTodayTripDay(
@@ -130,7 +333,9 @@ export default function TripStatusCard() {
         );
 
 
-      if (todayDay) {
+      if (
+        todayDay
+      ) {
 
         setCurrentDay(
           todayDay
@@ -150,15 +355,23 @@ export default function TripStatusCard() {
 
       } else {
 
-        setCurrentDay(null);
+        setCurrentDay(
+          null
+        );
 
-        setNextItem(null);
+        setNextItem(
+          null
+        );
       }
 
 
-      setCountdown(null);
+      setCountdown(
+        null
+      );
 
-      setStatus("during");
+      setStatus(
+        "during"
+      );
 
       return;
     }
@@ -168,22 +381,36 @@ export default function TripStatusCard() {
     // 旅行結束
     // ======================================
 
-    setCountdown(null);
+    setCountdown(
+      null
+    );
 
-    setCurrentDay(null);
+    setCurrentDay(
+      null
+    );
 
-    setNextItem(null);
+    setNextItem(
+      null
+    );
 
-    setStatus("after");
+    setStatus(
+      "after"
+    );
 
-  }, [now]);
+  }, [
+    now,
+    activeDepartAt,
+    activeTripEnd,
+  ]);
 
 
   // ========================================
   // LOADING
   // ========================================
 
-  if (status === "loading") {
+  if (
+    status === "loading"
+  ) {
 
     return (
       <div className="mt-5 h-44 animate-pulse rounded-3xl bg-slate-200" />
@@ -204,7 +431,8 @@ export default function TripStatusCard() {
           旅行前
       ===================================== */}
 
-      {status === "before" && (
+      {status ===
+        "before" && (
 
         <>
 
@@ -223,14 +451,20 @@ export default function TripStatusCard() {
 
 
               <h2 className="mt-2 text-2xl font-bold">
-                {tripData.name}
+                {activeTripName}
               </h2>
 
 
               <p className="mt-1 text-xs text-slate-400">
 
-                02/28 - 03/06 ·{" "}
-                {tripData.duration}
+                {activeDateRange}
+
+                {activeDuration && (
+                  <>
+                    {" · "}
+                    {activeDuration}
+                  </>
+                )}
 
               </p>
 
@@ -244,7 +478,9 @@ export default function TripStatusCard() {
               <div className="text-right">
 
                 <p className="text-3xl font-bold">
-                  {countdown.days}
+                  {
+                    countdown.days
+                  }
                 </p>
 
                 <p className="text-[10px] text-slate-400">
@@ -252,7 +488,6 @@ export default function TripStatusCard() {
                 </p>
 
               </div>
-
             )}
 
           </div>
@@ -272,7 +507,12 @@ export default function TripStatusCard() {
               <p className="mt-1 text-sm font-semibold">
 
                 Day 1 ·{" "}
-                {tripData.days[0].title}
+
+                {
+                  tripData.days[0]
+                    ?.title ??
+                  "尚未設定行程"
+                }
 
               </p>
 
@@ -289,7 +529,6 @@ export default function TripStatusCard() {
           </div>
 
         </>
-
       )}
 
 
@@ -297,123 +536,172 @@ export default function TripStatusCard() {
           旅行中
       ===================================== */}
 
-      {status === "during" &&
+      {status ===
+        "during" &&
         currentDay && (
 
-          <>
+        <>
 
-            {/* Day / Date */}
+          {/* Day / Date */}
 
-            <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between">
 
-              <span className="text-[11px] font-bold tracking-wide text-blue-300">
+            <span className="text-[11px] font-bold tracking-wide text-blue-300">
 
-                TODAY · DAY{" "}
-                {currentDay.day}
+              TODAY · DAY{" "}
 
-              </span>
+              {
+                currentDay.day
+              }
+
+            </span>
 
 
-              <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-400">
 
-                {currentDay.date
+              {
+                currentDay.date
                   .slice(5)
-                  .replace("-", "/")}
+                  .replace(
+                    "-",
+                    "/"
+                  )
+              }
 
-              </span>
+            </span>
+
+          </div>
+
+
+          {/* =================================
+              TITLE
+          ================================= */}
+
+          <div className="mt-3 flex items-start justify-between gap-3">
+
+
+            <div className="min-w-0">
+
+              <h2 className="text-2xl font-bold">
+
+                {
+                  currentDay.title
+                }
+
+              </h2>
+
+
+              <p className="mt-1 truncate text-xs text-slate-300">
+
+                {
+                  currentDay.subtitle
+                }
+
+              </p>
 
             </div>
 
 
-            {/* =================================
-                TITLE
-            ================================= */}
+            <Link
+              href="/itinerary"
+              className="shrink-0 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold transition hover:bg-white/20"
+            >
+              行程 →
+            </Link>
 
-            <div className="mt-3 flex items-start justify-between gap-3">
-
-
-              <div className="min-w-0">
-
-                <h2 className="text-2xl font-bold">
-
-                  {currentDay.title}
-
-                </h2>
+          </div>
 
 
-                <p className="mt-1 truncate text-xs text-slate-300">
+          {/* =================================
+              NEXT
+          ================================= */}
 
-                  {currentDay.subtitle}
+          <div className="mt-5 rounded-2xl bg-white/[0.06] p-4">
 
+
+            <p className="text-[10px] font-bold tracking-[0.18em] text-blue-300">
+              NEXT
+            </p>
+
+
+            {nextItem ? (
+
+              <NextItem
+                item={
+                  nextItem
+                }
+              />
+
+            ) : (
+
+              <div className="mt-3">
+
+                <p className="text-sm font-bold text-white">
+                  🎉 今天的行程完成了
+                </p>
+
+
+                <p className="mt-1 text-xs text-slate-400">
+                  好好享受剩下的時間
                 </p>
 
               </div>
+            )}
+
+          </div>
+
+        </>
+      )}
 
 
-              <Link
-                href="/itinerary"
-                className="shrink-0 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold transition hover:bg-white/20"
-              >
-                行程 →
-              </Link>
+      {/* =====================================
+          旅行中但今天沒有 itinerary
+      ===================================== */}
 
-            </div>
+      {status ===
+        "during" &&
+        !currentDay && (
 
+        <div className="flex items-center justify-between">
 
-            {/* =================================
-                NEXT
-            ================================= */}
+          <div>
 
-            <div className="mt-5 rounded-2xl bg-white/[0.06] p-4">
-
-
-              <p className="text-[10px] font-bold tracking-[0.18em] text-blue-300">
-                NEXT
-              </p>
+            <p className="text-[11px] font-semibold tracking-wider text-blue-300">
+              TRIP IN PROGRESS
+            </p>
 
 
-              {nextItem ? (
-
-                <NextItem
-                  item={nextItem}
-                />
-
-              ) : (
-
-                <div className="mt-3">
-
-                  <p className="text-sm font-bold text-white">
-
-                    🎉 今天的行程完成了
-
-                  </p>
+            <h2 className="mt-2 text-xl font-bold">
+              {activeTripName}
+            </h2>
 
 
-                  <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-slate-400">
+              今天尚未設定行程
+            </p>
 
-                    好好享受剩下的時間
+          </div>
 
-                  </p>
 
-                </div>
+          <Link
+            href="/itinerary"
+            className="rounded-full bg-white/10 px-4 py-2 text-xs font-semibold transition hover:bg-white/20"
+          >
+            行程 →
+          </Link>
 
-              )}
-
-            </div>
-
-          </>
-
-        )}
+        </div>
+      )}
 
 
       {/* =====================================
           旅行結束
       ===================================== */}
 
-      {status === "after" && (
+      {status ===
+        "after" && (
 
         <div className="flex items-center justify-between">
-
 
           <div>
 
@@ -423,12 +711,21 @@ export default function TripStatusCard() {
 
 
             <h2 className="mt-2 text-xl font-bold">
-              {tripData.name}
+              {activeTripName}
             </h2>
 
 
             <p className="mt-1 text-xs text-slate-400">
-              {tripData.duration}
+
+              {activeDateRange}
+
+              {activeDuration && (
+                <>
+                  {" · "}
+                  {activeDuration}
+                </>
+              )}
+
             </p>
 
           </div>
@@ -442,7 +739,6 @@ export default function TripStatusCard() {
           </Link>
 
         </div>
-
       )}
 
     </section>
@@ -486,15 +782,15 @@ function NextItem({
 
         <p className="text-xl font-bold">
 
-          {item.startTime}
+          {
+            item.startTime
+          }
 
         </p>
 
 
         <p className="mt-0.5 text-[9px] font-semibold tracking-wider text-slate-500">
-
           NEXT STOP
-
         </p>
 
       </div>
@@ -514,7 +810,9 @@ function NextItem({
 
         <p className="truncate text-sm font-bold text-white">
 
-          {item.name}
+          {
+            item.name
+          }
 
         </p>
 
@@ -523,10 +821,11 @@ function NextItem({
 
           <p className="mt-1 truncate text-xs text-slate-400">
 
-            {item.detail}
+            {
+              item.detail
+            }
 
           </p>
-
         )}
 
       </div>
@@ -539,16 +838,15 @@ function NextItem({
       {mapUrl && (
 
         <a
-          href={mapUrl}
+          href={
+            mapUrl
+          }
           target="_blank"
           rel="noopener noreferrer"
           className="shrink-0 rounded-xl bg-white px-3 py-2 text-[11px] font-bold text-slate-900 transition active:scale-95"
         >
-
           導航 ↗
-
         </a>
-
       )}
 
     </div>

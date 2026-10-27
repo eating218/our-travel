@@ -18,6 +18,9 @@ import {
 const STORAGE_KEY =
   "our-travel-trip-settings";
 
+const SYNC_EVENT =
+  "our-travel-trip-settings-updated";
+
 
 // ========================================
 // TYPES
@@ -72,6 +75,70 @@ function createDefaultSettings():
 
 
 // ========================================
+// READ STORAGE
+// ========================================
+
+function readStoredSettings():
+  TripSettings {
+  const defaults =
+    createDefaultSettings();
+
+
+  try {
+    const saved =
+      localStorage.getItem(
+        STORAGE_KEY
+      );
+
+
+    if (!saved) {
+      return defaults;
+    }
+
+
+    const parsed =
+      JSON.parse(
+        saved
+      ) as Partial<TripSettings>;
+
+
+    return {
+      name:
+        parsed.name ??
+        defaults.name,
+
+      country:
+        parsed.country ??
+        defaults.country,
+
+      startDate:
+        parsed.startDate ??
+        defaults.startDate,
+
+      endDate:
+        parsed.endDate ??
+        defaults.endDate,
+
+      flights:
+        Array.isArray(
+          parsed.flights
+        )
+          ? parsed.flights
+          : defaults.flights,
+    };
+  } catch (error) {
+    console.error(
+      "讀取旅程設定失敗：",
+      error
+    );
+
+
+    return defaults;
+  }
+}
+
+
+// ========================================
 // HOOK
 // ========================================
 
@@ -91,59 +158,13 @@ export function useTripSettings() {
 
 
   // ========================================
-  // LOAD
+  // INITIAL LOAD
   // ========================================
 
   useEffect(() => {
-    try {
-      const saved =
-        localStorage.getItem(
-          STORAGE_KEY
-        );
-
-
-      if (saved) {
-        const parsed =
-          JSON.parse(
-            saved
-          ) as Partial<TripSettings>;
-
-
-        const defaults =
-          createDefaultSettings();
-
-
-        setSettings({
-          name:
-            parsed.name ??
-            defaults.name,
-
-          country:
-            parsed.country ??
-            defaults.country,
-
-          startDate:
-            parsed.startDate ??
-            defaults.startDate,
-
-          endDate:
-            parsed.endDate ??
-            defaults.endDate,
-
-          flights:
-            Array.isArray(
-              parsed.flights
-            )
-              ? parsed.flights
-              : defaults.flights,
-        });
-      }
-    } catch (error) {
-      console.error(
-        "讀取旅程設定失敗：",
-        error
-      );
-    }
+    setSettings(
+      readStoredSettings()
+    );
 
 
     setLoaded(true);
@@ -151,32 +172,85 @@ export function useTripSettings() {
 
 
   // ========================================
-  // SAVE
+  // SAME PAGE SYNC
   // ========================================
 
   useEffect(() => {
-    if (!loaded) {
-      return;
+    function handleSync(
+      event: Event
+    ) {
+      const customEvent =
+        event as CustomEvent<TripSettings>;
+
+
+      if (
+        customEvent.detail
+      ) {
+        setSettings(
+          customEvent.detail
+        );
+
+
+        return;
+      }
+
+
+      setSettings(
+        readStoredSettings()
+      );
     }
 
 
-    try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(
-          settings
-        )
+    window.addEventListener(
+      SYNC_EVENT,
+      handleSync
+    );
+
+
+    return () => {
+      window.removeEventListener(
+        SYNC_EVENT,
+        handleSync
       );
-    } catch (error) {
-      console.error(
-        "儲存旅程設定失敗：",
-        error
+    };
+  }, []);
+
+
+  // ========================================
+  // OTHER TAB SYNC
+  // ========================================
+
+  useEffect(() => {
+    function handleStorage(
+      event: StorageEvent
+    ) {
+      if (
+        event.key !==
+        STORAGE_KEY
+      ) {
+        return;
+      }
+
+
+      setSettings(
+        readStoredSettings()
       );
     }
-  }, [
-    loaded,
-    settings,
-  ]);
+
+
+    window.addEventListener(
+      "storage",
+      handleStorage
+    );
+
+
+    return () => {
+      window.removeEventListener(
+        "storage",
+        handleStorage
+      );
+    };
+  }, []);
 
 
   // ========================================
@@ -189,6 +263,32 @@ export function useTripSettings() {
     setSettings(
       nextSettings
     );
+
+
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(
+          nextSettings
+        )
+      );
+
+
+      window.dispatchEvent(
+        new CustomEvent<TripSettings>(
+          SYNC_EVENT,
+          {
+            detail:
+              nextSettings,
+          }
+        )
+      );
+    } catch (error) {
+      console.error(
+        "儲存旅程設定失敗：",
+        error
+      );
+    }
   }
 
 
@@ -197,9 +297,39 @@ export function useTripSettings() {
   // ========================================
 
   function resetSettings() {
+    const defaults =
+      createDefaultSettings();
+
+
     setSettings(
-      createDefaultSettings()
+      defaults
     );
+
+
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(
+          defaults
+        )
+      );
+
+
+      window.dispatchEvent(
+        new CustomEvent<TripSettings>(
+          SYNC_EVENT,
+          {
+            detail:
+              defaults,
+          }
+        )
+      );
+    } catch (error) {
+      console.error(
+        "重設旅程設定失敗：",
+        error
+      );
+    }
   }
 
 
