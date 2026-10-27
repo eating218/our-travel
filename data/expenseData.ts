@@ -101,18 +101,38 @@ export type SettlementPayment = {
 export const initialExpenseMembers:
   ExpenseMember[] = [
     {
-      id: "fangyi",
-      name: "芳誼",
+      id: "1",
+      name: "文",
     },
 
     {
-      id: "chonggu",
-      name: "重谷",
+      id: "2",
+      name: "珠",
     },
 
     {
-      id: "mom",
-      name: "媽媽",
+      id: "3",
+      name: "儒",
+    },
+    
+    {
+      id: "4",
+      name: "億",
+    },
+    
+    {
+      id: "5",
+      name: "鈞",
+    },
+    
+    {
+      id: "6",
+      name: "婕",
+    },
+    
+    {
+      id: "7",
+      name: "廷",
     },
   ];
 
