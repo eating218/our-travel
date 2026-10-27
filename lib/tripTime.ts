@@ -9,7 +9,7 @@ const TEST_MODE = true;
 
 // 測試用時間
 const TEST_DATE =
-  "2027-03-01T12:20:00";
+  "2027-03-02T12:20:00";
 
 
 export function getAppNow() {
