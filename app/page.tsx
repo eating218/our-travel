@@ -32,9 +32,9 @@ const quickTools = [
   },
 
   {
-    icon: "💱",
-    name: "匯率",
-    href: "#",
+    icon: "💳",
+    name: "信用卡",
+    href: "/cards",
   },
 
   {
