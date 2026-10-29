@@ -15,12 +15,24 @@ import {
 } from "../../data/expenseData";
 
 import {
+  cardCatalog,
+} from "../../data/cardCatalog";
+
+import {
+  MyTravelCard,
+} from "../../data/cardData";
+
+import {
   useTripClock,
 } from "../../hooks/useTripClock";
 
 import {
   useExpenseData,
 } from "../../hooks/useExpenseData";
+
+import {
+  useCreditCards,
+} from "../../hooks/useCreditCards";
 
 import {
   getLocalDateString,
@@ -55,6 +67,75 @@ function formatMoney(
 
 }
 
+
+function getPaymentCardName(
+  expense: Expense,
+  cards: MyTravelCard[]
+) {
+  if (
+    expense.paymentMethod !==
+      "card" ||
+    !expense.paymentCardId
+  ) {
+    return null;
+  }
+
+  const card = cards.find(
+    (item) =>
+      item.id ===
+      expense.paymentCardId
+  );
+
+  if (!card) {
+    return "信用卡";
+  }
+
+  const catalogCard =
+    card.catalogCardId
+      ? cardCatalog.find(
+          (item) =>
+            item.id ===
+            card.catalogCardId
+        )
+      : undefined;
+
+  return (
+    catalogCard?.name ??
+    card.customName ??
+    "信用卡"
+  );
+}
+
+function getEstimatedCardTWD(
+  expense: Expense
+) {
+  if (
+    expense.paymentMethod !==
+    "card"
+  ) {
+    return null;
+  }
+
+  if (
+    expense.currency === "TWD"
+  ) {
+    return Math.round(
+      expense.amount
+    );
+  }
+
+  if (
+    !expense.exchangeRateSnapshot
+  ) {
+    return null;
+  }
+
+  return Math.round(
+    expense.amount *
+      expense.exchangeRateSnapshot
+        .rate
+  );
+}
 
 // ========================================
 // DATE
@@ -179,6 +260,7 @@ export default function ExpensePage() {
   expenses,
   members,
   categories,
+  currentMember,
   addExpense,
   deleteExpense,
   addMember,
@@ -188,6 +270,14 @@ export default function ExpensePage() {
   getMemberUsageCount,
   getCategoryUsageCount,
 } = useExpenseData();
+
+
+  const {
+    loaded: cardsLoaded,
+    cards: travelCards,
+  } = useCreditCards(
+    currentMember?.id
+  );
 
 
   const [
@@ -303,7 +393,8 @@ useEffect(() => {
 
   if (
     !now ||
-    !loaded
+    !loaded ||
+    !cardsLoaded
   ) {
 
     return (
@@ -611,6 +702,9 @@ useEffect(() => {
                   categories={
                     categories
                   }
+                  cards={
+                    travelCards
+                  }
                   isLast={
                     index ===
                     todayExpenses.length -
@@ -717,6 +811,9 @@ useEffect(() => {
           categories={
             categories
           }
+          cards={
+            travelCards
+          }
           onClose={() => {
 
             setSelectedExpense(
@@ -777,6 +874,7 @@ function ExpenseRow({
   expense,
   members,
   categories,
+  cards,
   isLast,
   onClick,
 }: {
@@ -787,6 +885,9 @@ function ExpenseRow({
 
   categories:
     ExpenseCategory[];
+
+  cards:
+    MyTravelCard[];
 
   isLast: boolean;
 
@@ -812,6 +913,13 @@ function ExpenseRow({
   const isPrivate =
     expense.visibility ===
     "private";
+
+
+  const paymentCardName =
+    getPaymentCardName(
+      expense,
+      cards
+    );
 
 
   return (
@@ -911,6 +1019,14 @@ function ExpenseRow({
         )}
 
 
+        {expense.paymentMethod ===
+          "card" && (
+          <p className="mt-1 truncate text-[10px] font-semibold text-blue-600">
+            💳 {paymentCardName}
+          </p>
+        )}
+
+
         <p className="mt-1 text-[10px] text-slate-400">
 
           {isPrivate
@@ -961,6 +1077,7 @@ function ExpenseDetailSheet({
   expense,
   members,
   categories,
+  cards,
   onClose,
   onDelete,
 }: {
@@ -971,6 +1088,9 @@ function ExpenseDetailSheet({
 
   categories:
     ExpenseCategory[];
+
+  cards:
+    MyTravelCard[];
 
   onClose: () => void;
 
@@ -1014,6 +1134,19 @@ function ExpenseDetailSheet({
   const isPrivate =
     expense.visibility ===
     "private";
+
+
+  const paymentCardName =
+    getPaymentCardName(
+      expense,
+      cards
+    );
+
+
+  const estimatedCardTWD =
+    getEstimatedCardTWD(
+      expense
+    );
 
 
   return (
@@ -1204,6 +1337,48 @@ function ExpenseDetailSheet({
               value="自己 100%"
             />
 
+          )}
+
+
+          <DetailRow
+            label="付款方式"
+            value={
+              expense.paymentMethod ===
+              "card"
+                ? `💳 ${
+                    paymentCardName ??
+                    "信用卡"
+                  }`
+                : expense.paymentMethod ===
+                    "other"
+                  ? "其他"
+                  : "💵 現金"
+            }
+          />
+
+
+          {expense.paymentMethod ===
+            "card" &&
+            expense.currency ===
+              "JPY" &&
+            expense.exchangeRateSnapshot && (
+            <DetailRow
+              label="刷卡參考匯率"
+              value={`¥1 ≈ NT$${expense.exchangeRateSnapshot.rate.toFixed(4)}`}
+            />
+          )}
+
+
+          {expense.paymentMethod ===
+            "card" &&
+            estimatedCardTWD !==
+              null && (
+            <DetailRow
+              label="估算刷卡台幣"
+              value={`NT$${estimatedCardTWD.toLocaleString(
+                "zh-TW"
+              )}`}
+            />
           )}
 
 

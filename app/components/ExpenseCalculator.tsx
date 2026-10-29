@@ -139,8 +139,7 @@ export default function ExpenseCalculator({
 
     } catch {
 
-      // 輸入到一半，例如 1200+
-      // 不需要顯示錯誤
+      // 輸入尚未完成時不顯示錯誤
 
     }
 
@@ -150,12 +149,51 @@ export default function ExpenseCalculator({
 
 
   // ========================================
+  // HELPERS
+  // ========================================
+
+  function isOperator(
+    value: string
+  ) {
+
+    return [
+      "+",
+      "-",
+      "*",
+      "/",
+    ].includes(value);
+
+  }
+
+
+  function getCurrentNumber(
+    value: string
+  ) {
+
+    const parts =
+      value.split(
+        /[+\-*/]/
+      );
+
+
+    return (
+      parts[
+        parts.length - 1
+      ] ?? ""
+    );
+
+  }
+
+
+  // ========================================
   // KEY
   // ========================================
 
   function pressKey(
     key: string
   ) {
+
+    // AC
 
     if (key === "AC") {
 
@@ -167,6 +205,8 @@ export default function ExpenseCalculator({
 
     }
 
+
+    // DELETE
 
     if (key === "⌫") {
 
@@ -183,9 +223,164 @@ export default function ExpenseCalculator({
     }
 
 
+    // DECIMAL
+
+    if (key === ".") {
+
+      setExpression(
+        (current) => {
+
+          const currentNumber =
+            getCurrentNumber(
+              current
+            );
+
+
+          if (
+            currentNumber.includes(
+              "."
+            )
+          ) {
+            return current;
+          }
+
+
+          if (!current) {
+            return "0.";
+          }
+
+
+          const lastCharacter =
+            current.slice(-1);
+
+
+          if (
+            isOperator(
+              lastCharacter
+            )
+          ) {
+
+            return (
+              current +
+              "0."
+            );
+
+          }
+
+
+          return (
+            current +
+            "."
+          );
+
+        }
+      );
+
+      return;
+
+    }
+
+
+    // OPERATOR
+
+    if (
+      isOperator(key)
+    ) {
+
+      setExpression(
+        (current) => {
+
+          if (!current) {
+            return current;
+          }
+
+
+          const lastCharacter =
+            current.slice(-1);
+
+
+          if (
+            lastCharacter === "."
+          ) {
+            return current;
+          }
+
+
+          if (
+            isOperator(
+              lastCharacter
+            )
+          ) {
+
+            return (
+              current.slice(
+                0,
+                -1
+              ) +
+              key
+            );
+
+          }
+
+
+          return (
+            current +
+            key
+          );
+
+        }
+      );
+
+      return;
+
+    }
+
+
+    // NUMBER
+
     setExpression(
-      (current) =>
-        current + key
+      (current) => {
+
+        const currentNumber =
+          getCurrentNumber(
+            current
+          );
+
+
+        // 前導 0
+        //
+        // 0 → 5 = 5
+        // 0 → 0 → 5 = 5
+        // 10 + 0 → 5 = 10 + 5
+        //
+        // 0.5 不受影響
+
+        if (
+          currentNumber === "0"
+        ) {
+
+          if (key === "0") {
+            return current;
+          }
+
+
+          return (
+            current.slice(
+              0,
+              -1
+            ) +
+            key
+          );
+
+        }
+
+
+        return (
+          current +
+          key
+        );
+
+      }
     );
 
   }
@@ -251,7 +446,7 @@ export default function ExpenseCalculator({
 
     "AC",
     "0",
-    "⌫",
+    ".",
     "+",
   ];
 
@@ -359,10 +554,40 @@ export default function ExpenseCalculator({
         </div>
 
 
+        {/* DELETE */}
+
+        <div className="mt-2 grid grid-cols-4 gap-2.5">
+
+          <div />
+
+          <div />
+
+          <div />
+
+          <button
+            type="button"
+            aria-label="刪除最後一位"
+            onClick={() =>
+              pressKey("⌫")
+            }
+            disabled={
+              expression.length === 0
+            }
+            className={`flex h-10 items-center justify-center rounded-xl text-lg font-bold transition active:scale-95 ${
+              expression.length > 0
+                ? "bg-white/[0.06] text-slate-300"
+                : "bg-white/[0.03] text-slate-700"
+            }`}
+          >
+            ⌫
+          </button>
+
+        </div>
+
+
         {/* KEYPAD */}
 
-        <div className="mt-5 grid grid-cols-4 gap-2.5">
-
+        <div className="mt-2.5 grid grid-cols-4 gap-2.5">
 
           {keys.map(
             (key) => {
@@ -397,8 +622,7 @@ export default function ExpenseCalculator({
                   className={`flex h-[62px] items-center justify-center rounded-2xl text-[21px] font-bold transition active:scale-95 ${
                     isOperator
                       ? "bg-blue-500 text-white"
-                      : key === "AC" ||
-                        key === "⌫"
+                      : key === "AC"
                       ? "bg-white/[0.06] text-slate-300"
                       : "bg-white/10 text-white"
                   }`}
@@ -410,7 +634,6 @@ export default function ExpenseCalculator({
 
             }
           )}
-
 
         </div>
 

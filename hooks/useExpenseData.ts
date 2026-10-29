@@ -55,6 +55,11 @@ function migrateExpenses(
       visibility:
         expense.visibility ??
         "shared",
+
+      // 舊資料沒有付款方式時，一律視為現金。
+      paymentMethod:
+        expense.paymentMethod ??
+        "cash",
     })
   );
 }

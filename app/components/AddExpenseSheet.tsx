@@ -6,8 +6,25 @@ import {
   Expense,
   ExpenseCategory,
   ExpenseMember,
+  ExpensePaymentMethod,
   ExpenseVisibility,
 } from "../../data/expenseData";
+
+import {
+  cardCatalog,
+} from "../../data/cardCatalog";
+
+import {
+  useCreditCards,
+} from "../../hooks/useCreditCards";
+
+import {
+  useExchangeRate,
+} from "../../hooks/useExchangeRate";
+
+import {
+  convertJPYToTWD,
+} from "../../lib/currencyEngine";
 
 import ExpenseCalculator, {
   ExpenseCurrency,
@@ -45,6 +62,46 @@ type Props = {
 
   getCategoryUsageCount: (categoryId: string) => number;
 };
+
+function formatTWD(
+  amount: number
+) {
+  return `NT$${Math.round(
+    amount
+  ).toLocaleString("zh-TW")}`;
+}
+
+function getTravelCardLabel(
+  card: {
+    catalogCardId?: string;
+    customIssuer?: string;
+    customName?: string;
+  }
+) {
+  const catalogCard =
+    card.catalogCardId
+      ? cardCatalog.find(
+          (item) =>
+            item.id ===
+            card.catalogCardId
+        )
+      : undefined;
+
+  return {
+    issuer:
+      catalogCard?.issuer ??
+      card.customIssuer ??
+      "",
+
+    name:
+      catalogCard?.name ??
+      card.customName ??
+      "自訂信用卡",
+
+    rewardRate:
+      catalogCard?.headlineRewardRate,
+  };
+}
 
 type ManageTarget =
   | {
@@ -99,6 +156,12 @@ export default function AddExpenseSheet({
 
   const [date, setDate] =
     useState(defaultDate);
+
+  const [paymentMethod, setPaymentMethod] =
+    useState<ExpensePaymentMethod>("cash");
+
+  const [paymentCardId, setPaymentCardId] =
+    useState("");
 
   // ========================================
   // UI
@@ -196,6 +259,20 @@ export default function AddExpenseSheet({
         member.isCurrentUser
     );
 
+  const {
+    loaded: cardsLoaded,
+    activeCards,
+  } = useCreditCards(
+    currentUser?.id
+  );
+
+  const {
+    loaded: exchangeRateLoaded,
+    activeRate,
+    refreshing: exchangeRateRefreshing,
+    refreshRate,
+  } = useExchangeRate();
+
   // ========================================
   // INITIALIZE
   // ========================================
@@ -256,6 +333,9 @@ export default function AddExpenseSheet({
           defaultDate
       );
 
+      setPaymentMethod("cash");
+      setPaymentCardId("");
+
       setCalculatorOpen(false);
       setShowAddMember(false);
       setShowAddCategory(false);
@@ -290,6 +370,58 @@ export default function AddExpenseSheet({
       }
     };
   }, []);
+
+  // ========================================
+  // PAYMENT METHOD SAFETY
+  // ========================================
+
+  const effectivePayerId =
+    visibility === "private"
+      ? currentUser?.id ?? ""
+      : paidBy;
+
+  const canUseOwnCard =
+    Boolean(currentUser) &&
+    effectivePayerId ===
+      currentUser?.id;
+
+  useEffect(() => {
+    if (
+      paymentMethod === "card" &&
+      !canUseOwnCard
+    ) {
+      setPaymentMethod("cash");
+      setPaymentCardId("");
+    }
+  }, [
+    paymentMethod,
+    canUseOwnCard,
+  ]);
+
+  useEffect(() => {
+    if (
+      paymentMethod !== "card" ||
+      !paymentCardId
+    ) {
+      return;
+    }
+
+    const stillAvailable =
+      activeCards.some(
+        (card) =>
+          card.id ===
+          paymentCardId
+      );
+
+    if (!stillAvailable) {
+      setPaymentMethod("cash");
+      setPaymentCardId("");
+    }
+  }, [
+    activeCards,
+    paymentMethod,
+    paymentCardId,
+  ]);
 
   // ========================================
   // SPLIT
@@ -541,6 +673,26 @@ export default function AddExpenseSheet({
       return;
     }
 
+    // 信用卡只能記在「本人付款」的支出上。
+    if (
+      paymentMethod === "card" &&
+      (
+        !canUseOwnCard ||
+        !paymentCardId
+      )
+    ) {
+      return;
+    }
+
+    // JPY 信用卡消費必須鎖住當下匯率快照。
+    if (
+      paymentMethod === "card" &&
+      currency === "JPY" &&
+      !activeRate
+    ) {
+      return;
+    }
+
     const realNow =
       new Date();
 
@@ -589,6 +741,19 @@ export default function AddExpenseSheet({
           ? [currentUser!.id]
           : splitBetween,
 
+      paymentMethod,
+
+      paymentCardId:
+        paymentMethod === "card"
+          ? paymentCardId
+          : undefined,
+
+      exchangeRateSnapshot:
+        paymentMethod === "card" &&
+        currency === "JPY"
+          ? activeRate ?? undefined
+          : undefined,
+
       date,
 
       time,
@@ -603,10 +768,22 @@ export default function AddExpenseSheet({
   // CAN SAVE
   // ========================================
 
+  const cardPaymentReady =
+    paymentMethod !== "card" ||
+    (
+      canUseOwnCard &&
+      paymentCardId !== "" &&
+      (
+        currency === "TWD" ||
+        Boolean(activeRate)
+      )
+    );
+
   const canSave =
     amount > 0 &&
     title.trim() !== "" &&
     categoryId !== "" &&
+    cardPaymentReady &&
     (
       visibility === "private"
         ? Boolean(currentUser)
@@ -618,6 +795,31 @@ export default function AddExpenseSheet({
     currency === "JPY"
       ? "¥"
       : "NT$";
+
+  const selectedPaymentCard =
+    activeCards.find(
+      (card) =>
+        card.id ===
+        paymentCardId
+    );
+
+  const selectedPaymentCardLabel =
+    selectedPaymentCard
+      ? getTravelCardLabel(
+          selectedPaymentCard
+        )
+      : null;
+
+  const estimatedCardTWD =
+    paymentMethod === "card" &&
+    currency === "JPY" &&
+    activeRate &&
+    amount > 0
+      ? convertJPYToTWD(
+          amount,
+          activeRate
+        ).convertedAmount
+      : null;
 
   // ========================================
   // MANAGE INFO
@@ -1209,6 +1411,241 @@ export default function AddExpenseSheet({
               </div>
             </>
           )}
+
+          {/* =================================
+              PAYMENT METHOD
+          ================================= */}
+
+          <div className="mt-6">
+            <div>
+              <p className="text-xs font-bold text-slate-700">
+                付款方式
+              </p>
+
+              <p className="mt-0.5 text-[9px] text-slate-400">
+                只記錄怎麼付款，不影響共同／私人與分帳結果
+              </p>
+            </div>
+
+            <div className="mt-2 space-y-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setPaymentMethod("cash");
+                  setPaymentCardId("");
+                }}
+                className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${
+                  paymentMethod === "cash"
+                    ? "border-slate-900 bg-slate-50"
+                    : "border-slate-200 bg-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-lg">
+                    💵
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">
+                      現金
+                    </p>
+
+                    <p className="mt-0.5 text-[9px] text-slate-400">
+                      不計入信用卡活動額度
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold ${
+                    paymentMethod === "cash"
+                      ? "bg-slate-900 text-white"
+                      : "border border-slate-200 text-transparent"
+                  }`}
+                >
+                  ✓
+                </div>
+              </button>
+
+              {canUseOwnCard &&
+                cardsLoaded &&
+                activeCards.map(
+                  (card) => {
+                    const cardLabel =
+                      getTravelCardLabel(
+                        card
+                      );
+
+                    const checked =
+                      paymentMethod ===
+                        "card" &&
+                      paymentCardId ===
+                        card.id;
+
+                    return (
+                      <button
+                        key={card.id}
+                        type="button"
+                        onClick={() => {
+                          setPaymentMethod(
+                            "card"
+                          );
+                          setPaymentCardId(
+                            card.id
+                          );
+                        }}
+                        className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${
+                          checked
+                            ? "border-blue-600 bg-blue-50/50"
+                            : "border-slate-200 bg-white"
+                        }`}
+                      >
+                        <div className="flex min-w-0 items-center gap-3">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-lg">
+                            💳
+                          </div>
+
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <p className="truncate text-sm font-bold text-slate-900">
+                                {cardLabel.name}
+                              </p>
+
+                              {cardLabel.rewardRate !==
+                                undefined && (
+                                <span className="shrink-0 text-[10px] font-bold text-blue-600">
+                                  {cardLabel.rewardRate}%
+                                </span>
+                              )}
+                            </div>
+
+                            {cardLabel.issuer && (
+                              <p className="mt-0.5 truncate text-[9px] text-slate-400">
+                                {cardLabel.issuer}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
+                            checked
+                              ? "bg-blue-600 text-white"
+                              : "border border-slate-200 text-transparent"
+                          }`}
+                        >
+                          ✓
+                        </div>
+                      </button>
+                    );
+                  }
+                )}
+            </div>
+
+            {!canUseOwnCard && (
+              <div className="mt-2 rounded-2xl bg-slate-50 px-4 py-3">
+                <p className="text-[10px] leading-5 text-slate-400">
+                  💳 信用卡是個人資料。只有「你本人付款」時，才能選擇自己的旅行信用卡。
+                </p>
+              </div>
+            )}
+
+            {canUseOwnCard &&
+              cardsLoaded &&
+              activeCards.length === 0 && (
+              <div className="mt-2 rounded-2xl bg-slate-50 px-4 py-3">
+                <p className="text-[10px] leading-5 text-slate-400">
+                  目前沒有使用中的旅行信用卡，可先到「我的旅行信用卡」加入。
+                </p>
+              </div>
+            )}
+
+            {paymentMethod === "card" &&
+              selectedPaymentCard && (
+              <div className="mt-3 rounded-2xl bg-slate-900 px-4 py-4 text-white">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-[9px] font-bold tracking-[0.16em] text-blue-300">
+                      CARD CHARGE
+                    </p>
+
+                    <p className="mt-1 truncate text-sm font-bold">
+                      {selectedPaymentCardLabel?.name}
+                    </p>
+                  </div>
+
+                  <p className="shrink-0 text-sm font-bold">
+                    {currencySymbol}
+                    {amount.toLocaleString()}
+                  </p>
+                </div>
+
+                {currency === "JPY" && (
+                  <div className="mt-3 border-t border-white/10 pt-3">
+                    {activeRate ? (
+                      <>
+                        <div className="flex items-center justify-between gap-3 text-[10px]">
+                          <span className="text-slate-400">
+                            參考匯率
+                          </span>
+
+                          <span className="font-bold text-slate-200">
+                            ¥1 ≈ NT${activeRate.rate.toFixed(4)}
+                          </span>
+                        </div>
+
+                        <div className="mt-2 flex items-center justify-between gap-3">
+                          <span className="text-[10px] text-slate-400">
+                            估算刷卡金額
+                          </span>
+
+                          <span className="text-base font-bold">
+                            {estimatedCardTWD !== null
+                              ? formatTWD(
+                                  estimatedCardTWD
+                                )
+                              : "NT$0"}
+                          </span>
+                        </div>
+
+                        <p className="mt-2 text-[9px] leading-4 text-slate-500">
+                          儲存後會鎖定這次匯率快照；實際請款仍以銀行為準。
+                        </p>
+                      </>
+                    ) : (
+                      <div>
+                        <p className="text-[10px] font-bold text-amber-300">
+                          尚未取得 JPY → TWD 參考匯率
+                        </p>
+
+                        <button
+                          type="button"
+                          disabled={
+                            exchangeRateRefreshing ||
+                            !exchangeRateLoaded
+                          }
+                          onClick={() =>
+                            refreshRate()
+                          }
+                          className="mt-2 rounded-xl bg-white/10 px-3 py-2 text-[10px] font-bold text-white disabled:opacity-40"
+                        >
+                          {exchangeRateRefreshing
+                            ? "更新中..."
+                            : "↻ 取得參考匯率"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {currency === "TWD" && (
+                  <p className="mt-3 border-t border-white/10 pt-3 text-[9px] leading-4 text-slate-500">
+                    台幣消費直接以原始金額計入信用卡活動額度，不需要匯率快照。
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* =================================
               DATE
