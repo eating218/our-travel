@@ -42,6 +42,8 @@ export type ExpenseCurrency =
   | "JPY"
   | "TWD";
 
+export type ExpenseTransactionType = "physical" | "online";
+
 export type ExpensePaymentMethod =
   | "cash"
   | "card"
@@ -73,6 +75,9 @@ export type Expense = {
    * 指向目前使用者自己的 MyTravelCard.id。
    */
   paymentCardId?: string;
+
+  /** 信用卡交易型態；舊資料未填寫時視為未知。 */
+  transactionType?: ExpenseTransactionType;
 
   /**
    * JPY 信用卡消費儲存當下 JPY → TWD 參考匯率快照。

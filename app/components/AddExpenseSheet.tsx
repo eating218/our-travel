@@ -7,6 +7,7 @@ import {
   ExpenseCategory,
   ExpenseMember,
   ExpensePaymentMethod,
+  ExpenseTransactionType,
   ExpenseVisibility,
 } from "../../data/expenseData";
 
@@ -45,6 +46,7 @@ type Props = {
   categories: ExpenseCategory[];
   defaultDate: string;
   initialData?: ExpenseInitialData;
+  editingExpense?: Expense;
 
   onClose: () => void;
 
@@ -120,6 +122,7 @@ export default function AddExpenseSheet({
   categories,
   defaultDate,
   initialData,
+  editingExpense,
   onClose,
   onSave,
   onAddMember,
@@ -162,6 +165,9 @@ export default function AddExpenseSheet({
 
   const [paymentCardId, setPaymentCardId] =
     useState("");
+
+  const [transactionType, setTransactionType] =
+    useState<ExpenseTransactionType>("physical");
 
   // ========================================
   // UI
@@ -289,52 +295,50 @@ export default function AddExpenseSheet({
         );
 
       setAmount(
-        initialData?.amount ?? 0
+        editingExpense?.amount ?? initialData?.amount ?? 0
       );
 
       setCurrency(
-        initialData?.currency ??
+        editingExpense?.currency ?? initialData?.currency ??
           "JPY"
       );
 
       setTitle(
-        initialData?.title ?? ""
+        editingExpense?.title ?? initialData?.title ?? ""
       );
 
       setNote(
-        initialData?.note ?? ""
+        editingExpense?.note ?? initialData?.note ?? ""
       );
 
       setCategoryId(
-        initialData?.categoryId ??
+        editingExpense?.categoryId ?? initialData?.categoryId ??
           categories[0]?.id ??
           ""
       );
 
       // 預設為共同支出
-      setVisibility("shared");
+      setVisibility(editingExpense?.visibility ?? "shared");
 
       setPaidBy(
-        initialCurrentUser?.id ??
+        editingExpense?.paidBy ?? initialCurrentUser?.id ??
           members[0]?.id ??
           ""
       );
 
       // 共同支出預設全部旅伴一起分攤
       setSplitBetween(
-        members.map(
-          (member) =>
-            member.id
-        )
+        editingExpense?.splitBetween ?? members.map((member) => member.id)
       );
 
       setDate(
-        initialData?.date ??
+        editingExpense?.date ?? initialData?.date ??
           defaultDate
       );
 
-      setPaymentMethod("cash");
-      setPaymentCardId("");
+      setPaymentMethod(editingExpense?.paymentMethod ?? "cash");
+      setTransactionType(editingExpense?.transactionType ?? "physical");
+      setPaymentCardId(editingExpense?.paymentCardId ?? "");
 
       setCalculatorOpen(false);
       setShowAddMember(false);
@@ -351,6 +355,7 @@ export default function AddExpenseSheet({
     open,
     defaultDate,
     initialData,
+    editingExpense,
     members,
     categories,
   ]);
@@ -711,7 +716,7 @@ export default function AddExpenseSheet({
 
     const expense:
       Expense = {
-      id: `expense-${Date.now()}`,
+      id: editingExpense?.id ?? `expense-${Date.now()}`,
 
       title:
         title.trim(),
@@ -743,20 +748,27 @@ export default function AddExpenseSheet({
 
       paymentMethod,
 
+      transactionType: paymentMethod === "card" ? transactionType : undefined,
+
       paymentCardId:
         paymentMethod === "card"
           ? paymentCardId
           : undefined,
 
       exchangeRateSnapshot:
-        paymentMethod === "card" &&
-        currency === "JPY"
-          ? activeRate ?? undefined
+        paymentMethod === "card" && currency === "JPY"
+          ? (editingExpense?.paymentMethod === "card" &&
+             editingExpense.currency === "JPY" &&
+             editingExpense.exchangeRateSnapshot &&
+             editingExpense.amount === amount &&
+             editingExpense.paymentCardId === paymentCardId
+               ? editingExpense.exchangeRateSnapshot
+               : activeRate ?? undefined)
           : undefined,
 
       date,
 
-      time,
+      time: editingExpense?.time ?? time,
     };
 
     onSave(expense);
@@ -889,11 +901,11 @@ export default function AddExpenseSheet({
         <div className="flex items-center justify-between px-5 pb-4 pt-3">
           <div>
             <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
-              NEW EXPENSE
+              {editingExpense ? "EDIT EXPENSE" : "NEW EXPENSE"}
             </p>
 
             <h2 className="mt-1 text-xl font-bold text-slate-900">
-              新增支出
+              {editingExpense ? "編輯支出" : "新增支出"}
             </h2>
           </div>
 
@@ -1556,6 +1568,34 @@ export default function AddExpenseSheet({
               <div className="mt-2 rounded-2xl bg-slate-50 px-4 py-3">
                 <p className="text-[10px] leading-5 text-slate-400">
                   目前沒有使用中的旅行信用卡，可先到「我的旅行信用卡」加入。
+                </p>
+              </div>
+            )}
+
+            {paymentMethod === "card" && (
+              <div className="mt-3">
+                <p className="text-xs font-bold text-slate-700">交易型態</p>
+                <div className="mt-2 flex gap-2">
+                  {([
+                    ["physical", "🏬 實體消費"],
+                    ["online", "🌐 網路消費"],
+                  ] as const).map(([value, label]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setTransactionType(value)}
+                      className={`flex-1 rounded-xl border px-3 py-2 text-xs font-bold ${
+                        transactionType === value
+                          ? "border-blue-600 bg-blue-50 text-blue-700"
+                          : "border-slate-200 bg-white text-slate-500"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-1 text-[10px] text-slate-400">
+                  僅作優惠資格分類，仍需確認銀行認列方式。
                 </p>
               </div>
             )}

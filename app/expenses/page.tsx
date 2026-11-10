@@ -262,6 +262,7 @@ export default function ExpensePage() {
   categories,
   currentMember,
   addExpense,
+  updateExpense,
   deleteExpense,
   addMember,
   deleteMember,
@@ -292,6 +293,8 @@ export default function ExpensePage() {
     useState<ExpenseInitialData | undefined>(
       undefined
     );
+
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
 
   const [
     selectedExpense,
@@ -758,6 +761,7 @@ useEffect(() => {
         initialData={
           expenseInitialData
         }
+        editingExpense={editingExpense ?? undefined}
 
         onClose={() => {
           setAddExpenseOpen(
@@ -767,9 +771,16 @@ useEffect(() => {
           setExpenseInitialData(
             undefined
           );
+          setEditingExpense(null);
         }}
 
-        onSave={addExpense}
+        onSave={(expense) => {
+          if (editingExpense) {
+            updateExpense(expense);
+          } else {
+            addExpense(expense);
+          }
+        }}
 
         onAddMember={addMember}
 
@@ -824,6 +835,12 @@ useEffect(() => {
               false
             );
 
+          }}
+          onEdit={() => {
+            setEditingExpense(selectedExpense);
+            setSelectedExpense(null);
+            setExpenseInitialData(undefined);
+            setAddExpenseOpen(true);
           }}
           onDelete={() =>
             setDeleteConfirmOpen(
@@ -1079,6 +1096,7 @@ function ExpenseDetailSheet({
   categories,
   cards,
   onClose,
+  onEdit,
   onDelete,
 }: {
   expense: Expense;
@@ -1093,6 +1111,8 @@ function ExpenseDetailSheet({
     MyTravelCard[];
 
   onClose: () => void;
+
+  onEdit: () => void;
 
   onDelete: () => void;
 }) {
@@ -1278,25 +1298,9 @@ function ExpenseDetailSheet({
 
 
           <DetailRow
-            label="日期"
-            value={
-              formatDisplayDate(
-                expense.date
-              )
-            }
+            label="日期時間"
+            value={`${formatDisplayDate(expense.date)}${expense.time ? ` · ${expense.time}` : ""}`}
           />
-
-
-          {expense.time && (
-
-            <DetailRow
-              label="時間"
-              value={
-                expense.time
-              }
-            />
-
-          )}
 
 
           {!isPrivate && (
@@ -1397,6 +1401,14 @@ function ExpenseDetailSheet({
 
         </div>
 
+
+        <button
+          type="button"
+          onClick={onEdit}
+          className="mt-4 w-full rounded-2xl bg-blue-600 py-3.5 text-sm font-bold text-white"
+        >
+          編輯這筆支出
+        </button>
 
         {/* DELETE */}
 

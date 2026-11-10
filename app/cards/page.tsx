@@ -1648,49 +1648,82 @@ export default function CardsPage() {
                         );
                       })()}
 
-                      {/* 主畫面直接顯示各優惠的數字進度，不需展開 */}
-                      {catalogCard && catalogCard.rewardRules.length > 0 && (
-                        <div className="mt-3 border-t border-slate-100 pt-2">
-                          {calculateCardRewardProgress(
-                            catalogCard.rewardRules,
-                            card.preTripSpentTWD + (cardTravelSpendMap[card.id] ?? 0),
-                            tripSettings.startDate,
-                            tripSettings.endDate
-                          ).map((progress) => (
-                            <div
-                              key={progress.ruleId}
-                              className="flex items-center justify-between gap-3 py-1.5"
-                            >
-                              <div className="min-w-0">
-                                <p className="truncate text-[11px] font-medium text-slate-700">
-                                  {progress.label}
-                                </p>
-                                <p className="text-[9px] text-slate-400">
-                                  {progress.status === "expired"
-                                    ? "旅行時已過期"
-                                    : progress.status === "upcoming"
-                                      ? "旅行時尚未開始"
-                                      : progress.status === "partial"
-                                        ? "僅部分日期適用"
-                                        : "總消費參考"}
-                                  {progress.minimumRemainingTWD !== undefined
-                                    ? ` · 距門檻 ${formatTWD(progress.minimumRemainingTWD)}`
-                                    : progress.estimatedSpendToCapTWD !== undefined
-                                      ? ` · 參考上限 ${formatTWD(progress.estimatedSpendToCapTWD)}`
+                      {/* V5.1: 以活動期間與交易型態初篩，合併金額及門檻百分比 */}
+                      {catalogCard && catalogCard.rewardRules.length > 0 && currentMember && (
+                        <div className="mt-2 border-t border-slate-100 pt-2">
+                          <p className="mb-1 text-[10px] font-bold text-slate-500">
+                            優惠進度 · 初步篩選
+                          </p>
+                          {catalogCard.rewardRules.map((rule) => {
+                            const selectedChannel = rule.spendingType === "selected";
+                            const matched = expenses.filter((expense) => {
+                              if (
+                                expense.paymentMethod !== "card" ||
+                                expense.paymentCardId !== card.id ||
+                                expense.paidBy !== currentMember.id ||
+                                expense.date < rule.validFrom ||
+                                expense.date > rule.validUntil ||
+                                !Number.isFinite(expense.amount) ||
+                                expense.amount < 0
+                              ) return false;
+                              if (selectedChannel) return false;
+                              if (rule.spendingType === "physical" && expense.transactionType !== "physical") return false;
+                              if (rule.spendingType === "online" && expense.transactionType !== "online") return false;
+                              if (expense.currency === "JPY") {
+                                const snapshot = expense.exchangeRateSnapshot;
+                                return !!snapshot &&
+                                  snapshot.from === "JPY" &&
+                                  snapshot.to === "TWD" &&
+                                  Number.isFinite(snapshot.rate) &&
+                                  snapshot.rate > 0;
+                              }
+                              return expense.currency === "TWD";
+                            });
+                            const amountTWD = Math.round(matched.reduce((sum, expense) => (
+                              sum + (expense.currency === "JPY"
+                                ? expense.amount * expense.exchangeRateSnapshot!.rate
+                                : expense.amount)
+                            ), 0));
+                            const progress = calculateCardRewardProgress(
+                              [rule],
+                              amountTWD,
+                              tripSettings.startDate,
+                              tripSettings.endDate
+                            )[0];
+                            const percent = selectedChannel
+                              ? undefined
+                              : progress.minimumProgressPercent ?? progress.capProgressPercent;
+                            const remaining = selectedChannel
+                              ? undefined
+                              : progress.minimumRemainingTWD;
+                            return (
+                              <div key={rule.id} className="flex items-center justify-between gap-3 py-1.5">
+                                <div className="min-w-0">
+                                  <p className="truncate text-[11px] font-medium text-slate-700">
+                                    {rule.label}
+                                  </p>
+                                  <p className="text-[9px] text-slate-400">
+                                    {selectedChannel
+                                      ? "指定通路待確認"
+                                      : `期間內初篩 ${formatTWD(amountTWD)}`}
+                                    {!selectedChannel && remaining !== undefined
+                                      ? ` · 距門檻 ${formatTWD(remaining)}`
                                       : ""}
-                                </p>
+                                    {progress.status === "expired" ? " · 旅行時已過期" : ""}
+                                    {progress.status === "upcoming" ? " · 旅行時尚未開始" : ""}
+                                    {progress.status === "partial" ? " · 僅部分旅行日期適用" : ""}
+                                  </p>
+                                </div>
+                                <span className="shrink-0 text-sm font-bold tabular-nums text-blue-600">
+                                  {percent === undefined ? "—" : `${percent}%`}
+                                </span>
                               </div>
-                              <span className="shrink-0 text-sm font-bold tabular-nums text-blue-600">
-                                {progress.minimumProgressPercent !== undefined
-                                  ? `${progress.minimumProgressPercent}%`
-                                  : progress.capProgressPercent !== undefined
-                                    ? `${progress.capProgressPercent}%`
-                                    : "—"}
-                              </span>
-                            </div>
-                          ))}
+                            );
+                          })}
                           <p className="mt-1 text-[9px] leading-4 text-slate-400">
-                            進度僅以整張卡累積消費估算，非合格消費或實領回饋。
+                            僅計旅行記帳中符合日期與交易型態的候選金額；
+                            出發前總額因缺日期與通路不計入。未驗證消費國家、銀行認列與登錄資格，
+                            百分比不是實際合格進度或回饋率。
                           </p>
                         </div>
                       )}

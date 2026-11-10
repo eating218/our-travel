@@ -521,6 +521,16 @@ export function useExpenseData() {
 
 
   // ========================================
+  // UPDATE EXPENSE (preserve ID, no duplicate)
+  // ========================================
+  function updateExpense(updated: Expense) {
+    setExpenses((current) =>
+      current.map((item) => item.id === updated.id ? updated : item)
+    );
+  }
+
+
+  // ========================================
   // DELETE EXPENSE
   // ========================================
 
@@ -825,6 +835,8 @@ export function useExpenseData() {
 
     // Expense
     addExpense,
+
+    updateExpense,
 
     deleteExpense,
 
