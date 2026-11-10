@@ -8,6 +8,8 @@ import {
 
 import Link from "next/link";
 
+import { calculateCardRewardProgress } from "../../lib/cardRewardEngine";
+
 import {
   cardCatalog,
   CardCatalogItem,
@@ -321,13 +323,31 @@ function getCatalogValidRange(
 
 function RewardDetails({
   card,
+  totalSpentTWD,
+  tripStart,
+  tripEnd,
 }: {
   card: CardCatalogItem;
+  totalSpentTWD?: number;
+  tripStart?: string;
+  tripEnd?: string;
 }) {
   const validRange =
     getCatalogValidRange(
       card
     );
+
+  // 卡庫瀏覽不顯示個人消費；只有「我的卡片」顯示參考進度。
+  const rewardProgress =
+    totalSpentTWD !== undefined && tripStart && tripEnd
+      ? calculateCardRewardProgress(
+          card.rewardRules,
+          totalSpentTWD,
+          tripStart,
+          tripEnd
+        )
+      : [];
+
 
 
   return (
@@ -409,6 +429,99 @@ function RewardDetails({
 
                 </div>
 
+
+                {rewardProgress.length > 0 && (() => {
+                  const progress = rewardProgress.find(
+                    (item) => item.ruleId === rule.id
+                  );
+                  if (!progress) return null;
+
+                  const activeForTrip =
+                    progress.status === "valid" ||
+                    progress.status === "partial";
+
+                  return (
+                    <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3">
+                      <p className="text-[10px] font-bold text-slate-600">
+                        回饋條件參考
+                      </p>
+
+                      {!activeForTrip ? (
+                        <p className="mt-2 text-[11px] font-bold text-rose-500">
+                          {progress.status === "expired"
+                            ? "此活動在旅行開始前已結束"
+                            : "此活動在旅行結束後才開始"}
+                        </p>
+                      ) : (
+                        <div className="mt-2 space-y-3">
+                          {progress.minimumSpendTWD !== undefined && (
+                            <div>
+                              <div className="flex items-center justify-between gap-3">
+                                <div>
+                                  <p className="text-[10px] text-slate-400">
+                                    總消費對照門檻
+                                  </p>
+                                  <p className="mt-1 text-xs font-bold text-slate-700">
+                                    {formatTWD(progress.totalSpentTWD)} / {formatTWD(progress.minimumSpendTWD)}
+                                  </p>
+                                </div>
+                                <p className="text-lg font-bold tabular-nums text-blue-600">
+                                  {progress.minimumProgressPercent}%
+                                </p>
+                              </div>
+                              <p className="mt-1 text-[10px] text-slate-500">
+                                {progress.minimumRemainingTWD === 0
+                                  ? "總消費已達參考門檻，仍須確認合格消費"
+                                  : `以總消費計算，還差 ${formatTWD(progress.minimumRemainingTWD ?? 0)}`}
+                              </p>
+                            </div>
+                          )}
+
+                          {progress.estimatedSpendToCapTWD !== undefined && (
+                            <div className="border-t border-slate-100 pt-3">
+                              <div className="flex items-center justify-between gap-3">
+                                <div>
+                                  <p className="text-[10px] text-slate-400">
+                                    理論回饋上限參考進度
+                                  </p>
+                                  <p className="mt-1 text-xs font-bold text-slate-700">
+                                    約 {formatTWD(progress.estimatedSpendToCapTWD)} 可刷滿
+                                  </p>
+                                </div>
+                                <p className="text-lg font-bold tabular-nums text-blue-600">
+                                  {progress.capProgressPercent}%
+                                </p>
+                              </div>
+                              <p className="mt-1 text-[10px] text-slate-400">
+                                依所列回饋率推算，非實際已取得回饋
+                              </p>
+                            </div>
+                          )}
+
+                          {progress.minimumSpendTWD === undefined &&
+                            progress.estimatedSpendToCapTWD === undefined && (
+                              <p className="text-[10px] text-slate-500">
+                                此規則未設定可計算的門檻或上限。
+                              </p>
+                            )}
+                        </div>
+                      )}
+
+                      {progress.warnings.length > 0 && (
+                        <div className="mt-3 space-y-1 border-t border-slate-100 pt-2">
+                          {progress.warnings.map((warning) => (
+                            <p key={warning} className="text-[10px] leading-4 text-amber-600">
+                              ⚠ {warning}
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                      <p className="mt-2 text-[10px] leading-4 text-slate-400">
+                        以整張卡累積消費估算；尚未逐筆核對活動日期、地區、通路及登錄資格，不能視為實際回饋進度。
+                      </p>
+                    </div>
+                  );
+                })()}
 
                 <div className="mt-3 space-y-1.5 text-[10px] leading-5 text-slate-500">
 
@@ -615,6 +728,7 @@ export default function CardsPage() {
       expenseLoaded,
 
     currentMember,
+    expenses,
   } = useExpenseData();
 
 
@@ -759,6 +873,50 @@ export default function CardsPage() {
   }, [exchangeLoaded, activeRate, isStale, refreshRate]);
 
 
+  // 每位旅伴獨立儲存各張卡、各活動的登錄狀態。
+  const [registrationState, setRegistrationState] = useState<Record<string, boolean>>({});
+  const [registrationOwner, setRegistrationOwner] = useState<string | null>(null);
+
+  useEffect(() => {
+    const ownerId = currentMember?.id;
+    if (!ownerId) {
+      return;
+    }
+
+    try {
+      const raw = localStorage.getItem(`our-travel-card-registrations-v1:${ownerId}`);
+      const parsed: unknown = raw ? JSON.parse(raw) : {};
+      const safe: Record<string, boolean> = {};
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        for (const [key, value] of Object.entries(parsed)) {
+          if (value === true) safe[key] = true;
+        }
+      }
+      setRegistrationState(safe);
+    } catch {
+      setRegistrationState({});
+    }
+    setRegistrationOwner(ownerId);
+  }, [currentMember?.id]);
+
+  function updateRegistration(cardId: string, ruleId: string, checked: boolean) {
+    if (!currentMember || registrationOwner !== currentMember.id) return;
+    const key = JSON.stringify([cardId, ruleId]);
+    const next = { ...registrationState };
+    if (checked) next[key] = true;
+    else delete next[key];
+    try {
+      localStorage.setItem(
+        `our-travel-card-registrations-v1:${currentMember.id}`,
+        JSON.stringify(next)
+      );
+      setRegistrationState(next);
+    } catch {
+      // 儲存失敗時不更新 UI，避免誤以為已記錄。
+      window.alert("登錄狀態儲存失敗，請檢查瀏覽器儲存空間。");
+    }
+  }
+
   // ========================================
   // CATALOG SEARCH
   // ========================================
@@ -810,6 +968,129 @@ export default function CardsPage() {
       [cards]
     );
 
+  // ========================================
+  // CARD SPENDING
+  // ========================================
+
+  const cardTravelSpendMap =
+    useMemo(() => {
+
+      const result: Record<
+        string,
+        number
+      > = {};
+
+
+      if (!currentMember) {
+        return result;
+      }
+
+
+      expenses.forEach(
+        (expense) => {
+
+          // 只處理信用卡付款
+          if (
+            expense.paymentMethod !==
+            "card"
+          ) {
+            return;
+          }
+
+
+          // 沒有卡片 ID
+          if (
+            !expense.paymentCardId
+          ) {
+            return;
+          }
+
+
+          // 只有目前使用者本人付款，
+          // 才可能算進自己的信用卡
+          if (
+            expense.paidBy !==
+            currentMember.id
+          ) {
+            return;
+          }
+
+
+          let amountTWD = 0;
+
+
+          // TWD 直接使用原始金額
+          if (
+            expense.currency ===
+            "TWD"
+          ) {
+
+            amountTWD =
+              expense.amount;
+
+          }
+
+
+          // JPY 使用當時儲存的匯率快照
+          if (
+            expense.currency ===
+            "JPY"
+          ) {
+
+            const snapshot =
+              expense.exchangeRateSnapshot;
+
+
+            // 沒有歷史匯率快照時，
+            // 不使用今天的匯率回頭改歷史資料
+            if (
+              !snapshot ||
+              !Number.isFinite(
+                snapshot.rate
+              ) ||
+              snapshot.rate <= 0
+            ) {
+              return;
+            }
+
+
+            amountTWD =
+              expense.amount *
+              snapshot.rate;
+
+          }
+
+
+          if (
+            !Number.isFinite(
+              amountTWD
+            ) ||
+            amountTWD <= 0
+          ) {
+            return;
+          }
+
+
+          result[
+            expense.paymentCardId
+          ] =
+            (
+              result[
+                expense.paymentCardId
+              ] ?? 0
+            ) +
+            amountTWD;
+
+        }
+      );
+
+
+      return result;
+
+    }, [
+      expenses,
+      currentMember,
+    ]);
 
   // ========================================
   // CUSTOM CARD
@@ -1338,41 +1619,162 @@ export default function CardsPage() {
                       </div>
 
 
-                      {/* PRE TRIP */}
+                      {/* CARD SPENDING */}
 
-                      <button
-                        type="button"
-                        onClick={() =>
-                          openSpendEditor(
-                            card
-                          )
-                        }
-                        className="mt-3 flex w-full items-center justify-between rounded-xl bg-slate-50 px-3 py-2.5 text-left"
-                      >
+                      {(() => {
 
-                        <div>
-
-                          <p className="text-[9px] font-bold tracking-wide text-slate-400">
-                            出發前已刷
-                          </p>
-
-                          <p className="mt-0.5 text-sm font-bold text-slate-800">
-                            {
-                              formatTWD(
-                                card.preTripSpentTWD
-                              )
-                            }
-                          </p>
-
-                        </div>
+                        const travelSpentTWD =
+                          cardTravelSpendMap[
+                            card.id
+                          ] ?? 0;
 
 
-                        <span className="text-xs font-bold text-blue-600">
-                          編輯
-                        </span>
+                        const totalSpentTWD =
+                          card.preTripSpentTWD +
+                          travelSpentTWD;
 
-                      </button>
 
+                        return (
+
+                          <div className="mt-3 rounded-2xl bg-slate-50 px-3 py-3">
+
+
+                            {/* TOTAL */}
+
+                            <div className="flex items-start justify-between gap-3">
+
+                              <div>
+
+                                <p className="text-[9px] font-bold tracking-wide text-slate-400">
+                                  累積消費
+                                </p>
+
+                                <p className="mt-1 text-xl font-bold tracking-tight text-slate-900">
+                                  {
+                                    formatTWD(
+                                      totalSpentTWD
+                                    )
+                                  }
+                                </p>
+
+                              </div>
+
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  openSpendEditor(
+                                    card
+                                  )
+                                }
+                                className="rounded-full bg-white px-3 py-1.5 text-[10px] font-bold text-blue-600 shadow-sm"
+                              >
+                                編輯出發前
+                              </button>
+
+                            </div>
+
+
+                            {/* BREAKDOWN */}
+
+                            <div className="mt-3 grid grid-cols-2 divide-x divide-slate-200 border-t border-slate-200 pt-3">
+
+
+                              {/* PRE TRIP */}
+
+                              <div className="pr-3">
+
+                                <p className="text-[9px] font-bold text-slate-400">
+                                  出發前已刷
+                                </p>
+
+                                <p className="mt-1 text-xs font-bold text-slate-700">
+                                  {
+                                    formatTWD(
+                                      card.preTripSpentTWD
+                                    )
+                                  }
+                                </p>
+
+                              </div>
+
+
+                              {/* DURING TRIP */}
+
+                              <div className="pl-3">
+
+                                <p className="text-[9px] font-bold text-slate-400">
+                                  旅行中已刷
+                                </p>
+
+                                <p className="mt-1 text-xs font-bold text-blue-600">
+                                  {
+                                    formatTWD(
+                                      travelSpentTWD
+                                    )
+                                  }
+                                </p>
+
+                              </div>
+
+
+                            </div>
+
+                          </div>
+
+                        );
+
+                      })()}
+
+
+                      {/* REGISTRATION CHECKLIST — 卡片主頁可直接勾選 */}
+                      {catalogCard &&
+                        registrationOwner === currentMember.id &&
+                        catalogCard.rewardRules.some((rule) => rule.registrationRequired) && (
+                          <div className="mt-3 rounded-2xl border border-amber-100 bg-amber-50/60 px-3 py-3">
+                            <p className="text-[10px] font-bold text-amber-800">
+                              活動登錄確認
+                            </p>
+                            <div className="mt-2 space-y-3">
+                              {catalogCard.rewardRules
+                                .filter((rule) => rule.registrationRequired)
+                                .map((rule) => {
+                                  const key = JSON.stringify([card.id, rule.id]);
+                                  const checked = registrationState[key] === true;
+                                  const expired = rule.validUntil < tripSettings.startDate;
+                                  const upcoming = rule.validFrom > tripSettings.endDate;
+                                  const outsideTrip = expired || upcoming;
+                                  return (
+                                    <label key={rule.id} className="flex cursor-pointer items-start gap-2.5">
+                                      <input
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={(event) =>
+                                          updateRegistration(card.id, rule.id, event.target.checked)
+                                        }
+                                        className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600"
+                                      />
+                                      <span className="min-w-0 text-[11px] leading-5 text-slate-700">
+                                        <span className="block font-semibold">{rule.label}：已完成活動登錄</span>
+                                        <span className="block text-[10px] text-slate-500">
+                                          {formatDate(rule.validFrom)} — {formatDate(rule.validUntil)}
+                                          {outsideTrip ? " · 不涵蓋本次旅行" : ""}
+                                        </span>
+                                        {checked && (
+                                          <span className="block text-[10px] text-emerald-700">
+                                            ✓ 已自行標記登錄完成
+                                          </span>
+                                        )}
+                                      </span>
+                                    </label>
+                                  );
+                                })}
+                            </div>
+                            <p className="mt-2 text-[10px] leading-4 text-amber-700">
+                              此勾選僅供個人記錄，不會向銀行登錄，也不代表符合回饋資格。
+                            </p>
+                          </div>
+                        )}
 
                       {/* DETAILS */}
 
@@ -1421,9 +1823,13 @@ export default function CardsPage() {
 
                           {expanded && (
                             <RewardDetails
-                              card={
-                                catalogCard
+                              card={catalogCard}
+                              totalSpentTWD={
+                                card.preTripSpentTWD +
+                                (cardTravelSpendMap[card.id] ?? 0)
                               }
+                              tripStart={tripSettings.startDate}
+                              tripEnd={tripSettings.endDate}
                             />
                           )}
 
