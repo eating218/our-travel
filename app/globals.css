@@ -1,26 +1,56 @@
+@import url("https://fonts.googleapis.com/css2?family=Huninn&display=swap");
 @import "tailwindcss";
 
+/* 京都和風主題 */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FFFCF6;
+  --foreground: #3E3A39;
+
+  --kyoto-paper: #FFFCF6;
+  --kyoto-card: #FFFFFF;
+  --kyoto-ink: #3E3A39;
+  --kyoto-muted: #817C76;
+  --kyoto-border: #E8DFD1;
+
+  --kyoto-yellow: #F6D27A;
+  --kyoto-pink: #F2A497;
+  --kyoto-blue: #A8D3E6;
+  --kyoto-green: #B9DAA5;
+  --kyoto-gold: #8C5D00;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+
+  --color-kyoto-paper: var(--kyoto-paper);
+  --color-kyoto-card: var(--kyoto-card);
+  --color-kyoto-ink: var(--kyoto-ink);
+  --color-kyoto-muted: var(--kyoto-muted);
+  --color-kyoto-border: var(--kyoto-border);
+
+  --color-kyoto-yellow: var(--kyoto-yellow);
+  --color-kyoto-pink: var(--kyoto-pink);
+  --color-kyoto-blue: var(--kyoto-blue);
+  --color-kyoto-green: var(--kyoto-green);
+  --color-kyoto-gold: var(--kyoto-gold);
+
+  --font-sans: var(--font-geist-sans), Arial, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    "Huninn",
+    "jf-openhuninn",
+    "Noto Sans TC",
+    "Microsoft JhengHei",
+    Arial,
+    sans-serif;
 }

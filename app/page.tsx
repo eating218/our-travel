@@ -438,7 +438,7 @@ export default function Home() {
   // ========================================
 
   return (
-    <main className="min-h-screen bg-slate-50 pb-24">
+    <main className="min-h-screen bg-[#FFFCF6] pb-24">
 
       <div className="mx-auto max-w-md px-5 pt-7">
 
@@ -448,12 +448,12 @@ export default function Home() {
 
         <header className="flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-bold tracking-[0.25em] text-blue-600">
+            <p className="text-[10px] font-bold tracking-[0.25em] text-[#8C5D00]">
               OUR TRAVEL
             </p>
 
 
-            <h1 className="mt-1 text-2xl font-bold text-slate-900">
+            <h1 className="mt-1 text-2xl font-bold text-[#3E3A39]">
               🇯🇵{" "}
               {tripSettingsLoaded
                 ? tripSettings.name
@@ -462,7 +462,7 @@ export default function Home() {
 
 
             <div className="mt-1 flex items-center gap-2">
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#938B82]">
                 {formatDateRange(
                   tripSettingsLoaded
                     ? tripSettings.startDate
@@ -477,7 +477,7 @@ export default function Home() {
 
               {currentMember && (
                 <>
-                  <span className="text-[10px] text-slate-300">
+                  <span className="text-[10px] text-[#B5AA9D]">
                     ·
                   </span>
 
@@ -487,7 +487,7 @@ export default function Home() {
                     onClick={
                       handleOpenIdentity
                     }
-                    className="text-[10px] font-semibold text-slate-400 transition active:scale-95"
+                    className="text-[10px] font-semibold text-[#938B82] transition active:scale-95"
                   >
                     👤{" "}
                     {
@@ -508,7 +508,7 @@ export default function Home() {
               )
             }
             aria-label="查看旅程資訊"
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-xl shadow-sm transition active:scale-95"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E8DFD1] bg-white text-xl shadow-sm transition active:scale-95"
           >
             ✈️
           </button>
@@ -535,12 +535,12 @@ export default function Home() {
 
         <section className="mt-7">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900">
+            <h2 className="text-lg font-bold text-[#3E3A39]">
               旅遊工具
             </h2>
 
 
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-[#938B82]">
               全部 →
             </span>
           </div>
@@ -555,7 +555,7 @@ export default function Home() {
                     key={
                       tool.name
                     }
-                    className="rounded-2xl bg-white px-2 py-4 text-center shadow-sm"
+                    className="rounded-2xl border border-[#E8DFD1] bg-white px-2 py-4 text-center shadow-sm"
                   >
                     <div className="text-2xl">
                       {
@@ -563,7 +563,7 @@ export default function Home() {
                       }
                     </div>
 
-                    <p className="mt-2 text-xs font-semibold text-slate-700">
+                    <p className="mt-2 text-xs font-semibold text-[#554F49]">
                       {
                         tool.name
                       }
@@ -577,7 +577,7 @@ export default function Home() {
                     href={
                       tool.href
                     }
-                    className="rounded-2xl bg-white px-2 py-4 text-center shadow-sm transition active:scale-[0.98]"
+                    className="rounded-2xl border border-[#E8DFD1] bg-white px-2 py-4 text-center shadow-sm transition active:scale-[0.98]"
                   >
                     <div className="text-2xl">
                       {
@@ -585,7 +585,7 @@ export default function Home() {
                       }
                     </div>
 
-                    <p className="mt-2 text-xs font-semibold text-slate-700">
+                    <p className="mt-2 text-xs font-semibold text-[#554F49]">
                       {
                         tool.name
                       }
@@ -607,7 +607,7 @@ export default function Home() {
 
           <Link
             href="/checklist"
-            className="rounded-3xl bg-white p-5 shadow-sm transition active:scale-[0.98]"
+            className="rounded-3xl border border-[#E8DFD1] bg-white p-5 shadow-sm transition active:scale-[0.98]"
           >
             <div className="flex items-center justify-between">
               <span className="text-xl">
@@ -620,8 +620,8 @@ export default function Home() {
               <span
                 className={`text-xs font-semibold ${
                   checklistCompleted
-                    ? "text-emerald-600"
-                    : "text-slate-400"
+                    ? "text-[#517C4E]"
+                    : "text-[#938B82]"
                 }`}
               >
                 {!checklistLoaded
@@ -633,13 +633,13 @@ export default function Home() {
             </div>
 
 
-            <h3 className="mt-4 font-bold text-slate-900">
+            <h3 className="mt-4 font-bold text-[#3E3A39]">
               行前準備
             </h3>
 
 
             <div className="mt-1 flex items-center justify-between">
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#938B82]">
                 Checklist
               </p>
 
@@ -648,8 +648,8 @@ export default function Home() {
                 <p
                   className={`text-[10px] font-bold ${
                     checklistCompleted
-                      ? "text-emerald-600"
-                      : "text-slate-400"
+                      ? "text-[#517C4E]"
+                      : "text-[#938B82]"
                   }`}
                 >
                   {percent}%
@@ -658,12 +658,12 @@ export default function Home() {
             </div>
 
 
-            <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-slate-100">
+            <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[#F5F0E7]">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${
                   checklistCompleted
-                    ? "bg-emerald-500"
-                    : "bg-slate-900"
+                    ? "bg-[#8FB77C]"
+                    : "bg-[#3E3A39]"
                 }`}
                 style={{
                   width: `${
@@ -681,24 +681,24 @@ export default function Home() {
 
           <Link
             href="/expenses"
-            className="rounded-3xl bg-white p-5 shadow-sm transition active:scale-[0.98]"
+            className="rounded-3xl border border-[#E8DFD1] bg-white p-5 shadow-sm transition active:scale-[0.98]"
           >
             <span className="text-xl">
               💰
             </span>
 
 
-            <h3 className="mt-4 font-bold text-slate-900">
+            <h3 className="mt-4 font-bold text-[#3E3A39]">
               共同記帳
             </h3>
 
 
-            <p className="mt-2 text-xl font-bold text-slate-900">
+            <p className="mt-2 text-xl font-bold text-[#3E3A39]">
               ¥ 24,580
             </p>
 
 
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-[#938B82]">
               目前旅費
             </p>
           </Link>
@@ -706,23 +706,23 @@ export default function Home() {
 
           {/* COUPONS */}
 
-          <div className="rounded-3xl bg-white p-5 shadow-sm">
+          <div className="rounded-3xl border border-[#E8DFD1] bg-white p-5 shadow-sm">
             <span className="text-xl">
               🛍️
             </span>
 
 
-            <h3 className="mt-4 font-bold text-slate-900">
+            <h3 className="mt-4 font-bold text-[#3E3A39]">
               免稅優惠
             </h3>
 
 
-            <p className="mt-2 text-xl font-bold text-slate-900">
+            <p className="mt-2 text-xl font-bold text-[#3E3A39]">
               6
             </p>
 
 
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-[#938B82]">
               張優惠券
             </p>
           </div>
@@ -735,7 +735,7 @@ export default function Home() {
 
         <Link
           href="/receipt"
-          className="mt-3 flex w-full items-center justify-between rounded-2xl bg-white p-4 text-left shadow-sm transition active:scale-[0.98]"
+          className="mt-3 flex w-full items-center justify-between rounded-2xl border border-[#E8DFD1] bg-white p-4 text-left shadow-sm transition active:scale-[0.98]"
         >
           <div className="flex items-center gap-3">
             <span className="text-xl">
@@ -744,19 +744,19 @@ export default function Home() {
 
 
             <div>
-              <p className="text-sm font-bold text-slate-900">
+              <p className="text-sm font-bold text-[#3E3A39]">
                 收據辨識
               </p>
 
 
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#938B82]">
                 拍照快速加入旅費
               </p>
             </div>
           </div>
 
 
-          <span className="text-slate-300">
+          <span className="text-[#B5AA9D]">
             ›
           </span>
         </Link>
@@ -767,7 +767,7 @@ export default function Home() {
           BOTTOM NAVIGATION
       ======================================== */}
 
-      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#E8DFD1] bg-[#FFFCF6]/95 backdrop-blur">
         <div className="mx-auto grid max-w-md grid-cols-4 px-4 pb-5 pt-3">
 
           <div className="text-center">
@@ -775,7 +775,7 @@ export default function Home() {
               🏠
             </div>
 
-            <p className="mt-1 text-[10px] font-bold text-slate-900">
+            <p className="mt-1 text-[10px] font-bold text-[#3E3A39]">
               首頁
             </p>
           </div>
@@ -789,7 +789,7 @@ export default function Home() {
               🗺️
             </div>
 
-            <p className="mt-1 text-[10px] text-slate-400">
+            <p className="mt-1 text-[10px] text-[#938B82]">
               行程
             </p>
           </Link>
@@ -803,7 +803,7 @@ export default function Home() {
               💰
             </div>
 
-            <p className="mt-1 text-[10px] text-slate-400">
+            <p className="mt-1 text-[10px] text-[#938B82]">
               分帳
             </p>
           </Link>
@@ -817,7 +817,7 @@ export default function Home() {
               🧳
             </div>
 
-            <p className="mt-1 text-[10px] text-slate-400">
+            <p className="mt-1 text-[10px] text-[#938B82]">
               準備
             </p>
           </Link>
@@ -856,13 +856,13 @@ export default function Home() {
             onClick={
               handleCloseIdentity
             }
-            className="absolute inset-0 bg-slate-950/45 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-[#3E3A39]/45 backdrop-blur-[2px]"
           />
 
 
           {/* MODAL */}
 
-          <section className="relative z-10 w-full max-w-sm rounded-[28px] bg-white p-5 shadow-2xl">
+          <section className="relative z-10 w-full max-w-sm rounded-[28px] border border-[#E8DFD1] bg-white p-5 shadow-2xl">
 
             {/* ========================================
                 SELECT MODE
@@ -876,17 +876,17 @@ export default function Home() {
 
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[9px] font-bold tracking-[0.24em] text-blue-600">
+                    <p className="text-[9px] font-bold tracking-[0.24em] text-[#8C5D00]">
                       YOUR IDENTITY
                     </p>
 
 
-                    <h2 className="mt-1.5 text-xl font-bold text-slate-900">
+                    <h2 className="mt-1.5 text-xl font-bold text-[#3E3A39]">
                       這趟旅行，你是誰？
                     </h2>
 
 
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-1 text-xs text-[#938B82]">
                       選擇後會記住這台裝置
                     </p>
                   </div>
@@ -899,7 +899,7 @@ export default function Home() {
                         handleCloseIdentity
                       }
                       aria-label="關閉"
-                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-400 transition active:scale-95"
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F5F0E7] text-sm font-bold text-[#938B82] transition active:scale-95"
                     >
                       ×
                     </button>
@@ -933,13 +933,13 @@ export default function Home() {
                           }
                           className={`relative flex h-[58px] items-center justify-center rounded-2xl border px-3 transition active:scale-[0.98] ${
                             selected
-                              ? "border-blue-500 bg-blue-50 shadow-sm"
-                              : "border-slate-200 bg-white active:bg-slate-50"
+                              ? "border-[#C69A3C] bg-[#FFF1C9] shadow-sm"
+                              : "border-[#E8DFD1] bg-white active:bg-[#FFFCF6]"
                           }`}
                         >
 
                           {selected && (
-                            <span className="absolute left-2.5 top-2.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold text-white">
+                            <span className="absolute left-2.5 top-2.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#8C5D00] text-[9px] font-bold text-white">
                               ✓
                             </span>
                           )}
@@ -948,8 +948,8 @@ export default function Home() {
                           <span
                             className={`truncate text-sm ${
                               selected
-                                ? "font-bold text-blue-700"
-                                : "font-semibold text-slate-700"
+                                ? "font-bold text-[#765000]"
+                                : "font-semibold text-[#554F49]"
                             }`}
                           >
                             {
@@ -969,10 +969,10 @@ export default function Home() {
                     onClick={
                       handleOpenAdd
                     }
-                    className="flex h-[58px] items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 px-3 text-xs font-bold text-slate-500 transition active:scale-[0.98] active:bg-slate-100"
+                    className="flex h-[58px] items-center justify-center rounded-2xl border border-dashed border-[#D8CCBA] bg-[#FFFCF6]/60 px-3 text-xs font-bold text-[#817C76] transition active:scale-[0.98] active:bg-[#F5F0E7]"
                   >
                     <span className="flex items-center gap-1.5">
-                      <span className="text-base font-normal text-blue-600">
+                      <span className="text-base font-normal text-[#8C5D00]">
                         ＋
                       </span>
 
@@ -992,7 +992,7 @@ export default function Home() {
                     onClick={
                       handleOpenEdit
                     }
-                    className="mt-4 flex h-9 w-full items-center justify-center gap-1.5 rounded-xl text-xs font-semibold text-slate-400 transition active:bg-slate-50 active:text-slate-600"
+                    className="mt-4 flex h-9 w-full items-center justify-center gap-1.5 rounded-xl text-xs font-semibold text-[#938B82] transition active:bg-[#FFFCF6] active:text-[#655E56]"
                   >
                     <span>
                       ✏️
@@ -1017,24 +1017,24 @@ export default function Home() {
                   onClick={
                     handleBackToSelect
                   }
-                  className="text-xs font-bold text-slate-400 transition active:text-slate-600"
+                  className="text-xs font-bold text-[#938B82] transition active:text-[#655E56]"
                 >
                   ‹ 返回
                 </button>
 
 
                 <div className="mt-4">
-                  <p className="text-[9px] font-bold tracking-[0.24em] text-blue-600">
+                  <p className="text-[9px] font-bold tracking-[0.24em] text-[#8C5D00]">
                     ADD TRAVELER
                   </p>
 
 
-                  <h2 className="mt-1.5 text-xl font-bold text-slate-900">
+                  <h2 className="mt-1.5 text-xl font-bold text-[#3E3A39]">
                     新增自己
                   </h2>
 
 
-                  <p className="mt-1 text-xs text-slate-400">
+                  <p className="mt-1 text-xs text-[#938B82]">
                     加入後會成為這台裝置的使用者
                   </p>
                 </div>
@@ -1043,7 +1043,7 @@ export default function Home() {
                 <div className="mt-5">
                   <label
                     htmlFor="new-member-name"
-                    className="text-[10px] font-bold tracking-wide text-slate-500"
+                    className="text-[10px] font-bold tracking-wide text-[#817C76]"
                   >
                     名稱
                   </label>
@@ -1079,7 +1079,7 @@ export default function Home() {
                     autoFocus
                     maxLength={20}
                     placeholder="例如：ㄆㄆ"
-                    className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm font-medium text-slate-900 outline-none transition placeholder:text-slate-300 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100"
+                    className="mt-2 h-11 w-full rounded-xl border border-[#E8DFD1] bg-[#FFFCF6] px-3.5 text-sm font-medium text-[#3E3A39] outline-none transition placeholder:text-[#B5AA9D] focus:border-[#C69A3C] focus:bg-white focus:ring-2 focus:ring-[#F6D27A]/35"
                   />
 
 
@@ -1101,7 +1101,7 @@ export default function Home() {
                   disabled={
                     !memberNameInput.trim()
                   }
-                  className="mt-5 h-11 w-full rounded-xl bg-slate-900 text-sm font-bold text-white transition active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+                  className="mt-5 h-11 w-full rounded-xl bg-[#3E3A39] text-sm font-bold text-white transition active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-[#E8DFD1] disabled:text-[#938B82]"
                 >
                   加入旅行
                 </button>
@@ -1121,24 +1121,24 @@ export default function Home() {
                   onClick={
                     handleBackToSelect
                   }
-                  className="text-xs font-bold text-slate-400 transition active:text-slate-600"
+                  className="text-xs font-bold text-[#938B82] transition active:text-[#655E56]"
                 >
                   ‹ 返回
                 </button>
 
 
                 <div className="mt-4">
-                  <p className="text-[9px] font-bold tracking-[0.24em] text-blue-600">
+                  <p className="text-[9px] font-bold tracking-[0.24em] text-[#8C5D00]">
                     EDIT IDENTITY
                   </p>
 
 
-                  <h2 className="mt-1.5 text-xl font-bold text-slate-900">
+                  <h2 className="mt-1.5 text-xl font-bold text-[#3E3A39]">
                     編輯我的名稱
                   </h2>
 
 
-                  <p className="mt-1 text-xs text-slate-400">
+                  <p className="mt-1 text-xs text-[#938B82]">
                     不會影響既有記帳與分帳紀錄
                   </p>
                 </div>
@@ -1147,7 +1147,7 @@ export default function Home() {
                 <div className="mt-5">
                   <label
                     htmlFor="edit-member-name"
-                    className="text-[10px] font-bold tracking-wide text-slate-500"
+                    className="text-[10px] font-bold tracking-wide text-[#817C76]"
                   >
                     名稱
                   </label>
@@ -1182,7 +1182,7 @@ export default function Home() {
                     }}
                     autoFocus
                     maxLength={20}
-                    className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm font-medium text-slate-900 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100"
+                    className="mt-2 h-11 w-full rounded-xl border border-[#E8DFD1] bg-[#FFFCF6] px-3.5 text-sm font-medium text-[#3E3A39] outline-none transition focus:border-[#C69A3C] focus:bg-white focus:ring-2 focus:ring-[#F6D27A]/35"
                   />
 
 
@@ -1204,7 +1204,7 @@ export default function Home() {
                   disabled={
                     !memberNameInput.trim()
                   }
-                  className="mt-5 h-11 w-full rounded-xl bg-slate-900 text-sm font-bold text-white transition active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+                  className="mt-5 h-11 w-full rounded-xl bg-[#3E3A39] text-sm font-bold text-white transition active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-[#E8DFD1] disabled:text-[#938B82]"
                 >
                   儲存名稱
                 </button>
