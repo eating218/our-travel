@@ -884,27 +884,27 @@ export default function AddExpenseSheet({
         type="button"
         aria-label="關閉"
         onClick={onClose}
-        className="absolute inset-0 bg-slate-950/40 backdrop-blur-[1px]"
+        className="absolute inset-0 bg-[#3E3A39]/40 backdrop-blur-[1px]"
       />
 
       {/* MAIN SHEET */}
 
-      <section className="relative z-10 flex max-h-[92vh] w-full max-w-md flex-col rounded-t-[32px] bg-white shadow-2xl">
+      <section className="relative z-10 flex max-h-[92vh] w-full max-w-md flex-col rounded-t-[32px] bg-[#FFFCF6] shadow-2xl">
         {/* HANDLE */}
 
         <div className="flex justify-center pt-3">
-          <div className="h-1 w-10 rounded-full bg-slate-200" />
+          <div className="h-1 w-10 rounded-full bg-[#E8DFD1]" />
         </div>
 
         {/* HEADER */}
 
         <div className="flex items-center justify-between px-5 pb-4 pt-3">
           <div>
-            <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
+            <p className="text-[10px] font-bold tracking-[0.18em] text-[#9A8C7B]">
               {editingExpense ? "EDIT EXPENSE" : "NEW EXPENSE"}
             </p>
 
-            <h2 className="mt-1 text-xl font-bold text-slate-900">
+            <h2 className="mt-1 text-xl font-bold text-[#3E3A39]">
               {editingExpense ? "編輯支出" : "新增支出"}
             </h2>
           </div>
@@ -912,7 +912,7 @@ export default function AddExpenseSheet({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-500"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F5F0E7] text-lg text-[#9A8C7B]"
           >
             ×
           </button>
@@ -920,18 +920,18 @@ export default function AddExpenseSheet({
 
         {/* CONTENT */}
 
-        <div className="overflow-y-auto px-5 pb-6">
+        <div className="overflow-y-auto px-5 pb-4">
           {/* =================================
               AMOUNT
           ================================= */}
 
-          <div className="rounded-3xl bg-slate-900 px-5 py-5 text-white">
+          <div className="rounded-2xl border border-[#E8DFD1] bg-white px-4 py-4 text-[#3E3A39]">
             <div className="flex items-center justify-between">
-              <p className="text-[10px] font-bold tracking-[0.16em] text-blue-300">
-                AMOUNT
+              <p className="text-[10px] font-bold tracking-[0.16em] text-[#8C5D00]">
+                支出金額
               </p>
 
-              <div className="flex rounded-full bg-white/10 p-1">
+              <div className="flex rounded-full bg-[#F5F0E7] p-1">
                 <button
                   type="button"
                   onClick={() =>
@@ -942,8 +942,8 @@ export default function AddExpenseSheet({
                   className={`rounded-full px-3 py-1.5 text-[10px] font-bold ${
                     currency ===
                     "JPY"
-                      ? "bg-white text-slate-900"
-                      : "text-slate-400"
+                      ? "bg-[#F6D27A] text-[#554018] shadow-sm"
+                      : "text-[#9A8C7B]"
                   }`}
                 >
                   ¥ 日幣
@@ -959,8 +959,8 @@ export default function AddExpenseSheet({
                   className={`rounded-full px-3 py-1.5 text-[10px] font-bold ${
                     currency ===
                     "TWD"
-                      ? "bg-white text-slate-900"
-                      : "text-slate-400"
+                      ? "bg-[#F6D27A] text-[#554018] shadow-sm"
+                      : "text-[#9A8C7B]"
                   }`}
                 >
                   NT$ 台幣
@@ -975,21 +975,21 @@ export default function AddExpenseSheet({
                   true
                 )
               }
-              className="mt-3 flex w-full items-center justify-between rounded-2xl bg-white/[0.06] px-4 py-4 text-left active:scale-[0.99]"
+              className="mt-2 flex w-full items-center justify-between rounded-xl px-1 py-2 text-left active:scale-[0.99]"
             >
               <div>
-                <p className="text-[10px] font-medium text-slate-500">
+                <p className="text-[10px] font-medium text-[#9A8C7B]">
                   點擊輸入金額
                 </p>
 
                 <div className="mt-1 flex items-end gap-2">
-                  <span className="pb-1 text-xl font-bold text-slate-500">
+                  <span className="pb-1 text-xl font-bold text-[#9A8C7B]">
                     {
                       currencySymbol
                     }
                   </span>
 
-                  <span className="text-4xl font-bold tracking-tight">
+                  <span className="text-3xl font-bold tracking-tight">
                     {amount.toLocaleString(
                       undefined,
                       {
@@ -1001,7 +1001,7 @@ export default function AddExpenseSheet({
                 </div>
               </div>
 
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-xl">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FFF1D0] text-lg text-[#8C5D00]">
                 ⌨
               </div>
             </button>
@@ -1011,8 +1011,8 @@ export default function AddExpenseSheet({
               TITLE
           ================================= */}
 
-          <div className="mt-5">
-            <label className="text-xs font-bold text-slate-700">
+          <div className="mt-4">
+            <label className="text-xs font-bold text-[#554A3D]">
               項目
             </label>
 
@@ -1025,7 +1025,7 @@ export default function AddExpenseSheet({
                   event.target.value
                 )
               }
-              className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-slate-900 focus:bg-white"
+              className="mt-2 w-full rounded-2xl border border-[#E8DFD1] bg-[#FFFCF6] px-4 py-3 text-sm text-[#3E3A39] placeholder:text-[#9A8C7B] outline-none focus:border-[#D8B46B] focus:bg-white"
             />
           </div>
 
@@ -1033,14 +1033,14 @@ export default function AddExpenseSheet({
               CATEGORY
           ================================= */}
 
-          <div className="mt-5">
+          <div className="mt-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-bold text-slate-700">
+                <p className="text-xs font-bold text-[#554A3D]">
                   分類
                 </p>
 
-                <p className="mt-0.5 text-[9px] text-slate-400">
+                <p className="mt-0.5 text-[9px] text-[#9A8C7B]">
                   長按可以管理
                 </p>
               </div>
@@ -1052,13 +1052,13 @@ export default function AddExpenseSheet({
                     true
                   )
                 }
-                className="text-[11px] font-bold text-blue-600"
+                className="text-[11px] font-bold text-[#8C5D00]"
               >
                 ＋ 新增分類
               </button>
             </div>
 
-            <div className="mt-2 grid grid-cols-4 gap-2">
+            <div className="mt-2 grid grid-cols-5 gap-2">
               {categories.map(
                 (category) => {
                   const active =
@@ -1102,19 +1102,19 @@ export default function AddExpenseSheet({
                           category.id
                         );
                       }}
-                      className={`select-none rounded-2xl px-2 py-3 ${
+                      className={`select-none rounded-xl border px-1 py-2 ${
                         active
-                          ? "bg-slate-900 text-white"
-                          : "bg-slate-100 text-slate-500"
+                          ? "border-[#D8B46B] bg-[#FFF1D0] text-[#554018]"
+                          : "border-transparent bg-[#F5F0E7] text-[#9A8C7B]"
                       }`}
                     >
-                      <div className="text-lg">
+                      <div className="text-base">
                         {
                           category.icon
                         }
                       </div>
 
-                      <p className="mt-1 truncate text-[10px] font-bold">
+                      <p className="mt-1 truncate text-[9px] font-bold">
                         {
                           category.name
                         }
@@ -1130,13 +1130,13 @@ export default function AddExpenseSheet({
               VISIBILITY
           ================================= */}
 
-          <div className="mt-5">
+          <div className="mt-4">
             <div>
-              <p className="text-xs font-bold text-slate-700">
+              <p className="text-xs font-bold text-[#554A3D]">
                 可見性
               </p>
 
-              <p className="mt-0.5 text-[9px] text-slate-400">
+              <p className="mt-0.5 text-[9px] text-[#9A8C7B]">
                 決定這筆支出是否讓同行旅伴看到
               </p>
             </div>
@@ -1147,11 +1147,11 @@ export default function AddExpenseSheet({
                 onClick={
                   selectShared
                 }
-                className={`rounded-2xl border px-3 py-3.5 text-center transition ${
+                className={`rounded-xl border px-3 py-2.5 text-center transition ${
                   visibility ===
                   "shared"
-                    ? "border-slate-900 bg-slate-900 text-white"
-                    : "border-slate-200 bg-white text-slate-500"
+                    ? "border-[#D8B46B] bg-[#FFF1D0] text-[#554018]"
+                    : "border-[#E8DFD1] bg-white text-[#9A8C7B]"
                 }`}
               >
                 <div className="text-lg">
@@ -1166,8 +1166,8 @@ export default function AddExpenseSheet({
                   className={`mt-1 text-[9px] ${
                     visibility ===
                     "shared"
-                      ? "text-slate-300"
-                      : "text-slate-400"
+                      ? "text-[#A89C8D]"
+                      : "text-[#9A8C7B]"
                   }`}
                 >
                   同行旅伴可見
@@ -1179,11 +1179,11 @@ export default function AddExpenseSheet({
                 onClick={
                   selectPrivate
                 }
-                className={`rounded-2xl border px-3 py-3.5 text-center transition ${
+                className={`rounded-xl border px-3 py-2.5 text-center transition ${
                   visibility ===
                   "private"
-                    ? "border-slate-900 bg-slate-900 text-white"
-                    : "border-slate-200 bg-white text-slate-500"
+                    ? "border-[#D8B46B] bg-[#FFF1D0] text-[#554018]"
+                    : "border-[#E8DFD1] bg-white text-[#9A8C7B]"
                 }`}
               >
                 <div className="text-lg">
@@ -1198,8 +1198,8 @@ export default function AddExpenseSheet({
                   className={`mt-1 text-[9px] ${
                     visibility ===
                     "private"
-                      ? "text-slate-300"
-                      : "text-slate-400"
+                      ? "text-[#A89C8D]"
+                      : "text-[#9A8C7B]"
                   }`}
                 >
                   只有自己可見
@@ -1214,18 +1214,18 @@ export default function AddExpenseSheet({
 
           {visibility ===
             "private" && (
-            <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-3">
+            <div className="mt-4 rounded-2xl bg-[#FFFCF6] px-4 py-3">
               <div className="flex items-start gap-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-lg">
                   🔒
                 </div>
 
                 <div>
-                  <p className="text-xs font-bold text-slate-700">
+                  <p className="text-xs font-bold text-[#554A3D]">
                     私人支出
                   </p>
 
-                  <p className="mt-1 text-[10px] leading-4 text-slate-400">
+                  <p className="mt-1 text-[10px] leading-4 text-[#9A8C7B]">
                     這筆支出只屬於你自己，不需要選擇付款人或分攤對象。
                   </p>
                 </div>
@@ -1244,15 +1244,15 @@ export default function AddExpenseSheet({
                   PAYER
               ================================= */}
 
-              <div className="mt-6">
+              <div className="mt-5">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-bold text-slate-700">
+                    <p className="text-xs font-bold text-[#554A3D]">
                       誰付款？
                     </p>
 
-                    <p className="mt-0.5 text-[9px] text-slate-400">
-                      長按可以管理旅伴
+                    <p className="mt-0.5 text-[9px] text-[#9A8C7B]">
+                      長按下方分攤名單可管理旅伴
                     </p>
                   </div>
 
@@ -1263,72 +1263,27 @@ export default function AddExpenseSheet({
                         true
                       )
                     }
-                    className="text-[11px] font-bold text-blue-600"
+                    className="text-[11px] font-bold text-[#8C5D00]"
                   >
                     ＋ 新增旅伴
                   </button>
                 </div>
 
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {members.map(
-                    (member) => {
-                      const active =
-                        paidBy ===
-                        member.id;
-
-                      return (
-                        <button
-                          key={
-                            member.id
-                          }
-                          type="button"
-                          onPointerDown={() =>
-                            startLongPress(
-                              {
-                                type: "member",
-                                item: member,
-                              }
-                            )
-                          }
-                          onPointerUp={
-                            stopLongPress
-                          }
-                          onPointerCancel={
-                            stopLongPress
-                          }
-                          onPointerLeave={
-                            stopLongPress
-                          }
-                          onClick={() => {
-                            if (
-                              longPressTriggered.current
-                            ) {
-                              longPressTriggered.current =
-                                false;
-
-                              return;
-                            }
-
-                            setPaidBy(
-                              member.id
-                            );
-                          }}
-                          className={`select-none rounded-full px-4 py-2.5 text-xs font-bold ${
-                            active
-                              ? "bg-slate-900 text-white"
-                              : "bg-slate-100 text-slate-500"
-                          }`}
-                        >
-                          {
-                            member.name
-                          }
-
-                          {member.isCurrentUser &&
-                            "（我）"}
-                        </button>
-                      );
-                    }
-                  )}
+                <div className="relative mt-2">
+                  <select
+                    aria-label="選擇付款人"
+                    value={paidBy}
+                    onChange={(event) => setPaidBy(event.target.value)}
+                    className="w-full appearance-none rounded-2xl border border-[#E8DFD1] bg-white px-4 py-3 pr-10 text-sm font-bold text-[#554A3D] outline-none transition focus:border-[#D8B46B] focus:ring-2 focus:ring-[#F6D27A]/30"
+                  >
+                    <option value="" disabled>請選擇付款人</option>
+                    {members.map((member) => (
+                      <option key={member.id} value={member.id}>
+                        {member.name}{member.isCurrentUser ? "（我）" : ""}
+                      </option>
+                    ))}
+                  </select>
+                  <span aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-[#9A8C7B]">⌄</span>
                 </div>
               </div>
 
@@ -1336,16 +1291,16 @@ export default function AddExpenseSheet({
                   SPLIT
               ================================= */}
 
-              <div className="mt-6">
+              <div className="mt-5">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-bold text-slate-700">
+                  <p className="text-xs font-bold text-[#554A3D]">
                     誰要分攤？
                   </p>
 
                   {amount > 0 &&
                     splitBetween.length >
                       0 && (
-                      <p className="text-[10px] font-semibold text-slate-400">
+                      <p className="text-[10px] font-semibold text-[#9A8C7B]">
                         約{" "}
                         {
                           currencySymbol
@@ -1365,53 +1320,37 @@ export default function AddExpenseSheet({
                     )}
                 </div>
 
-                <div className="mt-2 space-y-2">
-                  {members.map(
-                    (member) => {
-                      const checked =
-                        splitBetween.includes(
-                          member.id
-                        );
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {members.map((member) => {
+                    const checked = splitBetween.includes(member.id);
 
-                      return (
-                        <button
-                          key={
-                            member.id
+                    return (
+                      <button
+                        key={member.id}
+                        type="button"
+                        aria-pressed={checked}
+                        onPointerDown={() => startLongPress({ type: "member", item: member })}
+                        onPointerUp={stopLongPress}
+                        onPointerCancel={stopLongPress}
+                        onPointerLeave={stopLongPress}
+                        onClick={() => {
+                          if (longPressTriggered.current) {
+                            longPressTriggered.current = false;
+                            return;
                           }
-                          type="button"
-                          onClick={() =>
-                            toggleSplitMember(
-                              member.id
-                            )
-                          }
-                          className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${
-                            checked
-                              ? "border-slate-900 bg-slate-50"
-                              : "border-slate-200 bg-white"
-                          }`}
-                        >
-                          <p className="text-sm font-bold text-slate-900">
-                            {
-                              member.name
-                            }
-
-                            {member.isCurrentUser &&
-                              "（我）"}
-                          </p>
-
-                          <div
-                            className={`flex h-5 w-5 items-center justify-center rounded-md text-[11px] font-bold ${
-                              checked
-                                ? "bg-slate-900 text-white"
-                                : "border border-slate-200 text-transparent"
-                            }`}
-                          >
-                            ✓
-                          </div>
-                        </button>
-                      );
-                    }
-                  )}
+                          toggleSplitMember(member.id);
+                        }}
+                        className={`select-none rounded-full px-4 py-2.5 text-xs font-bold transition-colors ${
+                          checked
+                            ? "bg-[#F6D27A] text-[#554018]"
+                            : "bg-[#F5F0E7] text-[#9A8C7B]"
+                        }`}
+                      >
+                        {member.name}
+                        {member.isCurrentUser && "（我）"}
+                      </button>
+                    );
+                  })}
                 </div>
 
                 {splitBetween.length ===
@@ -1428,13 +1367,13 @@ export default function AddExpenseSheet({
               PAYMENT METHOD
           ================================= */}
 
-          <div className="mt-6">
+          <div className="mt-5">
             <div>
-              <p className="text-xs font-bold text-slate-700">
+              <p className="text-xs font-bold text-[#554A3D]">
                 付款方式
               </p>
 
-              <p className="mt-0.5 text-[9px] text-slate-400">
+              <p className="mt-0.5 text-[9px] text-[#9A8C7B]">
                 只記錄怎麼付款，不影響共同／私人與分帳結果
               </p>
             </div>
@@ -1448,8 +1387,8 @@ export default function AddExpenseSheet({
                 }}
                 className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${
                   paymentMethod === "cash"
-                    ? "border-slate-900 bg-slate-50"
-                    : "border-slate-200 bg-white"
+                    ? "border-[#D8B46B] bg-[#FFF7E7]"
+                    : "border-[#E8DFD1] bg-white"
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -1458,11 +1397,11 @@ export default function AddExpenseSheet({
                   </div>
 
                   <div>
-                    <p className="text-sm font-bold text-slate-900">
+                    <p className="text-sm font-bold text-[#3E3A39]">
                       現金
                     </p>
 
-                    <p className="mt-0.5 text-[9px] text-slate-400">
+                    <p className="mt-0.5 text-[9px] text-[#9A8C7B]">
                       不計入信用卡活動額度
                     </p>
                   </div>
@@ -1471,8 +1410,8 @@ export default function AddExpenseSheet({
                 <div
                   className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold ${
                     paymentMethod === "cash"
-                      ? "bg-slate-900 text-white"
-                      : "border border-slate-200 text-transparent"
+                      ? "bg-[#F6D27A] text-[#554018]"
+                      : "border border-[#E8DFD1] text-transparent"
                   }`}
                 >
                   ✓
@@ -1508,31 +1447,31 @@ export default function AddExpenseSheet({
                         }}
                         className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left ${
                           checked
-                            ? "border-blue-600 bg-blue-50/50"
-                            : "border-slate-200 bg-white"
+                            ? "border-[#D8B46B] bg-[#FFF5DB]"
+                            : "border-[#E8DFD1] bg-white"
                         }`}
                       >
                         <div className="flex min-w-0 items-center gap-3">
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-lg">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FFF5DB] text-lg">
                             💳
                           </div>
 
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <p className="truncate text-sm font-bold text-slate-900">
+                              <p className="truncate text-sm font-bold text-[#3E3A39]">
                                 {cardLabel.name}
                               </p>
 
                               {cardLabel.rewardRate !==
                                 undefined && (
-                                <span className="shrink-0 text-[10px] font-bold text-blue-600">
+                                <span className="shrink-0 text-[10px] font-bold text-[#8C5D00]">
                                   {cardLabel.rewardRate}%
                                 </span>
                               )}
                             </div>
 
                             {cardLabel.issuer && (
-                              <p className="mt-0.5 truncate text-[9px] text-slate-400">
+                              <p className="mt-0.5 truncate text-[9px] text-[#9A8C7B]">
                                 {cardLabel.issuer}
                               </p>
                             )}
@@ -1542,8 +1481,8 @@ export default function AddExpenseSheet({
                         <div
                           className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
                             checked
-                              ? "bg-blue-600 text-white"
-                              : "border border-slate-200 text-transparent"
+                              ? "bg-[#F6D27A] text-[#554018]"
+                              : "border border-[#E8DFD1] text-transparent"
                           }`}
                         >
                           ✓
@@ -1555,8 +1494,8 @@ export default function AddExpenseSheet({
             </div>
 
             {!canUseOwnCard && (
-              <div className="mt-2 rounded-2xl bg-slate-50 px-4 py-3">
-                <p className="text-[10px] leading-5 text-slate-400">
+              <div className="mt-2 rounded-2xl bg-[#FFFCF6] px-4 py-3">
+                <p className="text-[10px] leading-5 text-[#9A8C7B]">
                   💳 信用卡是個人資料。只有「你本人付款」時，才能選擇自己的旅行信用卡。
                 </p>
               </div>
@@ -1565,8 +1504,8 @@ export default function AddExpenseSheet({
             {canUseOwnCard &&
               cardsLoaded &&
               activeCards.length === 0 && (
-              <div className="mt-2 rounded-2xl bg-slate-50 px-4 py-3">
-                <p className="text-[10px] leading-5 text-slate-400">
+              <div className="mt-2 rounded-2xl bg-[#FFFCF6] px-4 py-3">
+                <p className="text-[10px] leading-5 text-[#9A8C7B]">
                   目前沒有使用中的旅行信用卡，可先到「我的旅行信用卡」加入。
                 </p>
               </div>
@@ -1574,7 +1513,7 @@ export default function AddExpenseSheet({
 
             {paymentMethod === "card" && (
               <div className="mt-3">
-                <p className="text-xs font-bold text-slate-700">交易型態</p>
+                <p className="text-xs font-bold text-[#554A3D]">交易型態</p>
                 <div className="mt-2 flex gap-2">
                   {([
                     ["physical", "🏬 實體消費"],
@@ -1586,15 +1525,15 @@ export default function AddExpenseSheet({
                       onClick={() => setTransactionType(value)}
                       className={`flex-1 rounded-xl border px-3 py-2 text-xs font-bold ${
                         transactionType === value
-                          ? "border-blue-600 bg-blue-50 text-blue-700"
-                          : "border-slate-200 bg-white text-slate-500"
+                          ? "border-[#D8B46B] bg-[#FFF5DB] text-[#8C5D00]"
+                          : "border-[#E8DFD1] bg-white text-[#9A8C7B]"
                       }`}
                     >
                       {label}
                     </button>
                   ))}
                 </div>
-                <p className="mt-1 text-[10px] text-slate-400">
+                <p className="mt-1 text-[10px] text-[#9A8C7B]">
                   僅作優惠資格分類，仍需確認銀行認列方式。
                 </p>
               </div>
@@ -1602,10 +1541,10 @@ export default function AddExpenseSheet({
 
             {paymentMethod === "card" &&
               selectedPaymentCard && (
-              <div className="mt-3 rounded-2xl bg-slate-900 px-4 py-4 text-white">
+              <div className="mt-3 rounded-2xl border border-[#E5BD62] bg-[#FFF3D9] px-4 py-4 text-[#3E3A39]">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-[9px] font-bold tracking-[0.16em] text-blue-300">
+                    <p className="text-[9px] font-bold tracking-[0.16em] text-[#8C5D00]">
                       CARD CHARGE
                     </p>
 
@@ -1621,21 +1560,21 @@ export default function AddExpenseSheet({
                 </div>
 
                 {currency === "JPY" && (
-                  <div className="mt-3 border-t border-white/10 pt-3">
+                  <div className="mt-3 border-t border-[#E8DFD1] pt-3">
                     {activeRate ? (
                       <>
                         <div className="flex items-center justify-between gap-3 text-[10px]">
-                          <span className="text-slate-400">
+                          <span className="text-[#9A8C7B]">
                             參考匯率
                           </span>
 
-                          <span className="font-bold text-slate-200">
+                          <span className="font-bold text-[#554A3D]">
                             ¥1 ≈ NT${activeRate.rate.toFixed(4)}
                           </span>
                         </div>
 
                         <div className="mt-2 flex items-center justify-between gap-3">
-                          <span className="text-[10px] text-slate-400">
+                          <span className="text-[10px] text-[#9A8C7B]">
                             估算刷卡金額
                           </span>
 
@@ -1648,7 +1587,7 @@ export default function AddExpenseSheet({
                           </span>
                         </div>
 
-                        <p className="mt-2 text-[9px] leading-4 text-slate-500">
+                        <p className="mt-2 text-[9px] leading-4 text-[#9A8C7B]">
                           儲存後會鎖定這次匯率快照；實際請款仍以銀行為準。
                         </p>
                       </>
@@ -1667,7 +1606,7 @@ export default function AddExpenseSheet({
                           onClick={() =>
                             refreshRate()
                           }
-                          className="mt-2 rounded-xl bg-white/10 px-3 py-2 text-[10px] font-bold text-white disabled:opacity-40"
+                          className="mt-2 rounded-xl bg-[#EAD8B5] px-3 py-2 text-[10px] font-bold text-[#3E3A39] disabled:opacity-40"
                         >
                           {exchangeRateRefreshing
                             ? "更新中..."
@@ -1679,7 +1618,7 @@ export default function AddExpenseSheet({
                 )}
 
                 {currency === "TWD" && (
-                  <p className="mt-3 border-t border-white/10 pt-3 text-[9px] leading-4 text-slate-500">
+                  <p className="mt-3 border-t border-[#E8DFD1] pt-3 text-[9px] leading-4 text-[#9A8C7B]">
                     台幣消費直接以原始金額計入信用卡活動額度，不需要匯率快照。
                   </p>
                 )}
@@ -1691,8 +1630,8 @@ export default function AddExpenseSheet({
               DATE
           ================================= */}
 
-          <div className="mt-5">
-            <label className="text-xs font-bold text-slate-700">
+          <div className="mt-4">
+            <label className="text-xs font-bold text-[#554A3D]">
               日期
             </label>
 
@@ -1704,7 +1643,7 @@ export default function AddExpenseSheet({
                   event.target.value
                 )
               }
-              className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-slate-900 focus:bg-white"
+              className="mt-2 w-full rounded-2xl border border-[#E8DFD1] bg-[#FFFCF6] px-4 py-3 text-sm text-[#3E3A39] placeholder:text-[#9A8C7B] outline-none focus:border-[#D8B46B] focus:bg-white"
             />
           </div>
 
@@ -1712,11 +1651,11 @@ export default function AddExpenseSheet({
               NOTE
           ================================= */}
 
-          <div className="mt-5">
-            <label className="text-xs font-bold text-slate-700">
+          <div className="mt-4">
+            <label className="text-xs font-bold text-[#554A3D]">
               備註
 
-              <span className="ml-1 font-normal text-slate-400">
+              <span className="ml-1 font-normal text-[#9A8C7B]">
                 選填
               </span>
             </label>
@@ -1730,7 +1669,7 @@ export default function AddExpenseSheet({
                   event.target.value
                 )
               }
-              className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-slate-900 focus:bg-white"
+              className="mt-2 w-full rounded-2xl border border-[#E8DFD1] bg-[#FFFCF6] px-4 py-3 text-sm text-[#3E3A39] placeholder:text-[#9A8C7B] outline-none focus:border-[#D8B46B] focus:bg-white"
             />
           </div>
         </div>
@@ -1739,15 +1678,15 @@ export default function AddExpenseSheet({
             SAVE
         ================================= */}
 
-        <div className="border-t border-slate-100 bg-white px-5 pb-5 pt-4">
+        <div className="border-t border-[#E8DFD1] bg-[#FFFCF6] px-5 pb-4 pt-3">
           <button
             type="button"
             disabled={!canSave}
             onClick={handleSave}
             className={`w-full rounded-2xl py-3.5 text-sm font-bold ${
               canSave
-                ? "bg-slate-900 text-white active:scale-[0.99]"
-                : "bg-slate-100 text-slate-300"
+                ? "bg-[#F6D27A] text-[#554018] active:scale-[0.99]"
+                : "bg-[#F5F0E7] text-[#A89C8D]"
             }`}
           >
             {visibility ===
@@ -1785,15 +1724,15 @@ export default function AddExpenseSheet({
       ===================================== */}
 
       {showAddMember && (
-        <div className="absolute inset-0 z-20 flex items-end justify-center bg-slate-950/30">
-          <div className="w-full max-w-md rounded-t-[28px] bg-white p-5">
+        <div className="absolute inset-0 z-20 flex items-end justify-center bg-[#3E3A39]/30">
+          <div className="w-full max-w-md rounded-t-[28px] bg-[#FFFCF6] p-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-bold tracking-[0.16em] text-slate-400">
+                <p className="text-[10px] font-bold tracking-[0.16em] text-[#9A8C7B]">
                   NEW MEMBER
                 </p>
 
-                <h3 className="mt-1 text-lg font-bold text-slate-900">
+                <h3 className="mt-1 text-lg font-bold text-[#3E3A39]">
                   新增旅伴
                 </h3>
               </div>
@@ -1805,7 +1744,7 @@ export default function AddExpenseSheet({
                     false
                   )
                 }
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F5F0E7]"
               >
                 ×
               </button>
@@ -1833,10 +1772,10 @@ export default function AddExpenseSheet({
                   handleAddMember();
                 }
               }}
-              className="mt-5 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none"
+              className="mt-5 w-full rounded-2xl border border-[#E8DFD1] bg-[#FFFCF6] px-4 py-3 text-sm outline-none"
             />
 
-            <p className="mt-3 text-[11px] leading-5 text-slate-400">
+            <p className="mt-3 text-[11px] leading-5 text-[#9A8C7B]">
               對方不需要使用 App，也可以由其他旅伴代為記帳與分帳。
             </p>
 
@@ -1850,8 +1789,8 @@ export default function AddExpenseSheet({
               }
               className={`mt-5 w-full rounded-2xl py-3.5 text-sm font-bold ${
                 newMemberName.trim()
-                  ? "bg-slate-900 text-white"
-                  : "bg-slate-100 text-slate-300"
+                  ? "bg-[#F6D27A] text-[#554018]"
+                  : "bg-[#F5F0E7] text-[#A89C8D]"
               }`}
             >
               新增旅伴
@@ -1865,15 +1804,15 @@ export default function AddExpenseSheet({
       ===================================== */}
 
       {showAddCategory && (
-        <div className="absolute inset-0 z-20 flex items-end justify-center bg-slate-950/30">
-          <div className="w-full max-w-md rounded-t-[28px] bg-white p-5">
+        <div className="absolute inset-0 z-20 flex items-end justify-center bg-[#3E3A39]/30">
+          <div className="w-full max-w-md rounded-t-[28px] bg-[#FFFCF6] p-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-bold tracking-[0.16em] text-slate-400">
+                <p className="text-[10px] font-bold tracking-[0.16em] text-[#9A8C7B]">
                   NEW CATEGORY
                 </p>
 
-                <h3 className="mt-1 text-lg font-bold text-slate-900">
+                <h3 className="mt-1 text-lg font-bold text-[#3E3A39]">
                   新增分類
                 </h3>
               </div>
@@ -1885,7 +1824,7 @@ export default function AddExpenseSheet({
                     false
                   )
                 }
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F5F0E7]"
               >
                 ×
               </button>
@@ -1905,7 +1844,7 @@ export default function AddExpenseSheet({
                   )
                 }
                 maxLength={4}
-                className="w-16 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-center text-xl outline-none"
+                className="w-16 rounded-2xl border border-[#E8DFD1] bg-[#FFFCF6] px-3 py-3 text-center text-xl outline-none"
               />
 
               <input
@@ -1932,11 +1871,11 @@ export default function AddExpenseSheet({
                     handleAddCategory();
                   }
                 }}
-                className="min-w-0 flex-1 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none"
+                className="min-w-0 flex-1 rounded-2xl border border-[#E8DFD1] bg-[#FFFCF6] px-4 py-3 text-sm outline-none"
               />
             </div>
 
-            <p className="mt-3 text-[11px] text-slate-400">
+            <p className="mt-3 text-[11px] text-[#9A8C7B]">
               左邊可以輸入 Emoji，例如 🎮、♨️、💊、🎁。
             </p>
 
@@ -1950,8 +1889,8 @@ export default function AddExpenseSheet({
               }
               className={`mt-5 w-full rounded-2xl py-3.5 text-sm font-bold ${
                 newCategoryName.trim()
-                  ? "bg-slate-900 text-white"
-                  : "bg-slate-100 text-slate-300"
+                  ? "bg-[#F6D27A] text-[#554018]"
+                  : "bg-[#F5F0E7] text-[#A89C8D]"
               }`}
             >
               新增分類
@@ -1965,7 +1904,7 @@ export default function AddExpenseSheet({
       ===================================== */}
 
       {manageTarget && (
-        <div className="absolute inset-0 z-30 flex items-end justify-center bg-slate-950/40">
+        <div className="absolute inset-0 z-30 flex items-end justify-center bg-[#3E3A39]/40">
           <button
             type="button"
             aria-label="關閉管理"
@@ -1977,7 +1916,7 @@ export default function AddExpenseSheet({
             className="absolute inset-0"
           />
 
-          <div className="relative z-10 w-full max-w-md rounded-t-[28px] bg-white p-5">
+          <div className="relative z-10 w-full max-w-md rounded-t-[28px] bg-[#FFFCF6] p-5">
             {/* CATEGORY */}
 
             {manageTarget.type ===
@@ -1991,27 +1930,27 @@ export default function AddExpenseSheet({
                     }
                   </div>
 
-                  <h3 className="mt-2 text-lg font-bold text-slate-900">
+                  <h3 className="mt-2 text-lg font-bold text-[#3E3A39]">
                     {
                       manageTarget.item
                         .name
                     }
                   </h3>
 
-                  <p className="mt-1 text-[11px] text-slate-400">
+                  <p className="mt-1 text-[11px] text-[#9A8C7B]">
                     分類管理
                   </p>
                 </div>
 
                 {manageCannotDelete ? (
-                  <div className="mt-5 rounded-2xl bg-slate-50 px-4 py-4 text-center">
-                    <p className="text-sm font-bold text-slate-700">
+                  <div className="mt-5 rounded-2xl bg-[#FFFCF6] px-4 py-4 text-center">
+                    <p className="text-sm font-bold text-[#554A3D]">
                       這個分類目前不能刪除
                     </p>
 
-                    <p className="mt-1 text-[11px] leading-5 text-slate-400">
+                    <p className="mt-1 text-[11px] leading-5 text-[#9A8C7B]">
                       目前有{" "}
-                      <strong className="text-slate-600">
+                      <strong className="text-[#766A5C]">
                         {
                           manageUsageCount
                         }
@@ -2038,7 +1977,7 @@ export default function AddExpenseSheet({
                       null
                     )
                   }
-                  className="mt-2 w-full rounded-2xl bg-slate-100 py-3.5 text-sm font-bold text-slate-600"
+                  className="mt-2 w-full rounded-2xl bg-[#F5F0E7] py-3.5 text-sm font-bold text-[#766A5C]"
                 >
                   {manageCannotDelete
                     ? "知道了"
@@ -2053,14 +1992,14 @@ export default function AddExpenseSheet({
               "member" && (
               <>
                 <div className="text-center">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 text-sm font-bold text-white">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#F6D27A] text-sm font-bold text-[#3E3A39]">
                     {manageTarget.item.name.slice(
                       0,
                       1
                     )}
                   </div>
 
-                  <h3 className="mt-2 text-lg font-bold text-slate-900">
+                  <h3 className="mt-2 text-lg font-bold text-[#3E3A39]">
                     {
                       manageTarget.item
                         .name
@@ -2071,32 +2010,32 @@ export default function AddExpenseSheet({
                       "（我）"}
                   </h3>
 
-                  <p className="mt-1 text-[11px] text-slate-400">
+                  <p className="mt-1 text-[11px] text-[#9A8C7B]">
                     旅伴管理
                   </p>
                 </div>
 
                 {manageTarget.item
                   .isCurrentUser ? (
-                  <div className="mt-5 rounded-2xl bg-slate-50 px-4 py-4 text-center">
-                    <p className="text-sm font-bold text-slate-700">
+                  <div className="mt-5 rounded-2xl bg-[#FFFCF6] px-4 py-4 text-center">
+                    <p className="text-sm font-bold text-[#554A3D]">
                       這是你自己 😎
                     </p>
 
-                    <p className="mt-1 text-[11px] text-slate-400">
+                    <p className="mt-1 text-[11px] text-[#9A8C7B]">
                       目前帳本的本人不能刪除。
                     </p>
                   </div>
                 ) : manageUsageCount >
                   0 ? (
-                  <div className="mt-5 rounded-2xl bg-slate-50 px-4 py-4 text-center">
-                    <p className="text-sm font-bold text-slate-700">
+                  <div className="mt-5 rounded-2xl bg-[#FFFCF6] px-4 py-4 text-center">
+                    <p className="text-sm font-bold text-[#554A3D]">
                       這位旅伴目前不能刪除
                     </p>
 
-                    <p className="mt-1 text-[11px] leading-5 text-slate-400">
+                    <p className="mt-1 text-[11px] leading-5 text-[#9A8C7B]">
                       目前有{" "}
-                      <strong className="text-slate-600">
+                      <strong className="text-[#766A5C]">
                         {
                           manageUsageCount
                         }
@@ -2123,7 +2062,7 @@ export default function AddExpenseSheet({
                       null
                     )
                   }
-                  className="mt-2 w-full rounded-2xl bg-slate-100 py-3.5 text-sm font-bold text-slate-600"
+                  className="mt-2 w-full rounded-2xl bg-[#F5F0E7] py-3.5 text-sm font-bold text-[#766A5C]"
                 >
                   {manageCannotDelete
                     ? "知道了"

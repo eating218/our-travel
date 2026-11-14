@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { allocateExpenseShares } from "../../lib/expenseShareAllocation";
 
 import {
   useEffect,
@@ -61,7 +62,7 @@ function formatMoney(
   return `${symbol}${amount.toLocaleString(
     undefined,
     {
-      maximumFractionDigits: 2,
+      maximumFractionDigits: 0,
     }
   )}`;
 
@@ -234,8 +235,9 @@ function calculateMyShare(
 
         return (
           total +
-          expense.amount /
-            expense.splitBetween.length
+          (allocateExpenseShares(expense).find(
+              (share) => share.memberId === currentUserId
+            )?.amount ?? 0)
         );
 
       },
@@ -402,13 +404,13 @@ useEffect(() => {
 
     return (
 
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-[#FFFCF6]">
 
         <div className="mx-auto max-w-md px-5 pt-5">
 
-          <div className="h-20 animate-pulse rounded-2xl bg-slate-200" />
+          <div className="h-20 animate-pulse rounded-2xl bg-[#E8DFD1]" />
 
-          <div className="mt-7 h-72 animate-pulse rounded-3xl bg-slate-200" />
+          <div className="mt-7 h-72 animate-pulse rounded-3xl bg-[#E8DFD1]" />
 
         </div>
 
@@ -502,12 +504,12 @@ useEffect(() => {
 
   return (
 
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#FFFCF6]">
 
 
       {/* HEADER */}
 
-      <header className="sticky top-0 z-30 border-b border-slate-100 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-[#E8DFD1] bg-[#FFFCF6]/95 backdrop-blur">
 
 
         <div className="mx-auto flex max-w-md items-center justify-between px-5 py-4">
@@ -515,7 +517,7 @@ useEffect(() => {
 
           <Link
             href="/"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F5F0E7] text-lg"
           >
             ‹
           </Link>
@@ -523,11 +525,11 @@ useEffect(() => {
 
           <div className="text-center">
 
-            <p className="text-[10px] font-bold tracking-[0.2em] text-slate-400">
-              EXPENSES
+            <p className="text-[10px] font-bold tracking-[0.2em] text-[#938674]">
+              EXPENSE JOURNAL
             </p>
 
-            <h1 className="text-sm font-bold text-slate-900">
+            <h1 className="text-sm font-bold text-[#3E3A39]">
               共同記帳
             </h1>
 
@@ -545,7 +547,7 @@ useEffect(() => {
                 true
               );
             }}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-xl font-light text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F6D27A] text-xl font-light text-[#554018]"
           >
             +
           </button>
@@ -561,135 +563,59 @@ useEffect(() => {
       <div className="mx-auto max-w-md px-5 pb-28 pt-5">
 
 
-        {/* SETTLEMENT */}
+        {/* TODAY SPENDING — 京都奶油色手帳卡片 */}
+        <section className="rounded-[24px] border border-[#E5BD62] bg-[#FFF8E9] px-5 py-4 shadow-[0_5px_18px_rgba(140,93,0,0.06)]">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-[10px] font-bold tracking-[0.16em] text-[#8C5D00]">TODAY'S SPENDING</p>
+            <span className="text-xs font-medium text-[#8A7964]">{formatDisplayDate(today)}</span>
+          </div>
+          <p className="mt-3 text-xs font-medium text-[#8A7964]">我的今日花費</p>
+          <div className="mt-1 flex items-end justify-between gap-3">
+            <p className="min-w-0 break-all text-[30px] font-bold leading-tight tracking-tight text-[#3E3A39]">
+              {formatMoney(todayJPY, "JPY")}
+            </p>
+            <span className="shrink-0 rounded-full bg-[#F6D27A] px-3 py-1 text-[11px] font-bold text-[#554018]">
+              {todayExpenses.length} 筆支出
+            </span>
+          </div>
+          <div className="mt-3 flex items-center justify-between gap-3 border-t border-[#E6D4B4] pt-3">
+            <span className="text-xs text-[#8A7964]">台幣支出</span>
+            <span className="text-sm font-bold text-[#3E3A39]">{formatMoney(todayTWD, "TWD")}</span>
+          </div>
+        </section>
 
+        {/* SETTLEMENT */}
         <Link
           href="/expenses/settlement"
-          className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white px-5 py-4 shadow-sm"
+          className="mt-3 flex items-center justify-between rounded-2xl border border-[#E8DFD1] bg-white px-4 py-3 shadow-[0_2px_12px_rgba(62,58,57,0.04)] transition active:bg-[#FFF8E9]"
         >
-
-
-          <div>
-
-            <p className="text-[10px] font-bold tracking-[0.16em] text-slate-400">
-              SETTLEMENT
-            </p>
-
-            <p className="mt-1 text-sm font-bold text-slate-900">
-              分帳結算
-            </p>
-
+          <div className="flex min-w-0 items-center gap-3">
+            <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#FFF1D0] text-xl">👥</span>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-[#3E3A39]">分帳結算</p>
+              <p className="mt-1 text-[11px] text-[#8A7964]">查看旅伴之間的結算結果</p>
+            </div>
           </div>
-
-
-          <div className="flex items-center gap-2">
-
-            <span className="text-xs font-semibold text-slate-400">
-              查看最終結果
-            </span>
-
-            <span className="text-lg text-slate-300">
-              ›
-            </span>
-
-          </div>
-
-
+          <span aria-hidden="true" className="ml-2 text-xl text-[#A18A68]">›</span>
         </Link>
 
-
-        {/* TODAY */}
-
-        <div className="mb-3 mt-7 flex items-end justify-between">
-
-
-          <div>
-
-            <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
-              TODAY
-            </p>
-
-            <h2 className="mt-1 text-xl font-bold text-slate-900">
-
-              {formatDisplayDate(
-                today
-              )}
-
-            </h2>
-
-          </div>
-
-
-          <div className="text-right">
-
-
-            <p className="mb-1 text-[9px] font-bold tracking-[0.12em] text-slate-400">
-              我的今日花費
-            </p>
-
-
-            <div className="flex items-center justify-end gap-2">
-
-
-              {todayJPY >
-                0 && (
-
-                <span className="rounded-full bg-slate-900 px-2.5 py-1 text-[10px] font-bold text-white">
-
-                  {formatMoney(
-                    todayJPY,
-                    "JPY"
-                  )}
-
-                </span>
-
-              )}
-
-
-              {todayTWD >
-                0 && (
-
-                <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-700">
-
-                  {formatMoney(
-                    todayTWD,
-                    "TWD"
-                  )}
-
-                </span>
-
-              )}
-
-
-            </div>
-
-
-            <p className="mt-1 text-xs text-slate-400">
-
-              {todayExpenses.length}
-              {" "}筆支出
-
-            </p>
-
-
-          </div>
-
-
+        {/* TODAY LIST HEADING */}
+        <div className="mb-3 mt-6 flex items-center justify-between gap-3">
+          <h2 className="text-base font-bold text-[#3E3A39]">今日支出</h2>
+          <p className="text-xs text-[#8A7964]">{formatDisplayDate(today)} · {todayExpenses.length} 筆</p>
         </div>
-
 
         {/* EXPENSE LIST */}
 
         {todayExpenses.length >
         0 ? (
 
-          <section className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm">
+          <section className="space-y-3">
 
 
             {todayExpenses.map(
               (
-                expense,
-                index
+                expense
               ) => (
 
                 <ExpenseRow
@@ -708,11 +634,6 @@ useEffect(() => {
                   cards={
                     travelCards
                   }
-                  isLast={
-                    index ===
-                    todayExpenses.length -
-                      1
-                  }
                   onClick={() =>
                     setSelectedExpense(
                       expense
@@ -728,17 +649,17 @@ useEffect(() => {
 
         ) : (
 
-          <section className="rounded-3xl border border-dashed border-slate-200 bg-white px-5 py-10 text-center">
+          <section className="rounded-3xl border border-dashed border-[#E8DFD1] bg-white px-5 py-10 text-center">
 
             <div className="text-3xl">
               💴
             </div>
 
-            <p className="mt-3 text-sm font-bold text-slate-700">
+            <p className="mt-3 text-sm font-bold text-[#554A3C]">
               今天還守得住錢包 😎
             </p>
 
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-[#938674]">
               點右上角 ＋ 花下去！
             </p>
 
@@ -892,7 +813,6 @@ function ExpenseRow({
   members,
   categories,
   cards,
-  isLast,
   onClick,
 }: {
   expense: Expense;
@@ -905,8 +825,6 @@ function ExpenseRow({
 
   cards:
     MyTravelCard[];
-
-  isLast: boolean;
 
   onClick: () => void;
 }) {
@@ -931,6 +849,10 @@ function ExpenseRow({
     expense.visibility ===
     "private";
 
+  // 柔和分類底色：僅改變圖示外觀，不影響分類資料或計算。
+  const categoryColorIndex = Math.max(0, categories.findIndex((item) => item.id === expense.categoryId));
+  const iconBackgrounds = ["bg-[#FBE9D9]", "bg-[#E5F0E6]", "bg-[#F3E8F1]", "bg-[#E8EDF8]", "bg-[#FFF1D0]"];
+  const iconBackground = iconBackgrounds[categoryColorIndex % iconBackgrounds.length];
 
   const paymentCardName =
     getPaymentCardName(
@@ -946,17 +868,13 @@ function ExpenseRow({
       onClick={
         onClick
       }
-      className={`flex w-full items-center gap-3 px-4 py-4 text-left transition active:bg-slate-50 ${
-        !isLast
-          ? "border-b border-slate-100"
-          : ""
-      }`}
+      className="flex w-full items-center gap-3 rounded-[22px] border border-[#E8DFD1] bg-white px-4 py-3.5 text-left shadow-[0_2px_12px_rgba(62,58,57,0.04)] transition active:bg-[#FFF8E9]"
     >
 
 
       {/* ICON */}
 
-      <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-lg">
+      <div className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-lg ${iconBackground}`} >
 
         {category?.icon ??
           "💴"}
@@ -964,7 +882,7 @@ function ExpenseRow({
 
         {isPrivate && (
 
-          <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-slate-900 text-[9px]">
+          <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-[#3E3A39] text-[9px]">
             🔒
           </div>
 
@@ -981,20 +899,20 @@ function ExpenseRow({
 
         <div className="flex items-center gap-2">
 
-          <p className="truncate text-sm font-bold text-slate-900">
+          <p className="truncate text-sm font-bold text-[#3E3A39]">
             {expense.title}
           </p>
 
 
           {isPrivate ? (
 
-            <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-500">
+            <span className="shrink-0 rounded-full bg-[#F5F0E7] px-2 py-0.5 text-[9px] font-bold text-[#857867]">
               私人
             </span>
 
           ) : (
 
-            <span className="shrink-0 text-[9px] font-medium text-slate-400">
+            <span className="shrink-0 text-[9px] font-medium text-[#938674]">
 
               {category?.name ??
                 "未分類"}
@@ -1009,7 +927,7 @@ function ExpenseRow({
 
         {isPrivate ? (
 
-          <p className="mt-1 truncate text-[11px] text-slate-400">
+          <p className="mt-1 truncate text-[11px] text-[#938674]">
 
             🔒 私人支出
 
@@ -1020,7 +938,7 @@ function ExpenseRow({
 
         ) : (
 
-          <p className="mt-1 truncate text-[11px] text-slate-400">
+          <p className="mt-1 truncate text-[11px] text-[#938674]">
 
             {expense.note
               ? `${expense.note} · `
@@ -1038,13 +956,13 @@ function ExpenseRow({
 
         {expense.paymentMethod ===
           "card" && (
-          <p className="mt-1 truncate text-[10px] font-semibold text-blue-600">
+          <p className="mt-1 truncate text-[10px] font-semibold text-[#8C5D00]">
             💳 {paymentCardName}
           </p>
         )}
 
 
-        <p className="mt-1 text-[10px] text-slate-400">
+        <p className="mt-1 text-[10px] text-[#938674]">
 
           {isPrivate
             ? "100% 計入我的花費"
@@ -1063,7 +981,7 @@ function ExpenseRow({
 
       <div className="shrink-0 text-right">
 
-        <p className="text-sm font-bold text-slate-900">
+        <p className="text-sm font-bold text-[#3E3A39]">
 
           {formatMoney(
             expense.amount,
@@ -1072,7 +990,7 @@ function ExpenseRow({
 
         </p>
 
-        <p className="mt-1 text-sm text-slate-300">
+        <p className="mt-1 text-sm text-[#B6A997]">
           ›
         </p>
 
@@ -1182,7 +1100,7 @@ function ExpenseDetailSheet({
         onClick={
           onClose
         }
-        className="absolute inset-0 bg-slate-950/40 backdrop-blur-[1px]"
+        className="absolute inset-0 bg-[#2B2623]/40 backdrop-blur-[1px]"
       />
 
 
@@ -1195,7 +1113,7 @@ function ExpenseDetailSheet({
 
         <div className="flex justify-center pt-3">
 
-          <div className="h-1 w-10 rounded-full bg-slate-200" />
+          <div className="h-1 w-10 rounded-full bg-[#E8DFD1]" />
 
         </div>
 
@@ -1207,11 +1125,11 @@ function ExpenseDetailSheet({
 
           <div>
 
-            <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
+            <p className="text-[10px] font-bold tracking-[0.18em] text-[#938674]">
               EXPENSE DETAIL
             </p>
 
-            <h2 className="mt-1 text-xl font-bold text-slate-900">
+            <h2 className="mt-1 text-xl font-bold text-[#3E3A39]">
               支出詳情
             </h2>
 
@@ -1223,7 +1141,7 @@ function ExpenseDetailSheet({
             onClick={
               onClose
             }
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-500"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F5F0E7] text-lg text-[#857867]"
           >
             ×
           </button>
@@ -1234,7 +1152,7 @@ function ExpenseDetailSheet({
 
         {/* MAIN */}
 
-        <div className="mt-5 rounded-3xl bg-slate-900 px-5 py-5 text-white">
+        <div className="mt-5 rounded-3xl bg-[#FFF3DC] px-5 py-5 text-[#3E3A39]">
 
 
           <div className="flex items-start justify-between gap-4">
@@ -1243,7 +1161,7 @@ function ExpenseDetailSheet({
             <div className="flex min-w-0 items-center gap-3">
 
 
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-xl">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-xl">
 
                 {category?.icon ??
                   "💴"}
@@ -1257,7 +1175,7 @@ function ExpenseDetailSheet({
                   {expense.title}
                 </p>
 
-                <p className="mt-1 text-[11px] text-slate-400">
+                <p className="mt-1 text-[11px] text-[#938674]">
 
                   {category?.name ??
                     "未分類"}
@@ -1294,7 +1212,7 @@ function ExpenseDetailSheet({
 
         {/* DETAILS */}
 
-        <div className="mt-5 overflow-hidden rounded-2xl border border-slate-100 bg-slate-50">
+        <div className="mt-5 overflow-hidden rounded-2xl border border-[#E8DFD1] bg-[#FFFCF6]">
 
 
           <DetailRow
@@ -1405,7 +1323,7 @@ function ExpenseDetailSheet({
         <button
           type="button"
           onClick={onEdit}
-          className="mt-4 w-full rounded-2xl bg-blue-600 py-3.5 text-sm font-bold text-white"
+          className="mt-4 w-full rounded-2xl bg-[#F6D27A] py-3.5 text-sm font-bold text-[#554018]"
         >
           編輯這筆支出
         </button>
@@ -1454,16 +1372,16 @@ function DetailRow({
     <div
       className={`flex items-start justify-between gap-5 px-4 py-3.5 ${
         !isLast
-          ? "border-b border-slate-200/70"
+          ? "border-b border-[#E8DFD1]"
           : ""
       }`}
     >
 
-      <span className="shrink-0 text-xs font-medium text-slate-400">
+      <span className="shrink-0 text-xs font-medium text-[#938674]">
         {label}
       </span>
 
-      <span className="text-right text-xs font-bold text-slate-700">
+      <span className="text-right text-xs font-bold text-[#554A3C]">
         {value}
       </span>
 
@@ -1503,7 +1421,7 @@ function DeleteConfirmDialog({
         onClick={
           onCancel
         }
-        className="absolute inset-0 bg-slate-950/50 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-[#2B2623]/50 backdrop-blur-[2px]"
       />
 
 
@@ -1517,12 +1435,12 @@ function DeleteConfirmDialog({
         </div>
 
 
-        <h3 className="mt-4 text-lg font-bold text-slate-900">
+        <h3 className="mt-4 text-lg font-bold text-[#3E3A39]">
           確定要刪除？
         </h3>
 
 
-        <p className="mt-2 text-sm leading-6 text-slate-500">
+        <p className="mt-2 text-sm leading-6 text-[#857867]">
 
           「{expense.title}」
 
@@ -1546,7 +1464,7 @@ function DeleteConfirmDialog({
             onClick={
               onCancel
             }
-            className="rounded-2xl bg-slate-100 py-3.5 text-sm font-bold text-slate-600"
+            className="rounded-2xl bg-[#F5F0E7] py-3.5 text-sm font-bold text-[#6F6253]"
           >
             先不要
           </button>
