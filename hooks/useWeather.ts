@@ -142,7 +142,7 @@ async function fetchWeather(
 
   if (!response.ok) {
     throw new Error(
-      "無法取得天氣資料"
+      `HTTP ${response.status}：無法取得天氣資料`
     );
   }
 
@@ -376,13 +376,31 @@ export function useWeather() {
           );
 
         setWeather(data);
-      } catch {
-        setError(
-          "暫時無法取得天氣"
-        );
-      } finally {
-        setLoaded(true);
-      }
+        } catch (err) {
+          console.error("[Weather] 取得天氣失敗：", err);
+
+          const errorName =
+            err instanceof Error ? err.name : "UnknownError";
+
+          const errorMessage =
+            err instanceof Error ? err.message : String(err);
+
+          if (
+            typeof window !== "undefined" &&
+            new URLSearchParams(window.location.search)
+              .has("debugWeather")
+          ) {
+            window.alert(
+              `天氣診斷結果\n` +
+              `錯誤類型：${errorName}\n` +
+              `錯誤內容：${errorMessage}`
+            );
+          }
+
+          setError("暫時無法取得天氣");
+        } finally {
+          setLoaded(true);
+        }
     }, []);
 
   useEffect(() => {
