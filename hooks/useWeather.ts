@@ -120,11 +120,18 @@ async function fetchWeather(
     forecast_days: "7",
   });
 
+  const startTime = performance.now();
   const controller = new AbortController();
 
   const timeoutId = setTimeout(() => {
+    console.warn(
+      `[Weather] 請求逾時：${Math.round(
+        performance.now() - startTime
+      )} ms`
+    );
+
     controller.abort();
-  }, 10000);
+  }, 20000);
 
   let response: Response;
 
