@@ -1477,13 +1477,13 @@ export default function ReceiptPage() {
 
     return (
 
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-[#FFFCF6]">
 
         <div className="mx-auto max-w-md px-5 pt-5">
 
-          <div className="h-16 animate-pulse rounded-2xl bg-slate-200" />
+          <div className="h-16 animate-pulse rounded-2xl bg-[#E8DFD1]" />
 
-          <div className="mt-5 h-72 animate-pulse rounded-[26px] bg-slate-200" />
+          <div className="mt-5 h-72 animate-pulse rounded-[26px] bg-[#E8DFD1]" />
 
         </div>
 
@@ -1501,11 +1501,11 @@ export default function ReceiptPage() {
 
   return (
 
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#FFFCF6]">
 
       {/* HEADER */}
 
-      <header className="sticky top-0 z-30 border-b border-slate-100 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-[#EEE6DA] bg-white/95 backdrop-blur">
 
         <div className="mx-auto flex max-w-md items-center justify-between px-5 py-4">
 
@@ -1513,7 +1513,7 @@ export default function ReceiptPage() {
 
             href="/"
 
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-700"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F5F0E7] text-lg text-[#655A4B]"
 
           >
 
@@ -1523,13 +1523,13 @@ export default function ReceiptPage() {
 
           <div className="text-center">
 
-            <p className="text-[10px] font-bold tracking-[0.2em] text-slate-400">
+            <p className="text-[10px] font-bold tracking-[0.2em] text-[#9A8C7B]">
 
               RECEIPT SCANNER
 
             </p>
 
-            <h1 className="text-sm font-bold text-slate-900">
+            <h1 className="text-sm font-bold text-[#3E3A39]">
 
               收據辨識
 
@@ -1545,7 +1545,7 @@ export default function ReceiptPage() {
 
               onClick={resetReceipt}
 
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm text-slate-500"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F5F0E7] text-sm text-[#8F8171]"
 
             >
 
@@ -1571,21 +1571,21 @@ export default function ReceiptPage() {
 
           <>
 
-            <section className="rounded-[26px] border border-dashed border-slate-300 bg-white px-5 py-9 text-center">
+            <section className="rounded-[26px] border border-dashed border-[#D8CDBD] bg-white px-5 py-9 text-center">
 
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-slate-100 text-3xl">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#F5F0E7] text-3xl">
 
                 📸
 
               </div>
 
-              <h3 className="mt-4 text-base font-bold text-slate-900">
+              <h3 className="mt-4 text-base font-bold text-[#3E3A39]">
 
                 掃描旅遊收據
 
               </h3>
 
-              <p className="mx-auto mt-2 max-w-[250px] text-xs leading-5 text-slate-400">
+              <p className="mx-auto mt-2 max-w-[250px] text-xs leading-5 text-[#9A8C7B]">
 
                 收據盡量攤平，避免反光並讓文字保持清楚。
 
@@ -1599,7 +1599,7 @@ export default function ReceiptPage() {
 
                   onClick={() => cameraInputRef.current?.click()}
 
-                  className="rounded-2xl bg-slate-900 px-3 py-3.5 text-xs font-bold text-white"
+                  className="rounded-2xl border border-[#E7D7BA] bg-[#FBF5E9] px-3 py-3.5 text-xs font-bold text-[#65513B] transition-colors hover:bg-[#F6ECD9] active:bg-[#F1E2C7]"
 
                 >
 
@@ -1613,7 +1613,7 @@ export default function ReceiptPage() {
 
                   onClick={() => albumInputRef.current?.click()}
 
-                  className="rounded-2xl border border-slate-200 bg-white px-3 py-3.5 text-xs font-bold text-slate-700"
+                  className="rounded-2xl border border-[#E7D7BA] bg-[#FBF5E9] px-3 py-3.5 text-xs font-bold text-[#65513B] transition-colors hover:bg-[#F6ECD9] active:bg-[#F1E2C7]"
 
                 >
 
@@ -1625,15 +1625,15 @@ export default function ReceiptPage() {
 
             </section>
 
-            <section className="mt-4 rounded-[22px] bg-blue-50 px-4 py-4">
+            <section className="mt-4 rounded-[22px] bg-[#FFF4DC] px-4 py-4">
 
-              <p className="text-xs font-bold text-blue-900">
+              <p className="text-xs font-bold text-[#8C5D00]">
 
                 Gemini Vision 測試
 
               </p>
 
-              <p className="mt-1 text-[11px] leading-5 text-blue-700">
+              <p className="mt-1 text-[11px] leading-5 text-[#8C5D00]">
 
                 照片會透過 Our Travel 的 Server API 傳給 Gemini 進行收據理解。API Key 只存在伺服器端。
 
@@ -1651,19 +1651,19 @@ export default function ReceiptPage() {
 
           <section className="mt-5">
 
-            <div className="overflow-hidden rounded-[26px] border border-slate-200 bg-white">
+            <div className="overflow-hidden rounded-[26px] border border-[#E8DFD1] bg-white">
 
-              <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+              <div className="flex items-center justify-between border-b border-[#EEE6DA] px-4 py-3">
 
                 <div className="min-w-0">
 
-                  <p className="text-[10px] font-bold tracking-[0.12em] text-slate-400">
+                  <p className="text-[10px] font-bold tracking-[0.12em] text-[#9A8C7B]">
 
                     RECEIPT
 
                   </p>
 
-                  <p className="mt-0.5 truncate text-xs font-bold text-slate-700">
+                  <p className="mt-0.5 truncate text-xs font-bold text-[#655A4B]">
 
                     {fileName || "收據照片"}
 
@@ -1679,7 +1679,7 @@ export default function ReceiptPage() {
 
                     onClick={() => albumInputRef.current?.click()}
 
-                    className="shrink-0 rounded-xl bg-slate-100 px-3 py-2 text-[10px] font-bold text-slate-600"
+                    className="shrink-0 rounded-xl bg-[#F5F0E7] px-3 py-2 text-[10px] font-bold text-[#796C5C]"
 
                   >
 
@@ -1691,7 +1691,7 @@ export default function ReceiptPage() {
 
               </div>
 
-              <div className="flex max-h-[360px] justify-center overflow-hidden bg-slate-100">
+              <div className="flex max-h-[360px] justify-center overflow-hidden bg-[#F5F0E7]">
 
                 <img
 
@@ -1725,7 +1725,7 @@ export default function ReceiptPage() {
 
               disabled={!selectedFile}
 
-              className="w-full rounded-2xl bg-slate-900 py-4 text-sm font-bold text-white disabled:bg-slate-300"
+              className="w-full rounded-2xl bg-[#F6D27A] py-4 text-sm font-bold text-[#554018] disabled:bg-[#E8DFD1]"
 
             >
 
@@ -1733,7 +1733,7 @@ export default function ReceiptPage() {
 
             </button>
 
-            <p className="mt-2 text-center text-[10px] leading-4 text-slate-400">
+            <p className="mt-2 text-center text-[10px] leading-4 text-[#9A8C7B]">
 
               照片會送到 Gemini API 辨識；API Key 只存在 Server 端。
 
@@ -1765,15 +1765,15 @@ export default function ReceiptPage() {
 
           <section className="mt-4 rounded-[24px] bg-white px-5 py-6 text-center">
 
-            <div className="mx-auto h-7 w-7 animate-spin rounded-full border-[3px] border-slate-200 border-t-slate-900" />
+            <div className="mx-auto h-7 w-7 animate-spin rounded-full border-[3px] border-[#E8DFD1] border-t-[#C99842]" />
 
-            <p className="mt-4 text-sm font-bold text-slate-800">
+            <p className="mt-4 text-sm font-bold text-[#554A3D]">
 
               Gemini 正在讀收據...
 
             </p>
 
-            <p className="mt-1 text-[11px] text-slate-400">
+            <p className="mt-1 text-[11px] text-[#9A8C7B]">
 
               {scanMessage || "正在辨識店家、日期、商品與金額..."}
 
@@ -1797,13 +1797,13 @@ export default function ReceiptPage() {
 
                 <div>
 
-                  <p className="text-[10px] font-bold tracking-[0.16em] text-emerald-500">
+                  <p className="text-[10px] font-bold tracking-[0.16em] text-[#8A814C]">
 
                     SCAN COMPLETE
 
                   </p>
 
-                  <h2 className="mt-1 text-base font-bold text-slate-900">
+                  <h2 className="mt-1 text-base font-bold text-[#3E3A39]">
 
                     辨識完成 ✓
 
@@ -1821,9 +1821,9 @@ export default function ReceiptPage() {
 
                     editing
 
-                      ? "bg-slate-900 text-white"
+                      ? "bg-[#F6D27A] text-[#554018]"
 
-                      : "bg-white text-slate-600"
+                      : "bg-white text-[#796C5C]"
 
                   }`}
 
@@ -1837,13 +1837,13 @@ export default function ReceiptPage() {
 
               {/* MERCHANT */}
 
-              <div className="rounded-[26px] bg-white p-4 shadow-sm shadow-slate-200/50">
+              <div className="rounded-[26px] bg-white p-4 shadow-sm shadow-[#E8DFD1]/50">
 
                 <div className="flex items-start justify-between gap-3">
 
                   <div className="min-w-0 flex-1">
 
-                    <p className="text-[10px] font-bold text-slate-400">
+                    <p className="text-[10px] font-bold text-[#9A8C7B]">
 
                       店家
 
@@ -1863,7 +1863,7 @@ export default function ReceiptPage() {
 
                         }
 
-                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-base font-bold text-slate-900 outline-none"
+                        className="mt-1 w-full rounded-xl border border-[#E8DFD1] px-3 py-2 text-base font-bold text-[#3E3A39] outline-none"
 
                       />
 
@@ -1871,13 +1871,13 @@ export default function ReceiptPage() {
 
                       <>
 
-                        <h3 className="mt-1 text-lg font-black text-slate-900">
+                        <h3 className="mt-1 text-lg font-black text-[#3E3A39]">
 
                           {result.merchant}
 
                         </h3>
 
-                        <p className="mt-1 text-xs font-medium text-slate-400">
+                        <p className="mt-1 text-xs font-medium text-[#9A8C7B]">
 
                           {getMerchantDisplayName(result.merchant)}
 
@@ -1889,15 +1889,15 @@ export default function ReceiptPage() {
 
                   </div>
 
-                  <div className="rounded-2xl bg-emerald-50 px-3 py-2 text-center">
+                  <div className="rounded-2xl bg-[#F3F0DF] px-3 py-2 text-center">
 
-                    <p className="text-[9px] font-bold text-emerald-600">
+                    <p className="text-[9px] font-bold text-[#7A713F]">
 
                       分類
 
                     </p>
 
-                    <p className="mt-0.5 text-xs font-bold text-emerald-800">
+                    <p className="mt-0.5 text-xs font-bold text-[#655B30]">
 
                       🍴 {result.suggestedCategory ?? "未分類"}
 
@@ -1907,13 +1907,13 @@ export default function ReceiptPage() {
 
                 </div>
 
-                <div className="mt-4 flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-3">
+                <div className="mt-4 flex items-center justify-between rounded-2xl bg-[#FFFCF6] px-3 py-3">
 
                   <div>
 
-                    <p className="text-[9px] font-bold text-slate-400">幣別</p>
+                    <p className="text-[9px] font-bold text-[#9A8C7B]">幣別</p>
 
-                    <p className="mt-1 text-xs font-bold text-slate-800">
+                    <p className="mt-1 text-xs font-bold text-[#554A3D]">
 
                       {result.currency === "TWD" ? "🇹🇼 TWD 新台幣" : "🇯🇵 JPY 日圓"}
 
@@ -1927,7 +1927,7 @@ export default function ReceiptPage() {
 
                     onChange={(event) => updateCurrency(event.target.value as "JPY" | "TWD")}
 
-                    className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 outline-none"
+                    className="rounded-xl border border-[#E8DFD1] bg-white px-3 py-2 text-xs font-bold text-[#655A4B] outline-none"
 
                     aria-label="收據幣別"
 
@@ -1943,9 +1943,9 @@ export default function ReceiptPage() {
 
                 <div className="mt-4 grid grid-cols-2 gap-3">
 
-                  <div className="rounded-2xl bg-slate-50 px-3 py-3">
+                  <div className="rounded-2xl bg-[#FFFCF6] px-3 py-3">
 
-                    <p className="text-[9px] font-bold text-slate-400">
+                    <p className="text-[9px] font-bold text-[#9A8C7B]">
 
                       日期
 
@@ -1965,13 +1965,13 @@ export default function ReceiptPage() {
 
                         }
 
-                        className="mt-1 w-full bg-transparent text-xs font-bold text-slate-800 outline-none"
+                        className="mt-1 w-full bg-transparent text-xs font-bold text-[#554A3D] outline-none"
 
                       />
 
                     ) : (
 
-                      <p className="mt-1 text-xs font-bold text-slate-800">
+                      <p className="mt-1 text-xs font-bold text-[#554A3D]">
 
                         {result.date ?? "—"}
 
@@ -1981,9 +1981,9 @@ export default function ReceiptPage() {
 
                   </div>
 
-                  <div className="rounded-2xl bg-slate-50 px-3 py-3">
+                  <div className="rounded-2xl bg-[#FFFCF6] px-3 py-3">
 
-                    <p className="text-[9px] font-bold text-slate-400">
+                    <p className="text-[9px] font-bold text-[#9A8C7B]">
 
                       時間
 
@@ -2003,13 +2003,13 @@ export default function ReceiptPage() {
 
                         }
 
-                        className="mt-1 w-full bg-transparent text-xs font-bold text-slate-800 outline-none"
+                        className="mt-1 w-full bg-transparent text-xs font-bold text-[#554A3D] outline-none"
 
                       />
 
                     ) : (
 
-                      <p className="mt-1 text-xs font-bold text-slate-800">
+                      <p className="mt-1 text-xs font-bold text-[#554A3D]">
 
                         {result.time ?? "—"}
 
@@ -2029,81 +2029,55 @@ export default function ReceiptPage() {
 
             {visibility === "shared" && (
 
-            <section className="mt-4 rounded-[26px] bg-white p-4 shadow-sm shadow-slate-200/50">
+            <section className="mt-4 rounded-[26px] bg-white p-4 shadow-sm shadow-[#E8DFD1]/50">
 
-              <p className="text-[10px] font-bold tracking-[0.14em] text-slate-400">
+              <p className="text-[10px] font-bold tracking-[0.14em] text-[#9A8C7B]">
 
                 PAID BY
 
               </p>
 
-              <h3 className="mt-1 text-sm font-bold text-slate-900">
+              <h3 className="mt-1 text-sm font-bold text-[#3E3A39]">
 
                 誰先結帳？
 
               </h3>
 
-              <p className="mt-1 text-[10px] leading-4 text-slate-400">
+              <p className="mt-1 text-[10px] leading-4 text-[#9A8C7B]">
 
                 預設由本人付款，需要時可以改成其他旅伴。
 
               </p>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-
-                {members.map((member) => {
-
-                  const selected = paidBy === member.id;
-
-                  return (
-
-                    <button
-
-                      key={member.id}
-
-                      type="button"
-
-                      onClick={() => setPaidBy(member.id)}
-
-                      className={`rounded-full px-4 py-2.5 text-xs font-bold transition ${
-
-                        selected
-
-                          ? "bg-slate-900 text-white"
-
-                          : "bg-slate-100 text-slate-600"
-
-                      }`}
-
-                    >
-
-                      {member.isCurrentUser
-
-                        ? `${member.name}（我）`
-
-                        : member.name}
-
-                    </button>
-
-                  );
-
-                })}
-
+              <div className="relative mt-3">
+                <select
+                  aria-label="選擇付款人"
+                  value={paidBy}
+                  onChange={(event) => setPaidBy(event.target.value)}
+                  className="w-full appearance-none rounded-2xl border border-[#E8DFD1] bg-white px-4 py-3 pr-10 text-sm font-bold text-[#554A3D] outline-none focus:border-[#D8B46B] focus:ring-2 focus:ring-[#F6D27A]/30"
+                >
+                  <option value="" disabled>請選擇付款人</option>
+                  {members.map((member) => (
+                    <option key={member.id} value={member.id}>
+                      {member.name}{member.isCurrentUser ? "（我）" : ""}
+                    </option>
+                  ))}
+                </select>
+                <span aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#9A8C7B]">⌄</span>
               </div>
-
             </section>
 
             )}
 
             {/* VISIBILITY */}
 
-            <section className="mt-4 rounded-[26px] bg-white p-4 shadow-sm shadow-slate-200/50">
+            <section className="mt-4 rounded-[26px] bg-white p-4 shadow-sm shadow-[#E8DFD1]/50">
 
-              <p className="text-[10px] font-bold tracking-[0.14em] text-slate-400">VISIBILITY</p>
+              <p className="text-[10px] font-bold tracking-[0.14em] text-[#9A8C7B]">VISIBILITY</p>
 
-              <h3 className="mt-1 text-sm font-bold text-slate-900">這張收據要一起分帳嗎？</h3>
+              <h3 className="mt-1 text-sm font-bold text-[#3E3A39]">這張收據要一起分帳嗎？</h3>
 
-              <p className="mt-1 text-[10px] leading-4 text-slate-400">共同收據會進入分帳；私人收據只有自己可見。</p>
+              <p className="mt-1 text-[10px] leading-4 text-[#9A8C7B]">共同收據會進入分帳；私人收據只有自己可見。</p>
 
               <div className="mt-3 grid grid-cols-2 gap-2">
 
@@ -2117,9 +2091,9 @@ export default function ReceiptPage() {
 
                     visibility === "shared"
 
-                      ? "border-slate-900 bg-slate-900 text-white"
+                      ? "border-[#D8B46B] bg-[#F6D27A] text-[#554018]"
 
-                      : "border-slate-200 bg-white text-slate-500"
+                      : "border-[#E8DFD1] bg-white text-[#8F8171]"
 
                   }`}
 
@@ -2151,9 +2125,9 @@ export default function ReceiptPage() {
 
                     visibility === "private"
 
-                      ? "border-slate-900 bg-slate-900 text-white"
+                      ? "border-[#D8B46B] bg-[#F6D27A] text-[#554018]"
 
-                      : "border-slate-200 bg-white text-slate-500"
+                      : "border-[#E8DFD1] bg-white text-[#8F8171]"
 
                   }`}
 
@@ -2179,19 +2153,19 @@ export default function ReceiptPage() {
 
             {/* ITEMS */}
 
-              <div className="my-5 border-t border-slate-100" />
+              <div className="my-5 border-t border-[#EEE6DA]" />
 
               <div className="flex items-center justify-between">
 
                 <div>
 
-                  <p className="text-[10px] font-bold tracking-[0.14em] text-slate-400">
+                  <p className="text-[10px] font-bold tracking-[0.14em] text-[#9A8C7B]">
 
                     ITEMS
 
                   </p>
 
-                  <h3 className="mt-1 text-sm font-bold text-slate-900">
+                  <h3 className="mt-1 text-sm font-bold text-[#3E3A39]">
 
                     {visibility === "private"
 
@@ -2203,7 +2177,7 @@ export default function ReceiptPage() {
 
                 </div>
 
-                <span className="text-[11px] font-bold text-slate-400">
+                <span className="text-[11px] font-bold text-[#9A8C7B]">
 
                   {result.items.length} 項
 
@@ -2225,7 +2199,7 @@ export default function ReceiptPage() {
 
                   ) : (
 
-                    <p className="text-[10px] font-bold text-emerald-600">
+                    <p className="text-[10px] font-bold text-[#7A713F]">
 
                       ✓ 全部分配完成
 
@@ -2239,7 +2213,7 @@ export default function ReceiptPage() {
 
                     onClick={setAllShared}
 
-                    className="shrink-0 rounded-full bg-indigo-50 px-3 py-1.5 text-[10px] font-bold text-indigo-700"
+                    className="shrink-0 rounded-full bg-[#FFF4DC] px-3 py-1.5 text-[10px] font-bold text-[#8C5D00]"
 
                   >
 
@@ -2287,13 +2261,13 @@ export default function ReceiptPage() {
 
                             }
 
-                            className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-800 outline-none"
+                            className="w-full rounded-xl border border-[#E8DFD1] px-3 py-2 text-sm font-bold text-[#554A3D] outline-none"
 
                           />
 
                         ) : (
 
-                          <p className="text-sm font-bold text-slate-800">
+                          <p className="text-sm font-bold text-[#554A3D]">
 
                             {item.chineseName}
 
@@ -2301,7 +2275,7 @@ export default function ReceiptPage() {
 
                         )}
 
-                        <p className="mt-1 text-[10px] text-slate-400">
+                        <p className="mt-1 text-[10px] text-[#9A8C7B]">
 
                           {item.originalName}
 
@@ -2319,7 +2293,7 @@ export default function ReceiptPage() {
 
                               item.hasAssigned
 
-                                ? "bg-slate-100 text-slate-600"
+                                ? "bg-[#F5F0E7] text-[#796C5C]"
 
                                 : "bg-amber-50 text-amber-700"
 
@@ -2347,9 +2321,9 @@ export default function ReceiptPage() {
 
                       {editing ? (
 
-                        <div className="flex shrink-0 items-center rounded-xl border border-slate-200 px-2">
+                        <div className="flex shrink-0 items-center rounded-xl border border-[#E8DFD1] px-2">
 
-                          <span className="text-xs font-bold text-slate-400">
+                          <span className="text-xs font-bold text-[#9A8C7B]">
 
                             {getCurrencySymbol(result.currency)}
 
@@ -2375,7 +2349,7 @@ export default function ReceiptPage() {
 
                             }
 
-                            className="w-16 bg-transparent py-2 text-right text-sm font-bold text-slate-800 outline-none"
+                            className="w-16 bg-transparent py-2 text-right text-sm font-bold text-[#554A3D] outline-none"
 
                           />
 
@@ -2385,7 +2359,7 @@ export default function ReceiptPage() {
                         <div className="shrink-0 text-right">
                           {item.discountAmount > 0 && (
                             <>
-                              <p className="text-[10px] font-bold text-slate-400 line-through">
+                              <p className="text-[10px] font-bold text-[#9A8C7B] line-through">
                                 {formatCurrency(item.originalAmount, result.currency)}
                               </p>
                               <p className="text-[9px] font-bold text-rose-500">
@@ -2393,7 +2367,7 @@ export default function ReceiptPage() {
                               </p>
                             </>
                           )}
-                          <p className="mt-0.5 text-sm font-black text-slate-900">
+                          <p className="mt-0.5 text-sm font-black text-[#3E3A39]">
                             {formatCurrency(item.amount, result.currency)}
                           </p>
                         </div>
@@ -2413,13 +2387,13 @@ export default function ReceiptPage() {
 
             {visibility === "shared" && (
 
-            <section className="mt-4 rounded-[26px] bg-slate-900 p-5 text-white">
+            <section className="mt-4 rounded-[26px] border border-[#D8B46B]/50 bg-[#F3E5CA] p-5 text-[#554A3D]">
 
               <div className="flex items-start justify-between gap-4">
 
                 <div>
 
-                  <p className="text-[10px] font-bold tracking-[0.14em] text-blue-300">
+                  <p className="text-[10px] font-bold tracking-[0.14em] text-[#8C5D00]">
 
                     SETTLEMENT
 
@@ -2435,7 +2409,7 @@ export default function ReceiptPage() {
 
                 <div className="text-right">
 
-                  <p className="text-[9px] text-slate-400">
+                  <p className="text-[9px] text-[#9A8C7B]">
 
                     付款人
 
@@ -2453,15 +2427,15 @@ export default function ReceiptPage() {
 
               {!allItemsAssigned ? (
 
-                <div className="mt-4 rounded-2xl bg-amber-400/10 px-4 py-4">
+                <div className="mt-4 rounded-2xl bg-white/60 px-4 py-4">
 
-                  <p className="text-xs font-bold text-amber-200">
+                  <p className="text-xs font-bold text-[#8C5D00]">
 
                     還有 {unassignedCount} 個商品尚未分配
 
                   </p>
 
-                  <p className="mt-1 text-[10px] leading-4 text-slate-400">
+                  <p className="mt-1 text-[10px] leading-4 text-[#9A8C7B]">
 
                     全部商品確認後，這裡才會顯示最終的收付款結果。
 
@@ -2479,13 +2453,13 @@ export default function ReceiptPage() {
 
                       key={`${transfer.from}-${transfer.to}-${index}`}
 
-                      className="flex items-center justify-between rounded-2xl bg-white/10 px-4 py-3"
+                      className="flex items-center justify-between rounded-2xl bg-white/75 px-4 py-3"
 
                     >
 
                       <div className="min-w-0">
 
-                        <p className="text-xs font-bold text-white">
+                        <p className="text-xs font-bold text-[#554018]">
 
                           {getMemberName(
 
@@ -2495,7 +2469,7 @@ export default function ReceiptPage() {
 
                           )}
 
-                          <span className="mx-2 text-slate-500">
+                          <span className="mx-2 text-[#8F8171]">
 
                             →
 
@@ -2511,7 +2485,7 @@ export default function ReceiptPage() {
 
                         </p>
 
-                        <p className="mt-1 text-[9px] text-slate-400">
+                        <p className="mt-1 text-[9px] text-[#9A8C7B]">
 
                           應付
 
@@ -2533,7 +2507,7 @@ export default function ReceiptPage() {
 
               ) : (
 
-                <div className="mt-4 rounded-2xl bg-white/10 px-4 py-4 text-center">
+                <div className="mt-4 rounded-2xl bg-white/65 px-4 py-4 text-center">
 
                   <p className="text-xs font-bold">
 
@@ -2541,7 +2515,7 @@ export default function ReceiptPage() {
 
                   </p>
 
-                  <p className="mt-1 text-[10px] text-slate-400">
+                  <p className="mt-1 text-[10px] text-[#9A8C7B]">
 
                     目前所有負擔都由付款人自己承擔
 
@@ -2553,11 +2527,11 @@ export default function ReceiptPage() {
 
               {allItemsAssigned && (
 
-                <div className="mt-4 grid grid-cols-2 gap-2 border-t border-white/10 pt-4">
+                <div className="mt-4 grid grid-cols-2 gap-2 border-t border-[#D8B46B]/35 pt-4">
 
                   <div>
 
-                    <p className="text-[9px] text-slate-400">
+                    <p className="text-[9px] text-[#9A8C7B]">
 
                       付款人自己負擔
 
@@ -2573,13 +2547,13 @@ export default function ReceiptPage() {
 
                   <div className="text-right">
 
-                    <p className="text-[9px] text-slate-400">
+                    <p className="text-[9px] text-[#9A8C7B]">
 
                       付款人應收
 
                     </p>
 
-                    <p className="mt-1 text-sm font-black text-emerald-300">
+                    <p className="mt-1 text-sm font-black text-[#8C5D00]">
 
                       {formatCurrency(payerReceivable, result.currency)}
 
@@ -2597,9 +2571,9 @@ export default function ReceiptPage() {
 
             {visibility === "private" && (
 
-              <section className="mt-4 rounded-[26px] bg-slate-900 p-5 text-white">
+              <section className="mt-4 rounded-[26px] border border-[#D8B46B]/50 bg-[#F3E5CA] p-5 text-[#554A3D]">
 
-                <p className="text-[10px] font-bold tracking-[0.14em] text-blue-300">MY SPENDING</p>
+                <p className="text-[10px] font-bold tracking-[0.14em] text-[#8C5D00]">MY SPENDING</p>
 
                 <div className="mt-2 flex items-end justify-between gap-4">
 
@@ -2607,7 +2581,7 @@ export default function ReceiptPage() {
 
                     <h3 className="text-base font-bold">本次私人支出</h3>
 
-                    <p className="mt-1 text-[10px] leading-4 text-slate-400">會計入我的旅行支出，不參與旅伴結算。</p>
+                    <p className="mt-1 text-[10px] leading-4 text-[#9A8C7B]">會計入我的旅行支出，不參與旅伴結算。</p>
 
                   </div>
 
@@ -2658,7 +2632,7 @@ export default function ReceiptPage() {
 
               {typeof result.tax === "number" && result.tax > 0 && (
 
-                <p className="mt-3 text-center text-[10px] text-slate-400">
+                <p className="mt-3 text-center text-[10px] text-[#9A8C7B]">
 
                   收據稅額 {formatCurrency(result.tax, result.currency)}
 
@@ -2696,7 +2670,7 @@ export default function ReceiptPage() {
 
               }
 
-              className="w-full rounded-2xl bg-slate-900 py-4 text-sm font-bold text-white disabled:bg-slate-300"
+              className="w-full rounded-2xl bg-[#F6D27A] py-4 text-sm font-bold text-[#554018] disabled:bg-[#E8DFD1]"
 
               >
 
@@ -2716,7 +2690,7 @@ export default function ReceiptPage() {
 
               </button>
 
-              <p className="mt-2 text-center text-[10px] leading-4 text-slate-400">
+              <p className="mt-2 text-center text-[10px] leading-4 text-[#9A8C7B]">
 
                 {visibility === "private"
 
@@ -2742,7 +2716,7 @@ export default function ReceiptPage() {
 
       {visibility === "shared" && assigningItem && assigningItemId && (
 
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/40 px-3 sm:items-center">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#3E3A39]/40 px-3 sm:items-center">
 
           <button
 
@@ -2758,15 +2732,15 @@ export default function ReceiptPage() {
 
           <div className="relative z-10 w-full max-w-md rounded-t-[30px] bg-white p-5 pb-7 shadow-2xl sm:rounded-[30px]">
 
-            <div className="mx-auto mb-5 h-1.5 w-12 rounded-full bg-slate-200" />
+            <div className="mx-auto mb-5 h-1.5 w-12 rounded-full bg-[#E8DFD1]" />
 
-            <p className="text-[10px] font-bold tracking-[0.15em] text-slate-400">
+            <p className="text-[10px] font-bold tracking-[0.15em] text-[#9A8C7B]">
 
               ASSIGN ITEM
 
             </p>
 
-            <h3 className="mt-1 text-lg font-black text-slate-900">
+            <h3 className="mt-1 text-lg font-black text-[#3E3A39]">
 
               這項是誰的？
 
@@ -2774,19 +2748,19 @@ export default function ReceiptPage() {
 
             {/* ITEM */}
 
-            <div className="mt-3 rounded-2xl bg-slate-50 px-4 py-3">
+            <div className="mt-3 rounded-2xl bg-[#FFFCF6] px-4 py-3">
 
               <div className="flex items-center justify-between gap-3">
 
                 <div className="min-w-0">
 
-                  <p className="text-sm font-bold text-slate-800">
+                  <p className="text-sm font-bold text-[#554A3D]">
 
                     {assigningItem.chineseName}
 
                   </p>
 
-                  <p className="mt-1 truncate text-[10px] text-slate-400">
+                  <p className="mt-1 truncate text-[10px] text-[#9A8C7B]">
 
                     {assigningItem.originalName}
 
@@ -2794,7 +2768,7 @@ export default function ReceiptPage() {
 
                 </div>
 
-                <p className="shrink-0 text-base font-black text-slate-900">
+                <p className="shrink-0 text-base font-black text-[#3E3A39]">
 
                   {formatCurrency(assigningItem.amount, result?.currency ?? "JPY")}
                   
@@ -2816,7 +2790,7 @@ export default function ReceiptPage() {
 
                 onClick={selectAllMembers}
 
-                className="w-full rounded-2xl bg-indigo-50 px-3 py-3 text-[11px] font-bold text-indigo-700 active:scale-[0.99]"
+                className="w-full rounded-2xl bg-[#FFF4DC] px-3 py-3 text-[11px] font-bold text-[#8C5D00] active:scale-[0.99]"
 
             >
 
@@ -2830,13 +2804,13 @@ export default function ReceiptPage() {
 
             <div className="mt-5">
 
-              <p className="text-xs font-bold text-slate-700">
+              <p className="text-xs font-bold text-[#655A4B]">
 
                 負擔這項的人
 
               </p>
 
-              <p className="mt-1 text-[10px] text-slate-400">
+              <p className="mt-1 text-[10px] text-[#9A8C7B]">
 
                 選 1 人＝個人用品；選多人＝這些人平均分攤。
 
@@ -2844,69 +2818,27 @@ export default function ReceiptPage() {
 
             </div>
 
-            <div className="mt-3 space-y-2">
-
-              {members.map((member) => {
-
-                const selected = draftMemberIds.includes(member.id);
-
-                return (
-
-                  <button
-
-                    key={member.id}
-
-                    type="button"
-
-                    onClick={() => toggleDraftMember(member.id)}
-
-                    className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3.5 transition ${
-
-                      selected
-
-                        ? "border-slate-900 bg-slate-900 text-white"
-
-                        : "border-slate-200 bg-white text-slate-700"
-
-                    }`}
-
-                  >
-
-                    <span className="text-xs font-bold">
-
-                      {member.isCurrentUser
-
-                        ? `${member.name}（我）`
-
-                        : member.name}
-
-                    </span>
-
-                    <span
-
-                      className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-black ${
-
-                        selected
-
-                          ? "bg-white text-slate-900"
-
-                          : "border border-slate-300 bg-white"
-
-                      }`}
-
-                    >
-
-                      {selected ? "✓" : ""}
-
-                    </span>
-
-                  </button>
-
-                );
-
-              })}
-
-            </div>
+             <div className="mt-3 flex flex-wrap gap-2">
+               {members.map((member) => {
+                 const selected = draftMemberIds.includes(member.id);
+                 return (
+                   <button
+                     key={member.id}
+                     type="button"
+                     aria-pressed={selected}
+                     onClick={() => toggleDraftMember(member.id)}
+                     className={`rounded-full px-4 py-2.5 text-xs font-bold transition-colors ${
+                       selected
+                         ? "bg-[#F6D27A] text-[#554018]"
+                         : "bg-[#F5F0E7] text-[#9A8C7B]"
+                     }`}
+                   >
+                     {member.name}{member.isCurrentUser ? "（我）" : ""}
+                     {selected ? " ✓" : ""}
+                   </button>
+                 );
+               })}
+             </div>
 
             {/* SAVE */}
 
@@ -2918,7 +2850,7 @@ export default function ReceiptPage() {
 
               disabled={draftMemberIds.length === 0}
 
-              className="mt-5 w-full rounded-2xl bg-slate-900 py-4 text-sm font-bold text-white disabled:bg-slate-300"
+              className="mt-5 w-full rounded-2xl bg-[#F6D27A] py-4 text-sm font-bold text-[#554018] disabled:bg-[#E8DFD1]"
 
             >
 

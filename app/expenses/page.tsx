@@ -450,25 +450,18 @@ useEffect(() => {
     );
 
 
-  const todayJPY =
-    currentUser
-      ? calculateMyShare(
-          todayExpenses,
-          currentUser.id,
-          "JPY"
-        )
-      : 0;
+  // 總覽顯示「我的分攤花費」，不等同於所有人的支出總額。
+  const totalJPY = currentUser ? calculateMyShare(expenses, currentUser.id, "JPY") : 0;
+  const totalTWD = currentUser ? calculateMyShare(expenses, currentUser.id, "TWD") : 0;
+  const recentExpenses = [...expenses].sort((a, b) =>
+    `${b.date} ${b.time ?? ""}`.localeCompare(`${a.date} ${a.time ?? ""}`)
+  ).slice(0, 8);
 
-
-  const todayTWD =
-    currentUser
-      ? calculateMyShare(
-          todayExpenses,
-          currentUser.id,
-          "TWD"
-        )
-      : 0;
-
+  function openNewExpense() {
+    setEditingExpense(null);
+    setExpenseInitialData(undefined);
+    setAddExpenseOpen(true);
+  }
 
   // ========================================
   // DELETE
@@ -507,168 +500,81 @@ useEffect(() => {
     <main className="min-h-screen bg-[#FFFCF6]">
 
 
-      {/* HEADER */}
-
+      {/* 簡潔頁首：不重複首頁的旅行插畫 */}
       <header className="sticky top-0 z-30 border-b border-[#E8DFD1] bg-[#FFFCF6]/95 backdrop-blur">
-
-
         <div className="mx-auto flex max-w-md items-center justify-between px-5 py-4">
-
-
-          <Link
-            href="/"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F5F0E7] text-lg"
-          >
-            ‹
-          </Link>
-
-
+          <Link href="/" aria-label="返回首頁" className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F5F0E7] text-xl text-[#554A3D]">‹</Link>
           <div className="text-center">
-
-            <p className="text-[10px] font-bold tracking-[0.2em] text-[#938674]">
-              EXPENSE JOURNAL
-            </p>
-
-            <h1 className="text-sm font-bold text-[#3E3A39]">
-              共同記帳
-            </h1>
-
+            <p className="text-[10px] font-bold tracking-[0.18em] text-[#A28D70]">TRAVEL JOURNAL</p>
+            <h1 className="text-lg font-bold text-[#3E3A39]">共同記帳</h1>
           </div>
+          <span aria-hidden="true" className="h-10 w-10 shrink-0" />
+        </div>
+      </header>
 
+      <div className="mx-auto max-w-md px-5 pb-28 pt-5">
+        {/* 收據辨識：保留原本 /receipt 頁面的 Gemini 與儲存流程 */}
+        <Link href="/receipt" className="flex items-center gap-4 rounded-[24px] border border-[#E8DFD1] bg-white px-4 py-4 shadow-[0_3px_12px_rgba(62,58,57,0.05)] transition active:bg-[#FFF8E9]">
+          <span aria-hidden="true" className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#FFF2D9] text-3xl">🧾</span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-base font-bold text-[#3E3A39]">收據辨識</span>
+            <span className="mt-1 block text-xs text-[#938674]">拍照快速加入旅費</span>
+          </span>
+          <span aria-hidden="true" className="text-2xl text-[#A9957A]">›</span>
+        </Link>
 
-          <button
-            type="button"
-            onClick={() => {
-              setExpenseInitialData(
-                undefined
-              );
-
-              setAddExpenseOpen(
-                true
-              );
-            }}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F6D27A] text-xl font-light text-[#554018]"
-          >
-            +
+        {/* 快捷功能 */}
+        <div className="mt-3 grid grid-cols-2 gap-2.5">
+          <button type="button" onClick={openNewExpense} className="flex min-h-[46px] items-center justify-center rounded-[16px] border border-[#E8DFD1] bg-[#FFF8EA] px-3 py-2 text-sm font-bold text-[#554A3D] shadow-[0_2px_8px_rgba(62,58,57,0.03)]">
+            新增支出
           </button>
-
+          <Link href="/expenses/settlement" className="flex min-h-[46px] items-center justify-center rounded-[16px] border border-[#E8DFD1] bg-[#FFF8EA] px-3 py-2 text-sm font-bold text-[#554A3D] shadow-[0_2px_8px_rgba(62,58,57,0.03)]">
+            分帳結算
+          </Link>
 
         </div>
 
-      </header>
-
-
-      {/* CONTENT */}
-
-      <div className="mx-auto max-w-md px-5 pb-28 pt-5">
-
-
-        {/* TODAY SPENDING — 京都奶油色手帳卡片 */}
-        <section className="rounded-[24px] border border-[#E5BD62] bg-[#FFF8E9] px-5 py-4 shadow-[0_5px_18px_rgba(140,93,0,0.06)]">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-[10px] font-bold tracking-[0.16em] text-[#8C5D00]">TODAY'S SPENDING</p>
-            <span className="text-xs font-medium text-[#8A7964]">{formatDisplayDate(today)}</span>
+        {/* 旅費總覽：使用既有整數分攤函式，幣別分開 */}
+        <section className="mt-7">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-base font-bold text-[#3E3A39]">💰 旅費總覽</h2>
+            <span className="text-[11px] text-[#938674]">我的累計分攤 · {expenses.length} 筆</span>
           </div>
-          <p className="mt-3 text-xs font-medium text-[#8A7964]">我的今日花費</p>
-          <div className="mt-1 flex items-end justify-between gap-3">
-            <p className="min-w-0 break-all text-[30px] font-bold leading-tight tracking-tight text-[#3E3A39]">
-              {formatMoney(todayJPY, "JPY")}
-            </p>
-            <span className="shrink-0 rounded-full bg-[#F6D27A] px-3 py-1 text-[11px] font-bold text-[#554018]">
-              {todayExpenses.length} 筆支出
-            </span>
-          </div>
-          <div className="mt-3 flex items-center justify-between gap-3 border-t border-[#E6D4B4] pt-3">
-            <span className="text-xs text-[#8A7964]">台幣支出</span>
-            <span className="text-sm font-bold text-[#3E3A39]">{formatMoney(todayTWD, "TWD")}</span>
+          <div className="grid grid-cols-2 gap-2.5">
+            <div className="min-w-0 rounded-[22px] bg-[#FFF2DD] px-4 py-5">
+              <p className="text-xs font-medium text-[#8A7964]">日圓 JPY</p>
+              <p className="mt-3 break-all text-[23px] font-bold tracking-tight text-[#493A2B]">{formatMoney(totalJPY, "JPY")}</p>
+            </div>
+            <div className="min-w-0 rounded-[22px] bg-[#FFF2DD] px-4 py-5">
+              <p className="text-xs font-medium text-[#8A7964]">台幣 TWD</p>
+              <p className="mt-3 break-all text-[23px] font-bold tracking-tight text-[#493A2B]">{formatMoney(totalTWD, "TWD")}</p>
+            </div>
           </div>
         </section>
 
-        {/* SETTLEMENT */}
-        <Link
-          href="/expenses/settlement"
-          className="mt-3 flex items-center justify-between rounded-2xl border border-[#E8DFD1] bg-white px-4 py-3 shadow-[0_2px_12px_rgba(62,58,57,0.04)] transition active:bg-[#FFF8E9]"
-        >
-          <div className="flex min-w-0 items-center gap-3">
-            <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#FFF1D0] text-xl">👥</span>
-            <div className="min-w-0">
-              <p className="text-sm font-bold text-[#3E3A39]">分帳結算</p>
-              <p className="mt-1 text-[11px] text-[#8A7964]">查看旅伴之間的結算結果</p>
-            </div>
+        {/* 最近支出 */}
+        <section className="mt-7">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="text-base font-bold text-[#3E3A39]">📋 最近支出</h2>
+            <span className="text-xs text-[#938674]">最近 {recentExpenses.length} 筆</span>
           </div>
-          <span aria-hidden="true" className="ml-2 text-xl text-[#A18A68]">›</span>
-        </Link>
-
-        {/* TODAY LIST HEADING */}
-        <div className="mb-3 mt-6 flex items-center justify-between gap-3">
-          <h2 className="text-base font-bold text-[#3E3A39]">今日支出</h2>
-          <p className="text-xs text-[#8A7964]">{formatDisplayDate(today)} · {todayExpenses.length} 筆</p>
-        </div>
-
-        {/* EXPENSE LIST */}
-
-        {todayExpenses.length >
-        0 ? (
-
-          <section className="space-y-3">
-
-
-            {todayExpenses.map(
-              (
-                expense
-              ) => (
-
-                <ExpenseRow
-                  key={
-                    expense.id
-                  }
-                  expense={
-                    expense
-                  }
-                  members={
-                    members
-                  }
-                  categories={
-                    categories
-                  }
-                  cards={
-                    travelCards
-                  }
-                  onClick={() =>
-                    setSelectedExpense(
-                      expense
-                    )
-                  }
-                />
-
-              )
-            )}
-
-
-          </section>
-
-        ) : (
-
-          <section className="rounded-3xl border border-dashed border-[#E8DFD1] bg-white px-5 py-10 text-center">
-
-            <div className="text-3xl">
-              💴
+          {recentExpenses.length ? (
+            <div className="overflow-hidden rounded-[24px] border border-[#E8DFD1] bg-white px-3 shadow-[0_2px_12px_rgba(62,58,57,0.04)]">
+              {recentExpenses.map((expense, index) => (
+                <div key={expense.id} className={index ? "border-t border-[#F0E9DE]" : ""}>
+                  <ExpenseRow expense={expense} members={members} categories={categories} cards={travelCards} onClick={() => setSelectedExpense(expense)} compact />
+                </div>
+              ))}
             </div>
-
-            <p className="mt-3 text-sm font-bold text-[#554A3C]">
-              今天還守得住錢包 😎
-            </p>
-
-            <p className="mt-1 text-xs text-[#938674]">
-              點右上角 ＋ 花下去！
-            </p>
-
-          </section>
-
-        )}
-
+          ) : (
+            <div className="rounded-[24px] border border-dashed border-[#E8DFD1] bg-white px-5 py-9 text-center">
+              <p className="text-3xl">🧾</p>
+              <p className="mt-3 text-sm font-bold text-[#554A3C]">還沒有支出紀錄</p>
+              <p className="mt-1 text-xs text-[#938674]">新增第一筆支出，開始記錄旅程吧</p>
+            </div>
+          )}
+        </section>
       </div>
-
 
       {/* =================================
           ADD EXPENSE
@@ -814,6 +720,7 @@ function ExpenseRow({
   categories,
   cards,
   onClick,
+  compact = false,
 }: {
   expense: Expense;
 
@@ -827,6 +734,7 @@ function ExpenseRow({
     MyTravelCard[];
 
   onClick: () => void;
+  compact?: boolean;
 }) {
 
   const category =
@@ -868,7 +776,7 @@ function ExpenseRow({
       onClick={
         onClick
       }
-      className="flex w-full items-center gap-3 rounded-[22px] border border-[#E8DFD1] bg-white px-4 py-3.5 text-left shadow-[0_2px_12px_rgba(62,58,57,0.04)] transition active:bg-[#FFF8E9]"
+      className={`flex w-full items-center gap-3 bg-white text-left transition active:bg-[#FFF8E9] ${compact ? "px-2 py-3" : "rounded-[22px] border border-[#E8DFD1] px-4 py-3.5 shadow-[0_2px_12px_rgba(62,58,57,0.04)]"}`}
     >
 
 
@@ -929,7 +837,7 @@ function ExpenseRow({
 
           <p className="mt-1 truncate text-[11px] text-[#938674]">
 
-            🔒 私人支出
+            {formatDisplayDate(expense.date)} · 🔒 私人支出
 
             {expense.note &&
               ` · ${expense.note}`}
@@ -940,7 +848,7 @@ function ExpenseRow({
 
           <p className="mt-1 truncate text-[11px] text-[#938674]">
 
-            {expense.note
+            {formatDisplayDate(expense.date)} · {expense.note
               ? `${expense.note} · `
               : ""}
 
