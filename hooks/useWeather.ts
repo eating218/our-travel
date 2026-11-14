@@ -120,12 +120,25 @@ async function fetchWeather(
     forecast_days: "7",
   });
 
-  const response = await fetch(
-    `https://api.open-meteo.com/v1/forecast?${params.toString()}`,
-    {
-      cache: "no-store",
-    }
-  );
+  const controller = new AbortController();
+
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, 10000);
+
+  let response: Response;
+
+  try {
+    response = await fetch(
+      `https://api.open-meteo.com/v1/forecast?${params.toString()}`,
+      {
+        cache: "no-store",
+        signal: controller.signal,
+      }
+    );
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   if (!response.ok) {
     throw new Error(
