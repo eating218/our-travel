@@ -413,7 +413,7 @@ export default function TripStatusCard() {
   ) {
 
     return (
-      <div className="mt-5 h-44 animate-pulse rounded-3xl bg-[#E8DFD1]" />
+      <div className="mt-5 h-44 animate-pulse rounded-3xl bg-[#514B48]" />
     );
   }
 
@@ -424,7 +424,7 @@ export default function TripStatusCard() {
 
   return (
 
-    <section className="mt-5 rounded-3xl border border-[#D9C8A6] bg-[#FFF9EC] p-5 text-[#3E3A39] shadow-sm">
+    <section className="mt-5 rounded-3xl border border-[#62574C] bg-[#3E3A39] p-5 text-[#FFFCF6] shadow-sm">
 
 
       {/* =====================================
@@ -445,7 +445,7 @@ export default function TripStatusCard() {
 
             <div>
 
-              <p className="text-[11px] font-semibold tracking-wider text-[#8C5D00]">
+              <p className="text-[11px] font-semibold tracking-wider text-[#F6D27A]">
                 UPCOMING TRIP
               </p>
 
@@ -455,7 +455,7 @@ export default function TripStatusCard() {
               </h2>
 
 
-              <p className="mt-1 text-xs text-[#817C76]">
+              <p className="mt-1 text-xs text-[#D6C8B6]">
 
                 {activeDateRange}
 
@@ -483,7 +483,7 @@ export default function TripStatusCard() {
                   }
                 </p>
 
-                <p className="text-[10px] text-[#817C76]">
+                <p className="text-[10px] text-[#D6C8B6]">
                   天後出發
                 </p>
 
@@ -495,11 +495,11 @@ export default function TripStatusCard() {
 
           {/* Next */}
 
-          <div className="mt-5 flex items-center justify-between border-t border-[#E8DFD1] pt-4">
+          <div className="mt-5 flex items-center justify-between border-t border-[#665C53] pt-4">
 
             <div>
 
-              <p className="text-[10px] font-bold tracking-wider text-[#817C76]">
+              <p className="text-[10px] font-bold tracking-wider text-[#D6C8B6]">
                 NEXT
               </p>
 
@@ -521,7 +521,7 @@ export default function TripStatusCard() {
 
             <Link
               href="/itinerary"
-              className="rounded-full border border-[#E6C36C] bg-[#F6D27A] px-4 py-2 text-xs font-semibold transition hover:bg-[#F2C45F]"
+              className="rounded-full border border-[#E6C36C] bg-[#F6D27A] px-4 py-2 text-xs font-semibold text-[#554018] transition hover:bg-[#F2C45F]"
             >
               行程 →
             </Link>
@@ -546,7 +546,7 @@ export default function TripStatusCard() {
 
           <div className="flex items-center justify-between">
 
-            <span className="text-[11px] font-bold tracking-wide text-[#8C5D00]">
+            <span className="text-[11px] font-bold tracking-wide text-[#F6D27A]">
 
               TODAY · DAY{" "}
 
@@ -557,7 +557,7 @@ export default function TripStatusCard() {
             </span>
 
 
-            <span className="text-xs text-[#817C76]">
+            <span className="text-xs text-[#D6C8B6]">
 
               {
                 currentDay.date
@@ -591,7 +591,7 @@ export default function TripStatusCard() {
               </h2>
 
 
-              <p className="mt-1 truncate text-xs text-[#817C76]">
+              <p className="mt-1 truncate text-xs text-[#D6C8B6]">
 
                 {
                   currentDay.subtitle
@@ -604,7 +604,7 @@ export default function TripStatusCard() {
 
             <Link
               href="/itinerary"
-              className="shrink-0 rounded-full border border-[#E6C36C] bg-[#F6D27A] px-4 py-2 text-xs font-semibold transition hover:bg-[#F2C45F]"
+              className="shrink-0 rounded-full border border-[#E6C36C] bg-[#F6D27A] px-4 py-2 text-xs font-semibold text-[#554018] transition hover:bg-[#F2C45F]"
             >
               行程 →
             </Link>
@@ -616,10 +616,10 @@ export default function TripStatusCard() {
               NEXT
           ================================= */}
 
-          <div className="mt-5 rounded-2xl border border-[#E8DFD1] bg-[#FFFFFF] p-4">
+          <div className="mt-5 rounded-2xl border border-[#665C53] bg-[#514B48] p-4">
 
 
-            <p className="text-[10px] font-bold tracking-[0.18em] text-[#8C5D00]">
+            <p className="text-[10px] font-bold tracking-[0.18em] text-[#F6D27A]">
               NEXT
             </p>
 
@@ -636,12 +636,12 @@ export default function TripStatusCard() {
 
               <div className="mt-3">
 
-                <p className="text-sm font-bold text-[#3E3A39]">
+                <p className="text-sm font-bold text-[#FFFCF6]">
                   🎉 今天的行程完成了
                 </p>
 
 
-                <p className="mt-1 text-xs text-[#817C76]">
+                <p className="mt-1 text-xs text-[#D6C8B6]">
                   好好享受剩下的時間
                 </p>
 
@@ -666,7 +666,7 @@ export default function TripStatusCard() {
 
           <div>
 
-            <p className="text-[11px] font-semibold tracking-wider text-[#8C5D00]">
+            <p className="text-[11px] font-semibold tracking-wider text-[#F6D27A]">
               TRIP IN PROGRESS
             </p>
 
@@ -676,7 +676,7 @@ export default function TripStatusCard() {
             </h2>
 
 
-            <p className="mt-1 text-xs text-[#817C76]">
+            <p className="mt-1 text-xs text-[#D6C8B6]">
               今天尚未設定行程
             </p>
 
@@ -685,7 +685,7 @@ export default function TripStatusCard() {
 
           <Link
             href="/itinerary"
-            className="rounded-full border border-[#E6C36C] bg-[#F6D27A] px-4 py-2 text-xs font-semibold transition hover:bg-[#F2C45F]"
+            className="rounded-full border border-[#E6C36C] bg-[#F6D27A] px-4 py-2 text-xs font-semibold text-[#554018] transition hover:bg-[#F2C45F]"
           >
             行程 →
           </Link>
@@ -705,7 +705,7 @@ export default function TripStatusCard() {
 
           <div>
 
-            <p className="text-[11px] font-semibold tracking-wider text-[#817C76]">
+            <p className="text-[11px] font-semibold tracking-wider text-[#D6C8B6]">
               TRIP COMPLETED
             </p>
 
@@ -715,7 +715,7 @@ export default function TripStatusCard() {
             </h2>
 
 
-            <p className="mt-1 text-xs text-[#817C76]">
+            <p className="mt-1 text-xs text-[#D6C8B6]">
 
               {activeDateRange}
 
@@ -733,7 +733,7 @@ export default function TripStatusCard() {
 
           <Link
             href="/itinerary"
-            className="rounded-full border border-[#E6C36C] bg-[#F6D27A] px-4 py-2 text-xs font-semibold transition hover:bg-[#F2C45F]"
+            className="rounded-full border border-[#E6C36C] bg-[#F6D27A] px-4 py-2 text-xs font-semibold text-[#554018] transition hover:bg-[#F2C45F]"
           >
             回顧 →
           </Link>
@@ -789,7 +789,7 @@ function NextItem({
         </p>
 
 
-        <p className="mt-0.5 text-[9px] font-semibold tracking-wider text-[#817C76]">
+        <p className="mt-0.5 text-[9px] font-semibold tracking-wider text-[#D6C8B6]">
           NEXT STOP
         </p>
 
@@ -808,7 +808,7 @@ function NextItem({
       <div className="min-w-0 flex-1">
 
 
-        <p className="truncate text-sm font-bold text-[#3E3A39]">
+        <p className="truncate text-sm font-bold text-[#FFFCF6]">
 
           {
             item.name
@@ -819,7 +819,7 @@ function NextItem({
 
         {item.detail && (
 
-          <p className="mt-1 truncate text-xs text-[#817C76]">
+          <p className="mt-1 truncate text-xs text-[#D6C8B6]">
 
             {
               item.detail

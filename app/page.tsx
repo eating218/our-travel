@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import TravelIcon from "./components/TravelIcon";
 
 import TripStatusCard from "./components/TripStatusCard";
 import TripInfoSheet from "./components/TripInfoSheet";
@@ -20,25 +21,25 @@ import { useTripSettings } from "../hooks/useTripSettings";
 
 const quickTools = [
   {
-    icon: "🗺️",
+    icon: "itinerary",
     name: "行程",
     href: "/itinerary",
   },
 
   {
-    icon: "🚆",
+    icon: "train",
     name: "交通",
     href: "#",
   },
 
   {
-    icon: "💳",
+    icon: "card",
     name: "信用卡",
     href: "/cards",
   },
 
   {
-    icon: "💬",
+    icon: "japanese",
     name: "日語",
     href: "/japanese",
   },
@@ -510,7 +511,7 @@ export default function Home() {
             aria-label="查看旅程資訊"
             className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E8DFD1] bg-white text-xl shadow-sm transition active:scale-95"
           >
-            ✈️
+            <TravelIcon name="plane" size={28} />
           </button>
         </header>
 
@@ -557,11 +558,7 @@ export default function Home() {
                     }
                     className="rounded-2xl border border-[#E8DFD1] bg-white px-2 py-4 text-center shadow-sm"
                   >
-                    <div className="text-2xl">
-                      {
-                        tool.icon
-                      }
-                    </div>
+                    <div className="flex justify-center"><TravelIcon name={tool.icon as "itinerary" | "train" | "card" | "japanese"} size={36} /></div>
 
                     <p className="mt-2 text-xs font-semibold text-[#554F49]">
                       {
@@ -579,11 +576,7 @@ export default function Home() {
                     }
                     className="rounded-2xl border border-[#E8DFD1] bg-white px-2 py-4 text-center shadow-sm transition active:scale-[0.98]"
                   >
-                    <div className="text-2xl">
-                      {
-                        tool.icon
-                      }
-                    </div>
+                    <div className="flex justify-center"><TravelIcon name={tool.icon as "itinerary" | "train" | "card" | "japanese"} size={36} /></div>
 
                     <p className="mt-2 text-xs font-semibold text-[#554F49]">
                       {
@@ -610,11 +603,7 @@ export default function Home() {
             className="rounded-3xl border border-[#E8DFD1] bg-white p-5 shadow-sm transition active:scale-[0.98]"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xl">
-                {checklistCompleted
-                  ? "✅"
-                  : "🧳"}
-              </span>
+              <TravelIcon name="checklist" size={34} />
 
 
               <span
@@ -683,9 +672,7 @@ export default function Home() {
             href="/expenses"
             className="rounded-3xl border border-[#E8DFD1] bg-white p-5 shadow-sm transition active:scale-[0.98]"
           >
-            <span className="text-xl">
-              💰
-            </span>
+            <TravelIcon name="money" size={34} />
 
 
             <h3 className="mt-4 font-bold text-[#3E3A39]">
@@ -707,9 +694,7 @@ export default function Home() {
           {/* COUPONS */}
 
           <div className="rounded-3xl border border-[#E8DFD1] bg-white p-5 shadow-sm">
-            <span className="text-xl">
-              🛍️
-            </span>
+            <TravelIcon name="shopping" size={34} />
 
 
             <h3 className="mt-4 font-bold text-[#3E3A39]">
@@ -738,9 +723,7 @@ export default function Home() {
           className="mt-3 flex w-full items-center justify-between rounded-2xl border border-[#E8DFD1] bg-white p-4 text-left shadow-sm transition active:scale-[0.98]"
         >
           <div className="flex items-center gap-3">
-            <span className="text-xl">
-              🧾
-            </span>
+            <TravelIcon name="receipt" size={34} />
 
 
             <div>
@@ -771,9 +754,7 @@ export default function Home() {
         <div className="mx-auto grid max-w-md grid-cols-4 px-4 pb-5 pt-3">
 
           <div className="text-center">
-            <div>
-              🏠
-            </div>
+            <div className="flex justify-center"><TravelIcon name="home" size={26} /></div>
 
             <p className="mt-1 text-[10px] font-bold text-[#3E3A39]">
               首頁
@@ -785,9 +766,7 @@ export default function Home() {
             href="/itinerary"
             className="text-center"
           >
-            <div>
-              🗺️
-            </div>
+            <div className="flex justify-center"><TravelIcon name="itinerary" size={26} /></div>
 
             <p className="mt-1 text-[10px] text-[#938B82]">
               行程
@@ -799,9 +778,7 @@ export default function Home() {
             href="/expenses"
             className="text-center"
           >
-            <div>
-              💰
-            </div>
+            <div className="flex justify-center"><TravelIcon name="money" size={26} /></div>
 
             <p className="mt-1 text-[10px] text-[#938B82]">
               分帳
@@ -813,9 +790,7 @@ export default function Home() {
             href="/checklist"
             className="text-center"
           >
-            <div>
-              🧳
-            </div>
+            <div className="flex justify-center"><TravelIcon name="checklist" size={26} /></div>
 
             <p className="mt-1 text-[10px] text-[#938B82]">
               準備

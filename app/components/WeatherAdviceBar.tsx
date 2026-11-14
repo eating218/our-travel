@@ -24,16 +24,16 @@ export default function WeatherAdviceBar() {
 
   if (!loaded) {
     return (
-      <div className="mt-4 animate-pulse rounded-2xl border border-[#D4E4E9] bg-[#EDF7FA] px-4 py-4">
-        <div className="h-6 w-32 rounded bg-[#D4E4E9]" />
-        <div className="mt-3 h-4 w-52 rounded bg-[#D4E4E9]" />
+      <div className="mt-4 animate-pulse rounded-2xl border border-[#E4D9C7] bg-[#F5F0E7] px-4 py-4">
+        <div className="h-6 w-32 rounded bg-[#E4D9C7]" />
+        <div className="mt-3 h-4 w-52 rounded bg-[#E4D9C7]" />
       </div>
     );
   }
 
   if (!weather || !today) {
     return (
-      <div className="mt-4 rounded-2xl border border-[#D4E4E9] bg-[#EDF7FA] px-4 py-4">
+      <div className="mt-4 rounded-2xl border border-[#E4D9C7] bg-[#F5F0E7] px-4 py-4">
         <p className="text-sm font-bold text-[#3E3A39]">🌦️ 暫時無法取得天氣</p>
       </div>
     );
@@ -43,7 +43,7 @@ export default function WeatherAdviceBar() {
   const advice = getAdvice(weather.current.apparentTemperature, today.precipitationProbability);
 
   return (
-    <section className="mt-4 overflow-hidden rounded-2xl border border-[#C9DFE8] bg-[#EDF7FA]">
+    <section className="mt-4 overflow-hidden rounded-2xl border border-[#E1D2B9] bg-[#F5F0E7]">
       <div className="flex items-stretch">
         <Link href="/weather" className="min-w-0 flex-1 px-4 py-4 transition active:scale-[0.99]">
           <div className="flex items-start justify-between gap-3">
@@ -63,29 +63,29 @@ export default function WeatherAdviceBar() {
             </div>
             <div className="shrink-0 text-right">
               <div className="flex items-center justify-end gap-1">
-                <p className="text-[11px] font-bold text-[#667E85]">
+                <p className="text-[11px] font-bold text-[#826A48]">
                   {weather.locationSource === "device" ? "📍 目前位置" : `🗓️ ${weather.locationName}`}
                 </p>
-                <span className="text-sm text-[#91AAB3]">›</span>
+                <span className="text-sm text-[#B6A58B]">›</span>
               </div>
               <p className="mt-1 text-[11px] text-[#817C76]">
                 {Math.round(today.maxTemperature)}° / {Math.round(today.minTemperature)}°
               </p>
             </div>
           </div>
-          <div className="mt-3 flex items-center gap-2 border-t border-[#C9DFE8] pt-3">
+          <div className="mt-3 flex items-center gap-2 border-t border-[#E1D2B9] pt-3">
             <span className="shrink-0 text-sm">{advice.icon}</span>
-            <p className="min-w-0 text-[11px] font-semibold leading-4 text-[#526B72]">{advice.text}</p>
+            <p className="min-w-0 text-[11px] font-semibold leading-4 text-[#75654E]">{advice.text}</p>
           </div>
         </Link>
         {weather.locationSource !== "device" && (
-          <div className="flex items-start border-l border-[#C9DFE8] px-3 pt-4">
+          <div className="flex items-start border-l border-[#E1D2B9] px-3 pt-4">
             <button
               type="button"
               onClick={requestCurrentLocation}
               disabled={locating}
               aria-label="使用目前位置"
-              className="rounded-lg px-1 py-1 text-[10px] font-bold text-[#497E8B] transition active:scale-95 disabled:text-[#91AAB3]"
+              className="rounded-lg px-1 py-1 text-[10px] font-bold text-[#8C5D00] transition active:scale-95 disabled:text-[#B6A58B]"
             >
               {locating ? "..." : <>📍<span className="ml-1">定位</span></>}
             </button>
@@ -93,7 +93,7 @@ export default function WeatherAdviceBar() {
         )}
       </div>
       {error && (
-        <div className="border-t border-[#C9DFE8] px-4 py-2">
+        <div className="border-t border-[#E1D2B9] px-4 py-2">
           <p className="text-[10px] text-[#9B6724]">{error}</p>
         </div>
       )}
