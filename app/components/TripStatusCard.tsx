@@ -601,16 +601,32 @@ export default function TripStatusCard() {
                 行程 →
               </Link>
             </div>
+            {/* 風景與 NEXT 之間的柔和金色波浪；只做裝飾，不遮擋按鈕 */}
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 400 18"
+              preserveAspectRatio="none"
+              className="pointer-events-none absolute bottom-[-1px] left-0 z-[5] h-[12px] w-full sm:h-[14px]"
+            >
+              <path
+                d="M0 8 C70 -3 120 18 200 10 S330 3 400 9 L400 18 L0 18 Z"
+                fill="#14243F"
+              />
+              <path
+                d="M0 8 C70 -3 120 18 200 10 S330 3 400 9"
+                fill="none"
+                stroke="#F6D27A"
+                strokeWidth="1.8"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
           </div>
 
           {/* =================================
-              NEXT
+              NEXT：直接呈現在深藍底色，不使用內層方框
           ================================= */}
 
-          <div className="relative z-10 mt-0 overflow-hidden rounded-2xl border border-[#54759A] bg-[#263B5B] px-3 py-2.5">
-
-
-            <div aria-hidden="true" className="pointer-events-none absolute right-3 top-2 text-lg opacity-65">🌸</div>
+          <div className="relative z-10 px-3 pb-0 pt-2">
             <p className="text-[10px] font-bold tracking-[0.18em] text-[#F6D27A]">
               NEXT
             </p>
@@ -626,7 +642,7 @@ export default function TripStatusCard() {
 
             ) : (
 
-              <div className="mt-3">
+              <div className="mt-1.5">
 
                 <p className="text-sm font-bold text-[#FFFCF6]">
                   🎉 今天的行程完成了
@@ -762,8 +778,8 @@ function NextItem({
 
 
   return (
-
-    <div className="mt-3 flex items-center gap-4">
+    // 調整方框高度
+    <div className="mt-1.3 flex items-center gap-3">
 
 
       {/* =====================================
@@ -835,7 +851,7 @@ function NextItem({
           }
           target="_blank"
           rel="noopener noreferrer"
-          className="shrink-0 rounded-xl bg-[#B9DAA5] px-3 py-2 text-[11px] font-bold text-[#3E3A39] transition active:scale-95"
+          className="shrink-0 rounded-xl border border-[#E6C36C] bg-[#F6D27A] px-3 py-2 text-[11px] font-bold text-[#554018] shadow-[0_2px_6px_rgba(0,0,0,0.15)] transition hover:bg-[#FFE09A] active:scale-95"
         >
           導航 ↗
         </a>
