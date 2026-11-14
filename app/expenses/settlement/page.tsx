@@ -984,21 +984,21 @@ export default function SettlementPage() {
 
     return (
 
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-[#FFFCF6]">
 
         <div className="mx-auto max-w-md px-5 pt-5">
 
 
 
-          <div className="h-16 animate-pulse rounded-2xl bg-slate-200" />
+          <div className="h-16 animate-pulse rounded-2xl bg-[#E8DFD1]" />
 
 
 
-          <div className="mt-5 h-52 animate-pulse rounded-3xl bg-slate-200" />
+          <div className="mt-5 h-52 animate-pulse rounded-3xl bg-[#E8DFD1]" />
 
 
 
-          <div className="mt-5 h-72 animate-pulse rounded-3xl bg-slate-200" />
+          <div className="mt-5 h-72 animate-pulse rounded-3xl bg-[#E8DFD1]" />
 
 
 
@@ -1040,7 +1040,7 @@ export default function SettlementPage() {
 
     return (
 
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-[#FFFCF6]">
 
 
 
@@ -1048,7 +1048,7 @@ export default function SettlementPage() {
 
 
 
-          <p className="text-sm font-bold text-slate-700">
+          <p className="text-sm font-bold text-[#554A3D]">
 
             找不到目前使用者
 
@@ -1060,7 +1060,7 @@ export default function SettlementPage() {
 
             href="/expenses"
 
-            className="mt-4 inline-block text-sm font-bold text-blue-600"
+            className="mt-4 inline-block text-sm font-bold text-[#8C5D00]"
 
           >
 
@@ -1300,7 +1300,7 @@ export default function SettlementPage() {
 
   return (
 
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#FFFCF6]">
 
 
 
@@ -1310,7 +1310,7 @@ export default function SettlementPage() {
 
 
 
-      <header className="sticky top-0 z-30 border-b border-slate-100 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-[#E8DFD1] bg-[#FFFCF6]/95 backdrop-blur">
 
 
 
@@ -1322,7 +1322,7 @@ export default function SettlementPage() {
 
             href="/expenses"
 
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-600"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F5F0E7] text-lg text-[#8A7B68]"
 
           >
 
@@ -1338,7 +1338,7 @@ export default function SettlementPage() {
 
 
 
-            <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
+            <p className="text-[10px] font-bold tracking-[0.18em] text-[#9A8C7B]">
 
               SETTLEMENT
 
@@ -1346,7 +1346,7 @@ export default function SettlementPage() {
 
 
 
-            <h1 className="text-sm font-bold text-slate-900">
+            <h1 className="text-sm font-bold text-[#3E3A39]">
 
               分帳結算
 
@@ -1386,7 +1386,7 @@ export default function SettlementPage() {
 
 
 
-    <section className="rounded-[28px] bg-slate-900 px-5 py-5 text-white">
+    <section className="rounded-[28px] border border-[#E5BD62] bg-[#FFF8E9] px-5 py-5 text-[#3E3A39] shadow-sm">
 
 
 
@@ -1396,7 +1396,7 @@ export default function SettlementPage() {
 
     <div>
 
-        <p className="text-xs font-bold tracking-[0.18em] text-blue-300">
+        <p className="text-xs font-bold tracking-[0.18em] text-[#8C5D00]">
 
         MY TRIP EXPENSE
 
@@ -1412,7 +1412,7 @@ export default function SettlementPage() {
 
 
 
-        <p className="mt-1.5 text-sm text-slate-400">
+        <p className="mt-1.5 text-sm text-[#9A8C7B]">
 
         共同分攤 ＋ 私人支出
 
@@ -1444,7 +1444,7 @@ export default function SettlementPage() {
 
 
 
-            <p className="text-sm font-bold text-slate-400">
+            <p className="text-sm font-bold text-[#9A8C7B]">
 
             🇯🇵 日幣
 
@@ -1476,11 +1476,11 @@ export default function SettlementPage() {
 
 
 
-            <span className="text-slate-400">
+            <span className="text-[#9A8C7B]">
 
             共同{" "}
 
-            <span className="text-slate-200">
+            <span className="text-[#554A3D]">
 
                 {formatMoney(
 
@@ -1496,7 +1496,7 @@ export default function SettlementPage() {
 
 
 
-            <span className="text-slate-600">
+            <span className="text-[#8A7B68]">
 
             ·
 
@@ -1504,11 +1504,11 @@ export default function SettlementPage() {
 
 
 
-            <span className="text-slate-400">
+            <span className="text-[#9A8C7B]">
 
             🔒 私人{" "}
 
-            <span className="text-slate-200">
+            <span className="text-[#554A3D]">
 
                 {formatMoney(
 
@@ -1538,7 +1538,7 @@ export default function SettlementPage() {
 
 
 
-        <div className="my-5 border-t border-white/10" />
+        <div className="my-5 border-t border-[#E8DFD1]" />
 
 
 
@@ -1556,7 +1556,7 @@ export default function SettlementPage() {
 
 
 
-            <p className="text-sm font-bold text-slate-400">
+            <p className="text-sm font-bold text-[#9A8C7B]">
 
             🇹🇼 台幣
 
@@ -1588,11 +1588,11 @@ export default function SettlementPage() {
 
 
 
-            <span className="text-slate-400">
+            <span className="text-[#9A8C7B]">
 
             共同{" "}
 
-            <span className="text-slate-200">
+            <span className="text-[#554A3D]">
 
                 {formatMoney(
 
@@ -1608,7 +1608,7 @@ export default function SettlementPage() {
 
 
 
-            <span className="text-slate-600">
+            <span className="text-[#8A7B68]">
 
             ·
 
@@ -1616,11 +1616,11 @@ export default function SettlementPage() {
 
 
 
-            <span className="text-slate-400">
+            <span className="text-[#9A8C7B]">
 
             🔒 私人{" "}
 
-            <span className="text-slate-200">
+            <span className="text-[#554A3D]">
 
                 {formatMoney(
 
@@ -1666,7 +1666,7 @@ export default function SettlementPage() {
 
 
 
-          <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
+          <p className="text-[10px] font-bold tracking-[0.18em] text-[#9A8C7B]">
 
             FINAL SETTLEMENT
 
@@ -1674,7 +1674,7 @@ export default function SettlementPage() {
 
 
 
-          <h2 className="mt-1 text-lg font-bold text-slate-900">
+          <h2 className="mt-1 text-lg font-bold text-[#3E3A39]">
 
             誰要給誰？
 
@@ -1682,7 +1682,7 @@ export default function SettlementPage() {
 
 
 
-          <p className="mt-1 text-[11px] leading-5 text-slate-400">
+          <p className="mt-1 text-[11px] leading-5 text-[#9A8C7B]">
 
             已自動抵銷彼此代墊，只留下最後需要轉帳的金額。
 
@@ -1774,7 +1774,7 @@ export default function SettlementPage() {
 
 
 
-            <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
+            <p className="text-[10px] font-bold tracking-[0.18em] text-[#9A8C7B]">
 
               EXPENSE RECORDS
 
@@ -1786,7 +1786,7 @@ export default function SettlementPage() {
 
 
 
-              <h2 className="text-lg font-bold text-slate-900">
+              <h2 className="text-lg font-bold text-[#3E3A39]">
 
                 支出紀錄
 
@@ -1794,7 +1794,7 @@ export default function SettlementPage() {
 
 
 
-              <p className="text-[10px] font-bold text-slate-400">
+              <p className="text-[10px] font-bold text-[#9A8C7B]">
 
                 {filteredRecords.length} 筆
 
@@ -1816,7 +1816,7 @@ export default function SettlementPage() {
 
 
 
-          <div className="mt-4 grid grid-cols-3 gap-1 rounded-2xl bg-slate-200/60 p-1">
+          <div className="mt-4 grid grid-cols-3 gap-1 rounded-2xl bg-[#F5F0E7] p-1">
 
 
 
@@ -1924,7 +1924,7 @@ export default function SettlementPage() {
 
 
 
-            <div className="mt-3 rounded-3xl border border-dashed border-slate-200 bg-white px-5 py-9 text-center">
+            <div className="mt-3 rounded-3xl border border-dashed border-[#E8DFD1] bg-white px-5 py-9 text-center">
 
 
 
@@ -1936,7 +1936,7 @@ export default function SettlementPage() {
 
 
 
-              <p className="mt-2 text-sm font-bold text-slate-700">
+              <p className="mt-2 text-sm font-bold text-[#554A3D]">
 
                 還沒有紀錄
 
@@ -1988,7 +1988,7 @@ export default function SettlementPage() {
 
                       key={date}
 
-                      className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm"
+                      className="overflow-hidden rounded-3xl border border-[#E8DFD1] bg-white shadow-sm"
 
                     >
 
@@ -2012,7 +2012,7 @@ export default function SettlementPage() {
 
                         }
 
-                        className="flex w-full items-center gap-3 px-4 py-4 text-left active:bg-slate-50"
+                        className="flex w-full items-center gap-3 px-4 py-4 text-left active:bg-[#FFFCF6]"
 
                       >
 
@@ -2024,9 +2024,9 @@ export default function SettlementPage() {
 
                             expanded
 
-                              ? "bg-slate-900 text-white"
+                              ? "bg-[#F6D27A] text-[#554018]"
 
-                              : "bg-slate-100 text-slate-400"
+                              : "bg-[#F5F0E7] text-[#9A8C7B]"
 
                           }`}
 
@@ -2060,7 +2060,7 @@ export default function SettlementPage() {
 
 
 
-                          <p className="text-[9px] font-bold tracking-[0.14em] text-slate-400">
+                          <p className="text-[9px] font-bold tracking-[0.14em] text-[#9A8C7B]">
 
                             DATE
 
@@ -2068,7 +2068,7 @@ export default function SettlementPage() {
 
 
 
-                          <p className="mt-0.5 text-sm font-bold text-slate-900">
+                          <p className="mt-0.5 text-sm font-bold text-[#3E3A39]">
 
                             {formatDisplayDate(
 
@@ -2086,7 +2086,7 @@ export default function SettlementPage() {
 
 
 
-                        <p className="shrink-0 text-xs font-bold text-slate-500">
+                        <p className="shrink-0 text-xs font-bold text-[#9A8C7B]">
 
 
 
@@ -2094,7 +2094,7 @@ export default function SettlementPage() {
 
 
 
-                          <span className="ml-1 text-[10px] font-medium text-slate-400">
+                          <span className="ml-1 text-[10px] font-medium text-[#9A8C7B]">
 
                             筆
 
@@ -2120,7 +2120,7 @@ export default function SettlementPage() {
 
 
 
-                        <div className="border-t border-slate-100">
+                        <div className="border-t border-[#E8DFD1]">
 
 
 
@@ -2236,7 +2236,7 @@ export default function SettlementPage() {
 
 
 
-        <section className="mt-7 rounded-3xl bg-blue-50 px-5 py-4">
+        <section className="mt-7 rounded-3xl border border-[#E8DFD1] bg-[#FFF8E9] px-5 py-4">
 
 
 
@@ -2256,7 +2256,7 @@ export default function SettlementPage() {
 
 
 
-              <p className="text-xs font-bold text-blue-900">
+              <p className="text-xs font-bold text-[#8C5D00]">
 
                 結算怎麼算？
 
@@ -2264,7 +2264,7 @@ export default function SettlementPage() {
 
 
 
-              <p className="mt-1 text-[11px] leading-5 text-blue-700/70">
+              <p className="mt-1 text-[11px] leading-5 text-[#8A7B68]">
 
                 共同支出會依照每筆設定的分攤人數計算每個人的實際負擔，再扣除已經代墊的金額。私人支出只計入你的旅行花費，不會影響其他人的結算。
 
@@ -2440,11 +2440,11 @@ function SummaryMiniCard({
 
   return (
 
-    <div className="rounded-2xl bg-white/[0.06] px-3 py-3">
+    <div className="rounded-2xl border border-[#E8DFD1] bg-white px-3 py-3">
 
 
 
-      <p className="text-[9px] font-bold text-slate-500">
+      <p className="text-[9px] font-bold text-[#9A8C7B]">
 
         {label}
 
@@ -2522,7 +2522,7 @@ function SettlementSection({
 
 
 
-    <section className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm">
+    <section className="overflow-hidden rounded-3xl border border-[#E8DFD1] bg-white shadow-sm">
 
 
 
@@ -2552,7 +2552,7 @@ function SettlementSection({
 
         }
 
-        className="flex w-full items-center gap-3 px-5 py-4 text-left active:bg-slate-50"
+        className="flex w-full items-center gap-3 px-5 py-4 text-left active:bg-[#FFFCF6]"
 
       >
 
@@ -2570,9 +2570,9 @@ function SettlementSection({
 
             expanded
 
-              ? "bg-slate-900 text-white"
+              ? "bg-[#F6D27A] text-[#554018]"
 
-              : "bg-slate-100 text-slate-400"
+              : "bg-[#F5F0E7] text-[#9A8C7B]"
 
           }`}
 
@@ -2610,7 +2610,7 @@ function SettlementSection({
 
 
 
-        <p className="min-w-0 flex-1 text-sm font-bold text-slate-900">
+        <p className="min-w-0 flex-1 text-sm font-bold text-[#3E3A39]">
 
           {title}
 
@@ -2624,7 +2624,7 @@ function SettlementSection({
 
 
 
-        <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[9px] font-bold text-slate-500">
+        <span className="shrink-0 rounded-full bg-[#F5F0E7] px-2.5 py-1 text-[9px] font-bold text-[#9A8C7B]">
 
 
 
@@ -2660,7 +2660,7 @@ function SettlementSection({
 
 
 
-        <div className="border-t border-slate-100">
+        <div className="border-t border-[#E8DFD1]">
 
 
 
@@ -2688,7 +2688,7 @@ function SettlementSection({
 
 
 
-              <p className="mt-2 text-sm font-bold text-slate-700">
+              <p className="mt-2 text-sm font-bold text-[#554A3D]">
 
                 已經扯平啦
 
@@ -2696,7 +2696,7 @@ function SettlementSection({
 
 
 
-              <p className="mt-1 text-[11px] text-slate-400">
+              <p className="mt-1 text-[11px] text-[#9A8C7B]">
 
                 目前沒有需要互相轉帳的金額
 
@@ -2874,7 +2874,7 @@ function SettlementRow({
 
         !isLast
 
-          ? "border-b border-slate-100"
+          ? "border-b border-[#E8DFD1]"
 
           : ""
 
@@ -2892,7 +2892,7 @@ function SettlementRow({
 
 
 
-          <p className="text-[9px] font-bold tracking-[0.1em] text-slate-400">
+          <p className="text-[9px] font-bold tracking-[0.1em] text-[#9A8C7B]">
 
             FROM
 
@@ -2900,7 +2900,7 @@ function SettlementRow({
 
 
 
-          <p className="mt-1 truncate text-sm font-bold text-slate-900">
+          <p className="mt-1 truncate text-sm font-bold text-[#3E3A39]">
 
             {fromName}
 
@@ -2918,7 +2918,7 @@ function SettlementRow({
 
 
 
-          <p className="rounded-full bg-slate-900 px-3 py-1.5 text-[11px] font-bold text-white">
+          <p className="rounded-full bg-[#F6D27A] px-3 py-1.5 text-[11px] font-bold text-[#554018]">
 
             {formatMoney(
 
@@ -2932,7 +2932,7 @@ function SettlementRow({
 
 
 
-          <div className="mt-1 text-sm text-slate-300">
+          <div className="mt-1 text-sm text-[#B2A493]">
 
             →
 
@@ -2950,7 +2950,7 @@ function SettlementRow({
 
 
 
-          <p className="text-[9px] font-bold tracking-[0.1em] text-slate-400">
+          <p className="text-[9px] font-bold tracking-[0.1em] text-[#9A8C7B]">
 
             TO
 
@@ -2958,7 +2958,7 @@ function SettlementRow({
 
 
 
-          <p className="mt-1 truncate text-sm font-bold text-slate-900">
+          <p className="mt-1 truncate text-sm font-bold text-[#3E3A39]">
 
             {toName}
 
@@ -3022,9 +3022,9 @@ function RecordFilterButton({
 
         active
 
-          ? "bg-white text-slate-900 shadow-sm"
+          ? "bg-white text-[#3E3A39] shadow-sm"
 
-          : "text-slate-500"
+          : "text-[#9A8C7B]"
 
       }`}
 
@@ -3120,11 +3120,11 @@ function ExpenseRecordRow({
 
       onClick={onClick}
 
-      className={`flex w-full items-center gap-3 px-4 py-4 text-left active:bg-slate-50 ${
+      className={`flex w-full items-center gap-3 px-4 py-4 text-left active:bg-[#FFFCF6] ${
 
         !isLast
 
-          ? "border-b border-slate-100"
+          ? "border-b border-[#E8DFD1]"
 
           : ""
 
@@ -3134,7 +3134,7 @@ function ExpenseRecordRow({
 
 
 
-      <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-lg">
+      <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#F5F0E7] text-lg">
 
 
 
@@ -3146,7 +3146,7 @@ function ExpenseRecordRow({
 
         {isPrivate && (
 
-          <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-slate-900 text-[9px]">
+          <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-[#F6D27A] text-[9px]">
 
             🔒
 
@@ -3170,7 +3170,7 @@ function ExpenseRecordRow({
 
 
 
-          <p className="truncate text-sm font-bold text-slate-900">
+          <p className="truncate text-sm font-bold text-[#3E3A39]">
 
             {expense.title}
 
@@ -3182,7 +3182,7 @@ function ExpenseRecordRow({
 
 
 
-            <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-500">
+            <span className="shrink-0 rounded-full bg-[#F5F0E7] px-2 py-0.5 text-[9px] font-bold text-[#9A8C7B]">
 
               私人
 
@@ -3194,7 +3194,7 @@ function ExpenseRecordRow({
 
 
 
-            <span className="shrink-0 text-[9px] font-medium text-slate-400">
+            <span className="shrink-0 text-[9px] font-medium text-[#9A8C7B]">
 
               {category?.name ??
 
@@ -3214,7 +3214,7 @@ function ExpenseRecordRow({
 
 
 
-        <p className="mt-1 truncate text-[11px] text-slate-400">
+        <p className="mt-1 truncate text-[11px] text-[#9A8C7B]">
 
 
 
@@ -3240,7 +3240,7 @@ function ExpenseRecordRow({
 
         {expense.time && (
 
-          <p className="mt-1 text-[10px] text-slate-300">
+          <p className="mt-1 text-[10px] text-[#B2A493]">
 
             {expense.time}
 
@@ -3260,7 +3260,7 @@ function ExpenseRecordRow({
 
 
 
-        <p className="text-sm font-bold text-slate-900">
+        <p className="text-sm font-bold text-[#3E3A39]">
 
           {formatMoney(
 
@@ -3274,7 +3274,7 @@ function ExpenseRecordRow({
 
 
 
-        <p className="mt-1 text-sm text-slate-300">
+        <p className="mt-1 text-sm text-[#B2A493]">
 
           ›
 
@@ -3414,7 +3414,7 @@ function ExpenseDetailSheet({
 
         onClick={onClose}
 
-        className="absolute inset-0 bg-slate-950/40 backdrop-blur-[1px]"
+        className="absolute inset-0 bg-[#3E3A39]/40 backdrop-blur-[1px]"
 
       />
 
@@ -3428,7 +3428,7 @@ function ExpenseDetailSheet({
 
         <div className="flex justify-center pt-3">
 
-          <div className="h-1 w-10 rounded-full bg-slate-200" />
+          <div className="h-1 w-10 rounded-full bg-[#E8DFD1]" />
 
         </div>
 
@@ -3444,7 +3444,7 @@ function ExpenseDetailSheet({
 
 
 
-            <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
+            <p className="text-[10px] font-bold tracking-[0.18em] text-[#9A8C7B]">
 
               EXPENSE DETAIL
 
@@ -3452,7 +3452,7 @@ function ExpenseDetailSheet({
 
 
 
-            <h2 className="mt-1 text-xl font-bold text-slate-900">
+            <h2 className="mt-1 text-xl font-bold text-[#3E3A39]">
 
               支出詳情
 
@@ -3472,7 +3472,7 @@ function ExpenseDetailSheet({
 
             onClick={onClose}
 
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-500"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F5F0E7] text-lg text-[#9A8C7B]"
 
           >
 
@@ -3488,7 +3488,7 @@ function ExpenseDetailSheet({
 
 
 
-        <div className="mt-5 rounded-3xl bg-slate-900 px-5 py-5 text-white">
+        <div className="mt-5 rounded-3xl bg-[#F6D27A] px-5 py-5 text-[#3E3A39]">
 
 
 
@@ -3500,7 +3500,7 @@ function ExpenseDetailSheet({
 
 
 
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-xl">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#FFF8E9] text-xl">
 
                 {category?.icon ??
 
@@ -3524,7 +3524,7 @@ function ExpenseDetailSheet({
 
 
 
-                <p className="mt-1 text-[11px] text-slate-400">
+                <p className="mt-1 text-[11px] text-[#9A8C7B]">
 
 
 
@@ -3584,7 +3584,7 @@ function ExpenseDetailSheet({
 
 
 
-        <div className="mt-5 overflow-hidden rounded-2xl border border-slate-100 bg-slate-50">
+        <div className="mt-5 overflow-hidden rounded-2xl border border-[#E8DFD1] bg-[#FFFCF6]">
 
 
 
@@ -3728,7 +3728,7 @@ function ExpenseDetailSheet({
 
           onClick={onDelete}
 
-          className="mt-5 w-full rounded-2xl bg-red-50 py-3.5 text-sm font-bold text-red-600 active:scale-[0.99]"
+          className="mt-5 w-full rounded-2xl bg-[#FFF0ED] py-3.5 text-sm font-bold text-red-600 active:scale-[0.99]"
 
         >
 
@@ -3776,11 +3776,11 @@ function DetailRow({
 
   return (
 
-    <div className="flex items-start justify-between gap-5 border-b border-slate-200/70 px-4 py-3.5 last:border-b-0">
+    <div className="flex items-start justify-between gap-5 border-b border-[#E8DFD1] px-4 py-3.5 last:border-b-0">
 
 
 
-      <span className="shrink-0 text-xs font-medium text-slate-400">
+      <span className="shrink-0 text-xs font-medium text-[#9A8C7B]">
 
         {label}
 
@@ -3788,7 +3788,7 @@ function DetailRow({
 
 
 
-      <span className="text-right text-xs font-bold text-slate-700">
+      <span className="text-right text-xs font-bold text-[#554A3D]">
 
         {value}
 
@@ -3846,7 +3846,7 @@ function DeleteConfirmDialog({
 
         onClick={onCancel}
 
-        className="absolute inset-0 bg-slate-950/50 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-[#3E3A39]/45 backdrop-blur-[2px]"
 
       />
 
@@ -3858,7 +3858,7 @@ function DeleteConfirmDialog({
 
 
 
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-xl">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF0ED] text-xl">
 
           🗑️
 
@@ -3868,7 +3868,7 @@ function DeleteConfirmDialog({
 
 
 
-        <h3 className="mt-4 text-lg font-bold text-slate-900">
+        <h3 className="mt-4 text-lg font-bold text-[#3E3A39]">
 
           確定要刪除？
 
@@ -3878,7 +3878,7 @@ function DeleteConfirmDialog({
 
 
 
-        <p className="mt-2 text-sm leading-6 text-slate-500">
+        <p className="mt-2 text-sm leading-6 text-[#9A8C7B]">
 
 
 
@@ -3916,7 +3916,7 @@ function DeleteConfirmDialog({
 
             onClick={onCancel}
 
-            className="rounded-2xl bg-slate-100 py-3.5 text-sm font-bold text-slate-600"
+            className="rounded-2xl bg-[#F5F0E7] py-3.5 text-sm font-bold text-[#8A7B68]"
 
           >
 
@@ -3932,7 +3932,7 @@ function DeleteConfirmDialog({
 
             onClick={onConfirm}
 
-            className="rounded-2xl bg-red-600 py-3.5 text-sm font-bold text-white active:scale-[0.99]"
+            className="rounded-2xl bg-red-600 py-3.5 text-sm font-bold text-[#3E3A39] active:scale-[0.99]"
 
           >
 
