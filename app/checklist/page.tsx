@@ -121,6 +121,7 @@ export default function ChecklistPage() {
     updateItem,
     deleteItem,
     reorderItems,
+    moveItemToCategory,
 
     addCategory,
     deleteCategory,
@@ -588,11 +589,9 @@ export default function ChecklistPage() {
       return;
     }
 
-    // V1：禁止跨分類
-    if (
-      activeItem.categoryId !==
-      overItem.categoryId
-    ) {
+    // 跨分類：移到目標物品所在分類，插在目標物品之前
+    if (activeItem.categoryId !== overItem.categoryId) {
+      moveItemToCategory(activeItem.id, overItem.id);
       return;
     }
 
@@ -609,21 +608,21 @@ export default function ChecklistPage() {
 
   if (!loaded) {
     return (
-      <main className="min-h-screen bg-slate-50">
-        <header className="border-b border-slate-100 bg-white">
+      <main className="min-h-screen bg-[#FFFCF6]">
+        <header className="border-b border-[#E8DFD1] bg-white">
           <div className="mx-auto flex max-w-md items-center justify-between px-5 py-4">
-            <div className="h-9 w-9 rounded-full bg-slate-100" />
+            <div className="h-9 w-9 rounded-full bg-[#F5F0E7]" />
 
-            <div className="h-4 w-24 animate-pulse rounded bg-slate-200" />
+            <div className="h-4 w-24 animate-pulse rounded bg-[#E8DFD1]" />
 
             <div className="w-9" />
           </div>
         </header>
 
         <div className="mx-auto max-w-md px-5 pt-6">
-          <div className="h-24 animate-pulse rounded-3xl bg-slate-200" />
+          <div className="h-24 animate-pulse rounded-3xl bg-[#E8DFD1]" />
 
-          <div className="mt-7 h-72 animate-pulse rounded-3xl bg-slate-200" />
+          <div className="mt-7 h-72 animate-pulse rounded-3xl bg-[#E8DFD1]" />
         </div>
       </main>
     );
@@ -639,24 +638,24 @@ export default function ChecklistPage() {
         handleDragEnd
       }
     >
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-[#FFFCF6]">
         {/* HEADER */}
 
-        <header className="sticky top-0 z-30 border-b border-slate-100 bg-white/95 backdrop-blur">
+        <header className="sticky top-0 z-30 border-b border-[#E8DFD1] bg-[#FFFCF6]/95 backdrop-blur">
           <div className="mx-auto flex max-w-md items-center justify-between px-5 py-4">
             <Link
               href="/"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg transition active:scale-95"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F5F0E7] text-lg transition active:scale-95"
             >
               ‹
             </Link>
 
             <div className="text-center">
-              <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
-                MY PACKING LIST
+              <p className="text-[10px] font-bold tracking-[0.18em] text-[#988C7E]">
+                KYOTO · PACKING LIST
               </p>
 
-              <h1 className="text-sm font-bold text-slate-900">
+              <h1 className="text-sm font-bold text-[#3E3A39]">
                 旅行用品
               </h1>
             </div>
@@ -670,17 +669,17 @@ export default function ChecklistPage() {
         <div className="mx-auto max-w-md px-5 pb-28 pt-5">
           {/* PROGRESS */}
 
-          <section className="rounded-3xl bg-slate-900 px-5 py-4 text-white">
+           <section className="rounded-[28px] border border-[#D8B46B] bg-[#F3E5CA] p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-bold tracking-[0.15em] text-slate-400">
+                <p className="text-[10px] font-bold tracking-[0.15em] text-[#8C5D00]">
                   PACKING
                 </p>
 
-                <p className="mt-1 text-xl font-bold">
+                <p className="mt-1 text-xl font-bold text-[#3E3A39]">
                   {completed}
 
-                  <span className="text-slate-500">
+                  <span className="text-[#A99A84]">
                     {" / "}
                     {total}
                   </span>
@@ -688,23 +687,23 @@ export default function ChecklistPage() {
               </div>
 
               <div className="text-right">
-                <p className="text-2xl font-bold">
+                <p className="text-2xl font-bold text-[#3E3A39]">
                   {percent}
 
-                  <span className="text-sm text-slate-400">
+                  <span className="text-sm text-[#8C5D00]">
                     %
                   </span>
                 </p>
 
-                <p className="mt-0.5 text-[10px] text-slate-400">
+                <p className="mt-0.5 text-[10px] text-[#A99A84]">
                   已準備
                 </p>
               </div>
             </div>
 
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
+            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#D9C6A8]">
               <div
-                className="h-full rounded-full bg-white transition-all duration-500"
+                className="h-full rounded-full bg-[#C99842] transition-all duration-500"
                 style={{
                   width:
                     `${percent}%`,
@@ -715,7 +714,7 @@ export default function ChecklistPage() {
 
           {/* FILTER */}
 
-          <section className="mt-4 flex rounded-2xl bg-slate-100 p-1">
+          <section className="mt-4 flex rounded-2xl border border-[#E8DFD1] bg-[#F5F0E7] p-1">
             <FilterButton
               active={
                 filter === "all"
@@ -770,7 +769,7 @@ export default function ChecklistPage() {
                   true
                 );
               }}
-              className="text-xs font-bold text-slate-700"
+              className="text-xs font-bold text-[#8C5D00]"
             >
               ＋ 新增分類
             </button>
@@ -782,7 +781,7 @@ export default function ChecklistPage() {
                   ? expandAll
                   : collapseAll
               }
-              className="text-[11px] font-bold text-slate-400"
+              className="text-[11px] font-bold text-[#988C7E]"
             >
               {allCollapsed
                 ? "全部展開 ↓"
@@ -864,7 +863,7 @@ export default function ChecklistPage() {
           </div>
 
           {filter === "all" && (
-            <p className="mt-4 text-center text-[10px] font-medium text-slate-300">
+            <p className="mt-4 text-center text-[10px] font-medium text-[#B8ADA0]">
               長按物品即可拖曳排序
             </p>
           )}
@@ -881,15 +880,15 @@ export default function ChecklistPage() {
                 )
               }
             >
-              <p className="text-[10px] font-bold tracking-[0.15em] text-slate-400">
+              <p className="text-[10px] font-bold tracking-[0.15em] text-[#988C7E]">
                 EDIT ITEM
               </p>
 
-              <h2 className="mt-1 text-xl font-bold text-slate-900">
+              <h2 className="mt-1 text-xl font-bold text-[#3E3A39]">
                 編輯旅行用品
               </h2>
 
-              <label className="mt-5 block text-xs font-bold text-slate-500">
+              <label className="mt-5 block text-xs font-bold text-[#83796D]">
                 物品名稱
               </label>
 
@@ -904,10 +903,10 @@ export default function ChecklistPage() {
                     event.target.value
                   )
                 }
-                className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm font-medium text-slate-900 outline-none focus:border-slate-900 focus:bg-white"
+                className="mt-2 w-full rounded-2xl border border-[#E8DFD1] bg-[#FFFCF6] px-4 py-4 text-sm font-medium text-[#3E3A39] outline-none focus:border-[#172B49] focus:bg-white"
               />
 
-              <p className="mt-5 text-xs font-bold text-slate-500">
+              <p className="mt-5 text-xs font-bold text-[#83796D]">
                 放哪裡？
               </p>
 
@@ -956,12 +955,12 @@ export default function ChecklistPage() {
               </div>
 
               {editingItem.note && (
-                <div className="mt-5 rounded-2xl bg-amber-50 px-4 py-3">
-                  <p className="text-[10px] font-bold tracking-wide text-amber-600">
+                <div className="mt-5 rounded-2xl bg-[#FFF4D9] px-4 py-3">
+                  <p className="text-[10px] font-bold tracking-wide text-[#9C6B16]">
                     注意事項
                   </p>
 
-                  <p className="mt-1 text-xs leading-5 text-amber-700">
+                  <p className="mt-1 text-xs leading-5 text-[#805A18]">
                     {
                       editingItem.note
                     }
@@ -972,25 +971,25 @@ export default function ChecklistPage() {
               {/* AIRLINE BAGGAGE RULE */}
 
               {editingBaggageRule && (
-                <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                <div className="mt-4 rounded-2xl border border-[#EBCB81] bg-[#FFF4D9] p-4">
 
                   <div className="flex items-start gap-3">
 
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-lg">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FCE6AC] text-lg">
                       ⚠️
                     </div>
 
                     <div className="min-w-0 flex-1">
 
-                      <p className="text-[10px] font-bold tracking-[0.12em] text-amber-600">
+                      <p className="text-[10px] font-bold tracking-[0.12em] text-[#9C6B16]">
                         航空行李注意
                       </p>
 
-                      <h3 className="mt-0.5 text-sm font-bold text-slate-900">
+                      <h3 className="mt-0.5 text-sm font-bold text-[#3E3A39]">
                         {editingBaggageRule.title}
                       </h3>
 
-                      <p className="mt-1 text-xs leading-5 text-slate-600">
+                      <p className="mt-1 text-xs leading-5 text-[#73685D]">
                         {editingBaggageRule.summary}
                       </p>
 
@@ -1000,9 +999,9 @@ export default function ChecklistPage() {
                           (rule) => (
                             <div
                               key={rule}
-                              className="flex items-start gap-2 text-xs leading-5 text-slate-700"
+                              className="flex items-start gap-2 text-xs leading-5 text-[#554C43]"
                             >
-                              <span className="shrink-0 font-bold text-amber-600">
+                              <span className="shrink-0 font-bold text-[#9C6B16]">
                                 •
                               </span>
 
@@ -1015,19 +1014,19 @@ export default function ChecklistPage() {
 
                       </div>
 
-                      <div className="mt-3 border-t border-amber-200 pt-2">
+                      <div className="mt-3 border-t border-[#EBCB81] pt-2">
 
-                        <p className="text-[10px] leading-4 text-slate-400">
+                        <p className="text-[10px] leading-4 text-[#988C7E]">
                           資料來源：
                           {editingBaggageRule.sourceName}
                         </p>
 
-                        <p className="text-[10px] leading-4 text-slate-400">
+                        <p className="text-[10px] leading-4 text-[#988C7E]">
                           規則更新：
                           {editingBaggageRule.updatedAt}
                         </p>
 
-                        <p className="mt-1 text-[10px] leading-4 text-slate-400">
+                        <p className="mt-1 text-[10px] leading-4 text-[#988C7E]">
                           實際限制仍以搭乘航空公司的最新規定為準。
                         </p>
 
@@ -1039,7 +1038,7 @@ export default function ChecklistPage() {
                 </div>
               )}
 
-              <label className="mt-5 block text-xs font-bold text-slate-500">
+              <label className="mt-5 block text-xs font-bold text-[#83796D]">
                 📝 我的備註
               </label>
 
@@ -1056,7 +1055,7 @@ export default function ChecklistPage() {
                 }
                 placeholder="例如：記得帶白色那顆、放在側背包..."
                 rows={3}
-                className="mt-2 w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-900 placeholder:text-slate-400 outline-none focus:border-slate-900 focus:bg-white"
+                className="mt-2 w-full resize-none rounded-2xl border border-[#E8DFD1] bg-[#FFFCF6] px-4 py-3 text-sm font-medium text-[#3E3A39] placeholder:text-[#988C7E] outline-none focus:border-[#172B49] focus:bg-white"
               />
 
               <div className="mt-6 flex gap-2">
@@ -1067,7 +1066,7 @@ export default function ChecklistPage() {
                       null
                     )
                   }
-                  className="flex-1 rounded-2xl bg-slate-100 py-3.5 text-sm font-bold text-slate-500"
+                  className="flex-1 rounded-2xl bg-[#F5F0E7] py-3.5 text-sm font-bold text-[#83796D]"
                 >
                   取消
                 </button>
@@ -1080,7 +1079,7 @@ export default function ChecklistPage() {
                   onClick={
                     handleSaveEdit
                   }
-                  className="flex-[1.5] rounded-2xl bg-slate-900 py-3.5 text-sm font-bold text-white disabled:opacity-30"
+                  className="flex-[1.5] rounded-2xl bg-[#172B49] py-3.5 text-sm font-bold text-white disabled:opacity-30"
                 >
                   儲存修改
                 </button>
@@ -1099,25 +1098,25 @@ export default function ChecklistPage() {
             }
           >
             <div className="text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-2xl">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#FCEAE8] text-2xl">
                 🗑️
               </div>
 
-              <p className="mt-5 text-[10px] font-bold tracking-[0.15em] text-slate-400">
+              <p className="mt-5 text-[10px] font-bold tracking-[0.15em] text-[#988C7E]">
                 DELETE ITEM
               </p>
 
-              <h2 className="mt-1 text-xl font-bold text-slate-900">
+              <h2 className="mt-1 text-xl font-bold text-[#3E3A39]">
                 刪除這個物品？
               </h2>
 
-              <p className="mt-3 text-sm font-bold text-slate-700">
+              <p className="mt-3 text-sm font-bold text-[#554C43]">
                 {
                   deleteItemState.title
                 }
               </p>
 
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="mt-1 text-xs text-[#988C7E]">
                 刪除後會從旅行用品清單移除
               </p>
             </div>
@@ -1130,7 +1129,7 @@ export default function ChecklistPage() {
                     null
                   )
                 }
-                className="flex-1 rounded-2xl bg-slate-100 py-3.5 text-sm font-bold text-slate-500"
+                className="flex-1 rounded-2xl bg-[#F5F0E7] py-3.5 text-sm font-bold text-[#83796D]"
               >
                 取消
               </button>
@@ -1140,7 +1139,7 @@ export default function ChecklistPage() {
                 onClick={
                   handleDeleteItem
                 }
-                className="flex-[1.5] rounded-2xl bg-red-50 py-3.5 text-sm font-bold text-red-600"
+                className="flex-[1.5] rounded-2xl bg-[#FCEAE8] py-3.5 text-sm font-bold text-red-600"
               >
                 刪除物品
               </button>
@@ -1158,15 +1157,15 @@ export default function ChecklistPage() {
               )
             }
           >
-            <p className="text-[10px] font-bold tracking-[0.15em] text-slate-400">
+            <p className="text-[10px] font-bold tracking-[0.15em] text-[#988C7E]">
               NEW ITEM
             </p>
 
-            <h2 className="mt-1 text-xl font-bold text-slate-900">
+            <h2 className="mt-1 text-xl font-bold text-[#3E3A39]">
               新增旅行用品
             </h2>
 
-            <label className="mt-5 block text-xs font-bold text-slate-500">
+            <label className="mt-5 block text-xs font-bold text-[#83796D]">
               物品名稱
             </label>
 
@@ -1183,29 +1182,29 @@ export default function ChecklistPage() {
                 )
               }
               placeholder="例如：相機"
-              className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 outline-none focus:border-slate-900 focus:bg-white"
+              className="mt-2 w-full rounded-2xl border border-[#E8DFD1] bg-[#FFFCF6] px-4 py-4 text-sm font-medium text-[#3E3A39] placeholder:text-[#988C7E] outline-none focus:border-[#172B49] focus:bg-white"
             />
 
             {/* 航空行李安全提醒 */}
             {detectedBaggageRule && (
-              <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+              <div className="mt-4 rounded-2xl border border-[#EBCB81] bg-[#FFF4D9] p-4">
                 <div className="flex items-start gap-3">
 
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-lg">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FCE6AC] text-lg">
                     ⚠️
                   </div>
 
                   <div className="min-w-0 flex-1">
 
-                    <p className="text-[10px] font-bold tracking-[0.12em] text-amber-600">
+                    <p className="text-[10px] font-bold tracking-[0.12em] text-[#9C6B16]">
                       航空行李注意
                     </p>
 
-                    <h3 className="mt-0.5 text-sm font-bold text-slate-900">
+                    <h3 className="mt-0.5 text-sm font-bold text-[#3E3A39]">
                       {detectedBaggageRule.title}
                     </h3>
 
-                    <p className="mt-1 text-xs leading-5 text-slate-600">
+                    <p className="mt-1 text-xs leading-5 text-[#73685D]">
                       {detectedBaggageRule.summary}
                     </p>
 
@@ -1214,9 +1213,9 @@ export default function ChecklistPage() {
                         (rule) => (
                           <div
                             key={rule}
-                            className="flex items-start gap-2 text-xs leading-5 text-slate-700"
+                            className="flex items-start gap-2 text-xs leading-5 text-[#554C43]"
                           >
-                            <span className="shrink-0 font-bold text-amber-600">
+                            <span className="shrink-0 font-bold text-[#9C6B16]">
                               •
                             </span>
 
@@ -1228,19 +1227,19 @@ export default function ChecklistPage() {
                       )}
                     </div>
 
-                    <div className="mt-3 border-t border-amber-200 pt-2">
+                    <div className="mt-3 border-t border-[#EBCB81] pt-2">
 
-                      <p className="text-[10px] leading-4 text-slate-400">
+                      <p className="text-[10px] leading-4 text-[#988C7E]">
                         資料來源：
                         {detectedBaggageRule.sourceName}
                       </p>
 
-                      <p className="text-[10px] leading-4 text-slate-400">
+                      <p className="text-[10px] leading-4 text-[#988C7E]">
                         規則更新：
                         {detectedBaggageRule.updatedAt}
                       </p>
 
-                      <p className="mt-1 text-[10px] leading-4 text-slate-400">
+                      <p className="mt-1 text-[10px] leading-4 text-[#988C7E]">
                         實際限制仍以搭乘航空公司的最新規定為準。
                       </p>
 
@@ -1251,7 +1250,7 @@ export default function ChecklistPage() {
               </div>
             )}
 
-            <p className="mt-5 text-xs font-bold text-slate-500">
+            <p className="mt-5 text-xs font-bold text-[#83796D]">
               放哪裡？
             </p>
 
@@ -1299,10 +1298,10 @@ export default function ChecklistPage() {
               </BaggageButton>
             </div>
 
-            <label className="mt-5 block text-xs font-bold text-slate-500">
+            <label className="mt-5 block text-xs font-bold text-[#83796D]">
               📝 我的備註
 
-              <span className="ml-1 font-medium text-slate-300">
+              <span className="ml-1 font-medium text-[#B8ADA0]">
                 選填
               </span>
             </label>
@@ -1320,7 +1319,7 @@ export default function ChecklistPage() {
               }
               placeholder="例如：放側背包、記得前一天充電..."
               rows={3}
-              className="mt-2 w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-900 placeholder:text-slate-400 outline-none focus:border-slate-900 focus:bg-white"
+              className="mt-2 w-full resize-none rounded-2xl border border-[#E8DFD1] bg-[#FFFCF6] px-4 py-3 text-sm font-medium text-[#3E3A39] placeholder:text-[#988C7E] outline-none focus:border-[#172B49] focus:bg-white"
             />
 
             <div className="mt-6 flex gap-2">
@@ -1331,7 +1330,7 @@ export default function ChecklistPage() {
                     null
                   )
                 }
-                className="flex-1 rounded-2xl bg-slate-100 py-3.5 text-sm font-bold text-slate-500"
+                className="flex-1 rounded-2xl bg-[#F5F0E7] py-3.5 text-sm font-bold text-[#83796D]"
               >
                 取消
               </button>
@@ -1344,7 +1343,7 @@ export default function ChecklistPage() {
                 onClick={
                   handleAddItem
                 }
-                className="flex-[1.5] rounded-2xl bg-slate-900 py-3.5 text-sm font-bold text-white disabled:opacity-30"
+                className="flex-[1.5] rounded-2xl bg-[#172B49] py-3.5 text-sm font-bold text-white disabled:opacity-30"
               >
                 加入清單
               </button>
@@ -1362,11 +1361,11 @@ export default function ChecklistPage() {
               )
             }
           >
-            <p className="text-[10px] font-bold tracking-[0.15em] text-slate-400">
+            <p className="text-[10px] font-bold tracking-[0.15em] text-[#988C7E]">
               NEW CATEGORY
             </p>
 
-            <h2 className="mt-1 text-xl font-bold text-slate-900">
+            <h2 className="mt-1 text-xl font-bold text-[#3E3A39]">
               新增分類
             </h2>
 
@@ -1383,7 +1382,7 @@ export default function ChecklistPage() {
                 )
               }
               placeholder="例如：攝影用品"
-              className="mt-5 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 outline-none focus:border-slate-900 focus:bg-white"
+              className="mt-5 w-full rounded-2xl border border-[#E8DFD1] bg-[#FFFCF6] px-4 py-4 text-sm font-medium text-[#3E3A39] placeholder:text-[#988C7E] outline-none focus:border-[#172B49] focus:bg-white"
             />
 
             <div className="mt-5 flex gap-2">
@@ -1394,7 +1393,7 @@ export default function ChecklistPage() {
                     false
                   )
                 }
-                className="flex-1 rounded-2xl bg-slate-100 py-3.5 text-sm font-bold text-slate-500"
+                className="flex-1 rounded-2xl bg-[#F5F0E7] py-3.5 text-sm font-bold text-[#83796D]"
               >
                 取消
               </button>
@@ -1407,7 +1406,7 @@ export default function ChecklistPage() {
                 disabled={
                   !newCategoryTitle.trim()
                 }
-                className="flex-[1.5] rounded-2xl bg-slate-900 py-3.5 text-sm font-bold text-white disabled:opacity-30"
+                className="flex-[1.5] rounded-2xl bg-[#172B49] py-3.5 text-sm font-bold text-white disabled:opacity-30"
               >
                 新增分類
               </button>
@@ -1492,7 +1491,7 @@ function CategorySection({
         );
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+    <section className="overflow-hidden rounded-[22px] border border-[#E8DFD1] bg-white shadow-[0_3px_12px_rgba(90,69,37,0.045)]">
       {/* HEADER */}
 
       <div className="flex items-center">
@@ -1501,14 +1500,14 @@ function CategorySection({
           onClick={
             onToggleCategory
           }
-          className="min-w-0 flex-1 px-4 py-4 text-left active:bg-slate-50"
+          className="min-w-0 flex-1 px-4 py-4 text-left active:bg-[#FFFCF6]"
         >
           <div className="flex items-center gap-3">
             <div
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
                 isComplete
-                  ? "bg-slate-900"
-                  : "bg-slate-50"
+                  ? "bg-[#172B49]"
+                  : "bg-[#FFFCF6]"
               }`}
             >
               {isComplete ? (
@@ -1529,8 +1528,8 @@ function CategorySection({
                 <h2
                   className={`truncate text-sm font-bold ${
                     isComplete
-                      ? "text-slate-400"
-                      : "text-slate-900"
+                      ? "text-[#988C7E]"
+                      : "text-[#3E3A39]"
                   }`}
                 >
                   {
@@ -1539,16 +1538,16 @@ function CategorySection({
                 </h2>
 
                 {isComplete && (
-                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-500">
+                  <span className="rounded-full bg-[#F5F0E7] px-2 py-0.5 text-[9px] font-bold text-[#83796D]">
                     DONE
                   </span>
                 )}
               </div>
 
               <div className="mt-1.5 flex items-center gap-2">
-                <div className="h-1 w-16 overflow-hidden rounded-full bg-slate-100">
+                <div className="h-1 w-16 overflow-hidden rounded-full bg-[#F5F0E7]">
                   <div
-                    className="h-full rounded-full bg-slate-900"
+                    className="h-full rounded-full bg-[#D8AE58]"
                     style={{
                       width:
                         `${percent}%`,
@@ -1556,7 +1555,7 @@ function CategorySection({
                   />
                 </div>
 
-                <span className="text-[10px] font-medium text-slate-400">
+                <span className="text-[10px] font-medium text-[#988C7E]">
                   {completed}
                   {" / "}
                   {items.length}
@@ -1565,7 +1564,7 @@ function CategorySection({
             </div>
 
             <span
-              className={`text-xs text-slate-300 transition-transform ${
+              className={`text-xs text-[#B8ADA0] transition-transform ${
                 collapsed
                   ? ""
                   : "rotate-180"
@@ -1591,7 +1590,7 @@ function CategorySection({
                 );
               }
             }}
-            className="mr-3 flex h-8 w-8 items-center justify-center rounded-full text-slate-300"
+            className="mr-3 flex h-8 w-8 items-center justify-center rounded-full text-[#B8ADA0]"
           >
             ×
           </button>
@@ -1601,7 +1600,7 @@ function CategorySection({
       {/* ITEMS */}
 
       {!collapsed && (
-        <div className="border-t border-slate-100">
+        <div className="border-t border-[#E8DFD1]">
           <SortableContext
             items={items.map(
               (item) =>
@@ -1645,7 +1644,7 @@ function CategorySection({
           </SortableContext>
 
           {items.length === 0 && (
-            <div className="px-4 py-6 text-center text-xs text-slate-400">
+            <div className="px-4 py-6 text-center text-xs text-[#988C7E]">
               這個分類目前沒有項目
             </div>
           )}
@@ -1656,7 +1655,7 @@ function CategorySection({
               onClick={
                 onAddItem
               }
-              className="flex w-full items-center px-4 py-3.5 text-xs font-bold text-slate-400 active:bg-slate-50"
+              className="flex w-full items-center px-4 py-3.5 text-xs font-bold text-[#988C7E] active:bg-[#FFFCF6]"
             >
               ＋ 新增物品
             </button>
@@ -1756,7 +1755,7 @@ function ChecklistRow({
       }
       className={`flex gap-3 px-4 py-3.5 transition-shadow ${
         !isLast
-          ? "border-b border-slate-100"
+          ? "border-b border-[#E8DFD1]"
           : ""
       } ${
         isDragging
@@ -1779,8 +1778,8 @@ function ChecklistRow({
         }}
         className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
           item.completed
-            ? "border-slate-900 bg-slate-900 text-white"
-            : "border-slate-200 bg-white text-transparent"
+            ? "border-[#E5B956] bg-[#F6D27A] text-[#59401D]"
+            : "border-[#E8DFD1] bg-white text-transparent"
         }`}
       >
         <span className="text-[9px] font-bold">
@@ -1821,8 +1820,8 @@ function ChecklistRow({
           <p
             className={`text-sm font-bold ${
               item.completed
-                ? "text-slate-300 line-through"
-                : "text-slate-800"
+                ? "text-[#B8ADA0] line-through"
+                : "text-[#3E3A39]"
             }`}
           >
             {item.title}
@@ -1832,14 +1831,14 @@ function ChecklistRow({
             <span
               className={`rounded-md px-1.5 py-0.5 text-[9px] font-bold ${
                 item.completed
-                  ? "bg-slate-50 text-slate-300"
+                  ? "bg-[#FFFCF6] text-[#B8ADA0]"
                   : item.baggage ===
                     "carry-on"
-                  ? "bg-blue-50 text-blue-600"
+                  ? "bg-[#EAF1F0] text-[#416E71]"
                   : item.baggage ===
                     "checked"
-                  ? "bg-amber-50 text-amber-600"
-                  : "bg-slate-100 text-slate-500"
+                  ? "bg-[#FFF4D9] text-[#9C6B16]"
+                  : "bg-[#F5F0E7] text-[#83796D]"
               }`}
             >
               {baggage.icon}{" "}
@@ -1854,12 +1853,12 @@ function ChecklistRow({
           <p
             className={`mt-1 text-[10px] leading-4 ${
               item.completed
-                ? "text-slate-200"
+                ? "text-[#D4C8BA]"
                 : item.note.startsWith(
                     "⚠️"
                   )
-                ? "font-medium text-amber-600"
-                : "text-slate-400"
+                ? "font-medium text-[#9C6B16]"
+                : "text-[#988C7E]"
             }`}
           >
             {item.note}
@@ -1872,8 +1871,8 @@ function ChecklistRow({
           <div
             className={`mt-1.5 flex items-center gap-1.5 ${
               item.completed
-                ? "text-slate-200"
-                : "text-amber-600"
+                ? "text-[#D4C8BA]"
+                : "text-[#9C6B16]"
             }`}
           >
             <span className="text-[10px]">
@@ -1885,7 +1884,7 @@ function ChecklistRow({
             </span>
 
             {!item.completed && (
-              <span className="text-[9px] font-medium text-amber-500">
+              <span className="text-[9px] font-medium text-[#B27C20]">
                 · 點擊查看
               </span>
             )}
@@ -1898,8 +1897,8 @@ function ChecklistRow({
           <div
             className={`mt-1.5 flex items-start gap-1 text-[10px] leading-4 ${
               item.completed
-                ? "text-slate-200"
-                : "text-slate-500"
+                ? "text-[#D4C8BA]"
+                : "text-[#83796D]"
             }`}
           >
             <span className="shrink-0">
@@ -1928,7 +1927,7 @@ function ChecklistRow({
             item.title
           );
         }}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg font-medium text-slate-400 active:bg-red-50 active:text-red-500"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg font-medium text-[#988C7E] active:bg-[#FCEAE8] active:text-red-500"
       >
         ×
       </button>
@@ -1962,8 +1961,8 @@ function FilterButton({
       }
       className={`flex-1 rounded-xl px-2 py-2.5 text-[11px] font-bold ${
         active
-          ? "bg-white text-slate-900 shadow-sm"
-          : "text-slate-400"
+          ? "bg-[#F6D27A] text-[#59401D] shadow-sm"
+          : "text-[#988C7E]"
       }`}
     >
       {children}
@@ -1997,8 +1996,8 @@ function BaggageButton({
       }
       className={`rounded-xl border px-2 py-3 text-xs font-bold ${
         active
-          ? "border-slate-900 bg-slate-900 text-white"
-          : "border-slate-200 bg-white text-slate-500"
+          ? "border-[#E5B956] bg-[#F6D27A] text-[#59401D]"
+          : "border-[#E8DFD1] bg-white text-[#83796D]"
       }`}
     >
       {children}
@@ -2018,7 +2017,7 @@ function BottomSheet({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-5 backdrop-blur-[2px]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#201D2A]/45 p-5 backdrop-blur-[2px]">
       {/* 點擊背景關閉 */}
       <button
         type="button"
@@ -2035,7 +2034,8 @@ function BottomSheet({
           w-full max-w-md
           overflow-y-auto
           rounded-[28px]
-          bg-white
+          bg-[#FFFCF6]
+          border border-[#E8DFD1]
           p-5
           shadow-2xl
         "

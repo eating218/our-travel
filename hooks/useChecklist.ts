@@ -386,6 +386,36 @@ export function useChecklist() {
   }
 
   // ========================================
+  // MOVE ITEM BETWEEN CATEGORIES
+  // 保留物品 ID、完成狀態、備註與行李類型
+  // ========================================
+
+  function moveItemToCategory(
+    activeId: string,
+    overId: string
+  ) {
+    setData((current) => {
+      const moving = current.items.find((item) => item.id === activeId);
+      const target = current.items.find((item) => item.id === overId);
+
+      if (!moving || !target || moving.categoryId === target.categoryId) {
+        return current;
+      }
+
+      const remaining = current.items.filter((item) => item.id !== activeId);
+      const targetIndex = remaining.findIndex((item) => item.id === overId);
+      if (targetIndex < 0) return current;
+
+      remaining.splice(targetIndex, 0, {
+        ...moving,
+        categoryId: target.categoryId,
+      });
+
+      return { ...current, items: remaining };
+    });
+  }
+
+  // ========================================
   // ADD CATEGORY
   // ========================================
 
@@ -651,6 +681,7 @@ export function useChecklist() {
     deleteItem,
 
     reorderItems,
+    moveItemToCategory,
 
     addCategory,
     deleteCategory,
