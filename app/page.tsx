@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import TravelIcon from "./components/TravelIcon";
 
 import TripStatusCard from "./components/TripStatusCard";
 import TripInfoSheet from "./components/TripInfoSheet";
 import WeatherAdviceBar from "./components/WeatherAdviceBar";
+import KyotoIcon from "./components/KyotoIcon";
 
 import { useChecklist } from "../hooks/useChecklist";
 import { useExpenseData } from "../hooks/useExpenseData";
@@ -503,15 +503,11 @@ export default function Home() {
 
           <button
             type="button"
-            onClick={() =>
-              setIsTripInfoOpen(
-                true
-              )
-            }
+            onClick={() => setIsTripInfoOpen(true)}
             aria-label="查看旅程資訊"
             className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E8DFD1] bg-white text-xl shadow-sm transition active:scale-95"
           >
-            <TravelIcon name="plane" size={28} />
+            <KyotoIcon name="suitcase" size={30} />
           </button>
         </header>
 
@@ -534,185 +530,87 @@ export default function Home() {
             TRAVEL TOOLS
         ======================================== */}
 
-        <section className="mt-7">
+        <section className="mt-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-[#3E3A39]">
-              旅遊工具
-            </h2>
-
-
-            <span className="text-xs text-[#938B82]">
-              全部 →
-            </span>
+            <h2 className="text-base font-bold text-[#3E3A39]">旅遊工具</h2>
+            <span className="text-xs text-[#938B82]">全部 →</span>
           </div>
 
-
-          <div className="mt-3 grid grid-cols-4 gap-2">
-            {quickTools.map(
-              (tool) =>
-                tool.href ===
-                "#" ? (
-                  <div
-                    key={
-                      tool.name
-                    }
-                    className="rounded-2xl border border-[#E8DFD1] bg-white px-2 py-4 text-center shadow-sm"
-                  >
-                    <div className="flex justify-center"><TravelIcon name={tool.icon as "itinerary" | "train" | "card" | "japanese"} size={36} /></div>
-
-                    <p className="mt-2 text-xs font-semibold text-[#554F49]">
-                      {
-                        tool.name
-                      }
-                    </p>
-                  </div>
-                ) : (
-                  <Link
-                    key={
-                      tool.name
-                    }
-                    href={
-                      tool.href
-                    }
-                    className="rounded-2xl border border-[#E8DFD1] bg-white px-2 py-4 text-center shadow-sm transition active:scale-[0.98]"
-                  >
-                    <div className="flex justify-center"><TravelIcon name={tool.icon as "itinerary" | "train" | "card" | "japanese"} size={36} /></div>
-
-                    <p className="mt-2 text-xs font-semibold text-[#554F49]">
-                      {
-                        tool.name
-                      }
-                    </p>
-                  </Link>
-                )
-            )}
+          {/* 四色工具：固定四欄、縮小高度，保持原有路由 */}
+          <div className="mt-2 grid grid-cols-4 gap-2">
+            {quickTools.map((tool, index) => {
+              const colors = [
+                "border-[#E9BD65] bg-[#FFF2D9]",
+                "border-[#B8D0A6] bg-[#EDF5E7]",
+                "border-[#ABCFE2] bg-[#EDF5FB]",
+                "border-[#E8B8BE] bg-[#FFF0F2]",
+              ];
+              const content = (
+                <>
+                  <KyotoIcon
+                    name={tool.icon as "itinerary" | "train" | "card" | "japanese"}
+                    size={28}
+                  />
+                  <span className="mt-1 text-[12px] font-bold text-[#554F49]">{tool.name}</span>
+                </>
+              );
+              const className = `flex h-[76px] min-w-0 flex-col items-center justify-center rounded-2xl border shadow-sm ${colors[index]}`;
+              return tool.href === "#" ? (
+                <div key={tool.name} className={className} aria-disabled="true">
+                  {content}
+                </div>
+              ) : (
+                <Link key={tool.name} href={tool.href} className={`${className} transition active:scale-[0.98]`}>
+                  {content}
+                </Link>
+              );
+            })}
           </div>
         </section>
 
-
-        {/* ========================================
-            INFORMATION CARDS
-        ======================================== */}
-
-        <section className="mt-5 grid grid-cols-2 gap-3">
-
-          {/* CHECKLIST */}
-
+        {/* 資訊卡：兩張並排橫向卡片，優惠券另行保留 */}
+        <section className="mt-3 grid grid-cols-2 gap-2">
           <Link
             href="/checklist"
-            className="rounded-3xl border border-[#E8DFD1] bg-white p-5 shadow-sm transition active:scale-[0.98]"
+            className="flex min-w-0 items-center gap-2 rounded-2xl border border-[#D9D1B2] bg-[#FFF8E9] p-2.5 shadow-sm transition active:scale-[0.98]"
           >
-            <div className="flex items-center justify-between">
-              <TravelIcon name="checklist" size={34} />
-
-
-              <span
-                className={`text-xs font-semibold ${
-                  checklistCompleted
-                    ? "text-[#517C4E]"
-                    : "text-[#938B82]"
-                }`}
-              >
-                {!checklistLoaded
-                  ? "..."
-                  : checklistCompleted
-                    ? "✓ 完成"
-                    : `${completed} / ${total}`}
-              </span>
-            </div>
-
-
-            <h3 className="mt-4 font-bold text-[#3E3A39]">
-              行前準備
-            </h3>
-
-
-            <div className="mt-1 flex items-center justify-between">
-              <p className="text-xs text-[#938B82]">
-                Checklist
+            <KyotoIcon name="checklist" size={23} />
+            <div className="min-w-0 flex-1">
+              <h3 className="text-sm font-bold text-[#3E3A39]">行前準備</h3>
+              <p className="mt-0.5 text-[11px] text-[#756B60]">
+                {!checklistLoaded ? "載入中..." : `${completed} / ${total} 項 (${percent}%)`}
               </p>
-
-
-              {checklistLoaded && (
-                <p
-                  className={`text-[10px] font-bold ${
-                    checklistCompleted
-                      ? "text-[#517C4E]"
-                      : "text-[#938B82]"
-                  }`}
-                >
-                  {percent}%
-                </p>
-              )}
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EEE7DA]">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${checklistCompleted ? "bg-[#8FB77C]" : "bg-[#A7CF85]"}`}
+                  style={{ width: `${checklistLoaded ? percent : 0}%` }}
+                />
+              </div>
             </div>
-
-
-            <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[#F5F0E7]">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ${
-                  checklistCompleted
-                    ? "bg-[#8FB77C]"
-                    : "bg-[#3E3A39]"
-                }`}
-                style={{
-                  width: `${
-                    checklistLoaded
-                      ? percent
-                      : 0
-                  }%`,
-                }}
-              />
-            </div>
+            <span aria-hidden="true" className="text-lg text-[#655E56]">›</span>
           </Link>
-
-
-          {/* EXPENSES */}
 
           <Link
             href="/expenses"
-            className="rounded-3xl border border-[#E8DFD1] bg-white p-5 shadow-sm transition active:scale-[0.98]"
+            className="flex min-w-0 items-center gap-2 rounded-2xl border border-[#E8C3C0] bg-[#FFF0ED] p-2.5 shadow-sm transition active:scale-[0.98]"
           >
-            <TravelIcon name="money" size={34} />
-
-
-            <h3 className="mt-4 font-bold text-[#3E3A39]">
-              共同記帳
-            </h3>
-
-
-            <p className="mt-2 text-xl font-bold text-[#3E3A39]">
-              ¥ 24,580
-            </p>
-
-
-            <p className="mt-1 text-xs text-[#938B82]">
-              目前旅費
-            </p>
+            <KyotoIcon name="money" size={23} />
+            <div className="min-w-0 flex-1">
+              <h3 className="text-sm font-bold text-[#3E3A39]">共同記帳</h3>
+              <p className="mt-1 text-base font-bold text-[#3E3A39]">¥ 24,580</p>
+              <p className="text-[10px] text-[#938B82]">目前旅費</p>
+            </div>
+            <span aria-hidden="true" className="text-lg text-[#655E56]">›</span>
           </Link>
 
-
-          {/* COUPONS */}
-
-          <div className="rounded-3xl border border-[#E8DFD1] bg-white p-5 shadow-sm">
-            <TravelIcon name="shopping" size={34} />
-
-
-            <h3 className="mt-4 font-bold text-[#3E3A39]">
-              免稅優惠
-            </h3>
-
-
-            <p className="mt-2 text-xl font-bold text-[#3E3A39]">
-              6
-            </p>
-
-
-            <p className="mt-1 text-xs text-[#938B82]">
-              張優惠券
-            </p>
+          <div className="col-span-2 flex items-center gap-3 rounded-2xl border border-[#E8DFD1] bg-white px-4 py-3 shadow-sm">
+            <span aria-hidden="true" className="text-2xl">🛍️</span>
+            <div className="flex-1">
+              <h3 className="text-sm font-bold text-[#3E3A39]">免稅優惠</h3>
+              <p className="text-xs text-[#938B82]">6 張優惠券</p>
+            </div>
           </div>
         </section>
-
 
         {/* ========================================
             RECEIPT
@@ -723,7 +621,9 @@ export default function Home() {
           className="mt-3 flex w-full items-center justify-between rounded-2xl border border-[#E8DFD1] bg-white p-4 text-left shadow-sm transition active:scale-[0.98]"
         >
           <div className="flex items-center gap-3">
-            <TravelIcon name="receipt" size={34} />
+            <span className="text-xl">
+              <KyotoIcon name="receipt" size={30} />
+            </span>
 
 
             <div>
@@ -750,52 +650,32 @@ export default function Home() {
           BOTTOM NAVIGATION
       ======================================== */}
 
-      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#E8DFD1] bg-[#FFFCF6]/95 backdrop-blur">
-        <div className="mx-auto grid max-w-md grid-cols-4 px-4 pb-5 pt-3">
-
-          <div className="text-center">
-            <div className="flex justify-center"><TravelIcon name="home" size={26} /></div>
-
-            <p className="mt-1 text-[10px] font-bold text-[#3E3A39]">
-              首頁
-            </p>
+      <nav aria-label="主要導覽" className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#E8DFD1] bg-[#FFFCF6]/95 backdrop-blur">
+        <div className="mx-auto grid max-w-md grid-cols-6 gap-1 px-2 pb-[max(12px,env(safe-area-inset-bottom))] pt-2">
+          <div aria-current="page" className="flex min-w-0 flex-col items-center justify-center rounded-2xl bg-[#D9ECC6] py-1.5 text-[#3E3A39]">
+            <KyotoIcon name="home" size={23} />
+            <span className="mt-0.5 text-[11px] font-bold">首頁</span>
           </div>
-
-
-          <Link
-            href="/itinerary"
-            className="text-center"
-          >
-            <div className="flex justify-center"><TravelIcon name="itinerary" size={26} /></div>
-
-            <p className="mt-1 text-[10px] text-[#938B82]">
-              行程
-            </p>
+          <Link href="/itinerary" className="flex min-w-0 flex-col items-center justify-center py-1.5 text-[#817C76] transition active:scale-95">
+            <KyotoIcon name="itinerary" size={23} />
+            <span className="mt-0.5 text-[11px]">行程</span>
           </Link>
-
-
-          <Link
-            href="/expenses"
-            className="text-center"
-          >
-            <div className="flex justify-center"><TravelIcon name="money" size={26} /></div>
-
-            <p className="mt-1 text-[10px] text-[#938B82]">
-              分帳
-            </p>
+          <Link href="/expenses" className="flex min-w-0 flex-col items-center justify-center py-1.5 text-[#817C76] transition active:scale-95">
+            <KyotoIcon name="money" size={23} />
+            <span className="mt-0.5 text-[11px]">記帳</span>
           </Link>
-
-
-          <Link
-            href="/checklist"
-            className="text-center"
-          >
-            <div className="flex justify-center"><TravelIcon name="checklist" size={26} /></div>
-
-            <p className="mt-1 text-[10px] text-[#938B82]">
-              準備
-            </p>
+          <Link href="/cards" className="flex min-w-0 flex-col items-center justify-center py-1.5 text-[#817C76] transition active:scale-95">
+            <KyotoIcon name="card" size={23} />
+            <span className="mt-0.5 text-[11px]">信用卡</span>
           </Link>
+          <Link href="/checklist" className="flex min-w-0 flex-col items-center justify-center py-1.5 text-[#817C76] transition active:scale-95">
+            <KyotoIcon name="checklist" size={23} />
+            <span className="mt-0.5 text-[11px]">清單</span>
+          </Link>
+          <button type="button" onClick={() => setIsTripInfoOpen(true)} aria-label="其他：查看旅程資訊" className="flex min-w-0 flex-col items-center justify-center py-1.5 text-[#817C76] transition active:scale-95">
+            <span aria-hidden="true" className="flex h-[23px] items-center justify-center text-xl leading-none">•••</span>
+            <span className="mt-0.5 text-[11px]">其他</span>
+          </button>
         </div>
       </nav>
 

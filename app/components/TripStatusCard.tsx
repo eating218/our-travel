@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import KyotoScenery from "./KyotoScenery";
 import {
   useEffect,
   useState,
@@ -413,7 +414,7 @@ export default function TripStatusCard() {
   ) {
 
     return (
-      <div className="mt-5 h-44 animate-pulse rounded-3xl bg-[#514B48]" />
+      <div className="mt-5 h-44 animate-pulse rounded-3xl bg-[#1C2D48]" />
     );
   }
 
@@ -424,7 +425,7 @@ export default function TripStatusCard() {
 
   return (
 
-    <section className="mt-5 rounded-3xl border border-[#62574C] bg-[#3E3A39] p-5 text-[#FFFCF6] shadow-sm">
+    <section className="relative mt-4 overflow-hidden rounded-3xl border border-[#385777] bg-[#14243F] px-4 py-3 text-[#FFFCF6] shadow-sm">
 
 
       {/* =====================================
@@ -455,7 +456,7 @@ export default function TripStatusCard() {
               </h2>
 
 
-              <p className="mt-1 text-xs text-[#D6C8B6]">
+              <p className="mt-1 text-xs text-[#C4D4E6]">
 
                 {activeDateRange}
 
@@ -483,7 +484,7 @@ export default function TripStatusCard() {
                   }
                 </p>
 
-                <p className="text-[10px] text-[#D6C8B6]">
+                <p className="text-[10px] text-[#C4D4E6]">
                   天後出發
                 </p>
 
@@ -495,11 +496,11 @@ export default function TripStatusCard() {
 
           {/* Next */}
 
-          <div className="mt-5 flex items-center justify-between border-t border-[#665C53] pt-4">
+          <div className="mt-5 flex items-center justify-between border-t border-[#54759A] pt-4">
 
             <div>
 
-              <p className="text-[10px] font-bold tracking-wider text-[#D6C8B6]">
+              <p className="text-[10px] font-bold tracking-wider text-[#C4D4E6]">
                 NEXT
               </p>
 
@@ -521,7 +522,7 @@ export default function TripStatusCard() {
 
             <Link
               href="/itinerary"
-              className="rounded-full border border-[#E6C36C] bg-[#F6D27A] px-4 py-2 text-xs font-semibold text-[#554018] transition hover:bg-[#F2C45F]"
+              className="rounded-full border border-[#E6C36C] bg-[#F6D27A]/75 backdrop-blur-[1px] px-4 py-2 text-xs font-semibold text-[#554018] transition hover:bg-[#F2C45F]"
             >
               行程 →
             </Link>
@@ -542,83 +543,74 @@ export default function TripStatusCard() {
 
         <>
 
-          {/* Day / Date */}
-
-          <div className="flex items-center justify-between">
-
-            <span className="text-[11px] font-bold tracking-wide text-[#F6D27A]">
-
-              TODAY · DAY{" "}
-
-              {
-                currentDay.day
-              }
-
-            </span>
-
-
-            <span className="text-xs text-[#D6C8B6]">
-
-              {
-                currentDay.date
-                  .slice(5)
-                  .replace(
-                    "-",
-                    "/"
-                  )
-              }
-
-            </span>
-
-          </div>
-
-
-          {/* =================================
-              TITLE
-          ================================= */}
-
-          <div className="mt-3 flex items-start justify-between gap-3">
-
-
-            <div className="min-w-0">
-
-              <h2 className="text-2xl font-bold">
-
-                {
-                  currentDay.title
-                }
-
-              </h2>
-
-
-              <p className="mt-1 truncate text-xs text-[#D6C8B6]">
-
-                {
-                  currentDay.subtitle
-                }
-
-              </p>
-
+          {/* TODAY 與風景疊圖：固定精簡高度，不改動行程資料 */}
+          <div className="relative -mx-4 -mt-3 h-[104px] overflow-hidden px-4 pt-3 sm:h-[112px]">
+            {/* 風景置於文字下方，靠左延伸；使用原始透明 PNG */}
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+              {currentDay.day >= 1 && currentDay.day <= 7 ? (
+                <img
+                  src={
+                    {
+                      1: "/images/travel/day-01-arrival.png",
+                      2: "/images/travel/day-02-higashiyama.png",
+                      3: "/images/travel/day-03-arashiyama.png",
+                      4: "/images/travel/day-04-amanohashidate.png",
+                      5: "/images/travel/day-05-usj.png",
+                      6: "/images/travel/day-06-osaka.png",
+                      7: "/images/travel/day-07-departure.png",
+                    }[currentDay.day]
+                  }
+                  alt=""
+                  draggable={false}
+                  className="absolute bottom-[-1px] left-[-5%] h-[101%] w-[105%] max-w-none select-none"
+                />
+              ) : (
+                <KyotoScenery day={currentDay.day} style={{ opacity: 1 }} />
+              )}
             </div>
-
-
-            <Link
-              href="/itinerary"
-              className="shrink-0 rounded-full border border-[#E6C36C] bg-[#F6D27A] px-4 py-2 text-xs font-semibold text-[#554018] transition hover:bg-[#F2C45F]"
-            >
-              行程 →
-            </Link>
-
+            {/* 左側淡入深藍，保護文字可讀性；右上角留按鈕安全區 */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-[1]"
+              style={{
+                background: "linear-gradient(90deg, #14243F 0%, rgba(20,36,63,.95) 18%, rgba(20,36,63,.62) 36%, rgba(20,36,63,.12) 58%, transparent 74%)",
+              }}
+            />
+            <div className="relative z-10 flex items-center gap-2.5">
+              <span className="text-[11px] font-bold tracking-wide text-[#F6D27A]">
+                TODAY · DAY {currentDay.day}
+              </span>
+              <span aria-hidden="true" className="h-3 w-px bg-[#F6D27A]/60" />
+              <span className="text-[11px] font-medium tracking-wide text-[#C4D4E6]">
+                {currentDay.date.slice(5).replace("-", "/")}
+              </span>
+            </div>
+            <div className="relative z-10 mt-2 flex items-start justify-between gap-2">
+              <div className="min-w-0 max-w-[64%]">
+                <h2 className="text-[22px] font-bold leading-tight drop-shadow-[0_2px_3px_rgba(20,36,63,1)] sm:text-2xl">
+                  {currentDay.title}
+                </h2>
+                <p className="mt-1 text-[11px] leading-4 text-[#D4E0EE] drop-shadow-[0_2px_3px_rgba(20,36,63,1)] sm:text-xs">
+                  {currentDay.subtitle}
+                </p>
+              </div>
+              <Link
+                href="/itinerary"
+                className="relative z-20 shrink-0 rounded-full border border-white/80 bg-white/[0.01] px-3 py-2 text-xs font-bold text-white shadow-[inset_0_2px_2px_rgba(255,255,255,0.65),inset_0_-3px_5px_rgba(0,0,0,0.12),0_5px_14px_rgba(0,0,0,0.24)] backdrop-blur-[2px] backdrop-saturate-150 transition-all hover:bg-white/[0.16] active:scale-95"
+              >
+                行程 →
+              </Link>
+            </div>
           </div>
-
 
           {/* =================================
               NEXT
           ================================= */}
 
-          <div className="mt-5 rounded-2xl border border-[#665C53] bg-[#514B48] p-4">
+          <div className="relative z-10 mt-0 overflow-hidden rounded-2xl border border-[#54759A] bg-[#263B5B] px-3 py-2.5">
 
 
+            <div aria-hidden="true" className="pointer-events-none absolute right-3 top-2 text-lg opacity-65">🌸</div>
             <p className="text-[10px] font-bold tracking-[0.18em] text-[#F6D27A]">
               NEXT
             </p>
@@ -641,7 +633,7 @@ export default function TripStatusCard() {
                 </p>
 
 
-                <p className="mt-1 text-xs text-[#D6C8B6]">
+                <p className="mt-1 text-xs text-[#C4D4E6]">
                   好好享受剩下的時間
                 </p>
 
@@ -676,7 +668,7 @@ export default function TripStatusCard() {
             </h2>
 
 
-            <p className="mt-1 text-xs text-[#D6C8B6]">
+            <p className="mt-1 text-xs text-[#C4D4E6]">
               今天尚未設定行程
             </p>
 
@@ -705,7 +697,7 @@ export default function TripStatusCard() {
 
           <div>
 
-            <p className="text-[11px] font-semibold tracking-wider text-[#D6C8B6]">
+            <p className="text-[11px] font-semibold tracking-wider text-[#C4D4E6]">
               TRIP COMPLETED
             </p>
 
@@ -715,7 +707,7 @@ export default function TripStatusCard() {
             </h2>
 
 
-            <p className="mt-1 text-xs text-[#D6C8B6]">
+            <p className="mt-1 text-xs text-[#C4D4E6]">
 
               {activeDateRange}
 
@@ -789,7 +781,7 @@ function NextItem({
         </p>
 
 
-        <p className="mt-0.5 text-[9px] font-semibold tracking-wider text-[#D6C8B6]">
+        <p className="mt-0.5 text-[9px] font-semibold tracking-wider text-[#C4D4E6]">
           NEXT STOP
         </p>
 
@@ -819,7 +811,7 @@ function NextItem({
 
         {item.detail && (
 
-          <p className="mt-1 truncate text-xs text-[#D6C8B6]">
+          <p className="mt-1 truncate text-xs text-[#C4D4E6]">
 
             {
               item.detail
