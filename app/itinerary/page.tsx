@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { TRAVEL_DAY_IMAGES } from "../components/travelDayImages";
 
 import {
   useCallback,
@@ -661,7 +662,7 @@ export default function ItineraryPage() {
 
     return (
 
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-[#FFFCF6]">
 
         <div className="mx-auto max-w-md px-5 py-12 text-center">
 
@@ -925,7 +926,7 @@ export default function ItineraryPage() {
 
     return (
 
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-[#FFFCF6]">
 
 
         {/* TOP BAR LOADING */}
@@ -1013,14 +1014,14 @@ export default function ItineraryPage() {
 
   return (
 
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#FFFCF6]">
 
 
       {/* =====================================
           TOP BAR
       ===================================== */}
 
-      <header className="sticky top-0 z-30 border-b border-slate-100 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-[#E8DFD1] bg-[#FFFCF6]/95 backdrop-blur">
 
 
         {/* TITLE BAR */}
@@ -1032,7 +1033,7 @@ export default function ItineraryPage() {
 
           <Link
             href="/"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg transition active:scale-95"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-[#E8DFD1] bg-white text-[#3E3A39] text-lg transition active:scale-95"
           >
             ‹
           </Link>
@@ -1042,12 +1043,12 @@ export default function ItineraryPage() {
 
           <div className="text-center">
 
-            <p className="text-[10px] font-bold tracking-[0.2em] text-slate-400">
+            <p className="text-[10px] font-bold tracking-[0.2em] text-[#8C5D00]">
               ITINERARY
             </p>
 
 
-            <h1 className="text-sm font-bold text-slate-900">
+            <h1 className="text-sm font-bold text-[#14243F]">
               {activeTripName}
             </h1>
 
@@ -1123,10 +1124,10 @@ export default function ItineraryPage() {
 
                     className={`min-w-[58px] rounded-2xl px-3 py-2.5 text-center transition active:scale-95 ${
                       active
-                        ? "bg-slate-900 text-white shadow-sm"
+                        ? "bg-[#F6D27A] text-[#473515] shadow-[0_3px_0_#D6AD51]"
                         : isToday
-                        ? "bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-100"
-                        : "bg-slate-100 text-slate-500"
+                        ? "bg-[#FFF5D9] text-[#8C5D00] ring-1 ring-inset ring-[#E6C36C]"
+                        : "bg-white text-[#726C65] ring-1 ring-inset ring-[#E8DFD1]"
                     }`}
                   >
 
@@ -1137,7 +1138,7 @@ export default function ItineraryPage() {
                       className={`text-[9px] font-bold tracking-[0.04em] ${
                         active &&
                         isToday
-                          ? "text-blue-300"
+                          ? "text-[#554018]"
                           : ""
                       }`}
                     >
@@ -1154,9 +1155,9 @@ export default function ItineraryPage() {
                     <p
                       className={`mt-1 text-xs font-semibold ${
                         active
-                          ? "text-white"
+                          ? "text-[#554018]"
                           : isToday
-                          ? "text-blue-600"
+                          ? "text-[#8C5D00]"
                           : ""
                       }`}
                     >
@@ -1194,45 +1195,34 @@ export default function ItineraryPage() {
             DAY TITLE
         ================================= */}
 
-        <section>
-
-
-          {/* DAY + TODAY */}
-
-          <div className="flex items-center gap-2">
-
-            <p className="text-xs font-bold text-blue-600">
-
-              DAY{" "}
-              {currentDay.day}
-
+        <section className="relative isolate overflow-hidden rounded-[26px] border border-[#385879] bg-[#14243F] shadow-[0_8px_22px_rgba(20,36,63,0.13)]">
+          {/* 七天共用首頁景點圖片；沒有對應圖片時維持深藍底色 */}
+          {TRAVEL_DAY_IMAGES[currentDay.day] && (
+            <img
+              src={TRAVEL_DAY_IMAGES[currentDay.day]}
+              alt=""
+              draggable={false}
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+            />
+          )}
+          {/* 左側漸層讓文字在插畫上保持清楚 */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#14243F] via-[#14243F]/85 to-[#14243F]/10" />
+          <div className="relative z-10 flex min-h-[172px] flex-col justify-center px-5 py-6">
+            <div className="flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-[#F6D27A]">
+              <span>DAY {currentDay.day}</span>
+              <span className="text-[#E6C36C]">│</span>
+              <span className="text-[#D4E1F3]">{currentDay.date.slice(5).replace("-", "/")}</span>
+              {todayDay?.day === currentDay.day && (
+                <span className="rounded-full border border-[#F6D27A]/60 px-2 py-0.5 text-[10px]">TODAY</span>
+              )}
+            </div>
+            <h2 className="mt-4 max-w-[78%] text-[26px] font-bold leading-tight tracking-wide text-white">
+              {currentDay.title}
+            </h2>
+            <p className="mt-2 max-w-[78%] text-xs leading-relaxed text-[#D4E1F3]">
+              {currentDay.subtitle}
             </p>
-
-
-            {todayDay?.day ===
-              currentDay.day && (
-
-              <span className="rounded-full bg-blue-50 px-2 py-1 text-[9px] font-bold tracking-[0.1em] text-blue-600">
-                TODAY
-              </span>
-            )}
-
           </div>
-
-
-          {/* TITLE */}
-
-          <h2 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">
-            {currentDay.title}
-          </h2>
-
-
-          {/* SUBTITLE */}
-
-          <p className="mt-2 text-sm text-slate-400">
-            {currentDay.subtitle}
-          </p>
-
         </section>
 
 
@@ -1240,7 +1230,16 @@ export default function ItineraryPage() {
             TIMELINE
         ================================= */}
 
-        <section className="mt-8">
+        <section className="mt-5">
+          <div className="mb-5 flex items-center justify-between px-1">
+            <div className="flex items-center gap-2">
+              <span className="h-5 w-1 rounded-full bg-[#D6AD51]" />
+              <span className="text-sm font-bold tracking-[0.12em] text-[#3E3A39]">今日時間軸</span>
+            </div>
+            <span className="rounded-full border border-[#E8DFD1] bg-white px-3 py-1 text-[10px] font-semibold text-[#8C5D00]">
+              {currentDay.items.length} 個行程
+            </span>
+          </div>
 
 
           {currentDay.items.length >
@@ -1299,7 +1298,7 @@ export default function ItineraryPage() {
 
           ) : (
 
-            <div className="rounded-3xl border border-dashed border-slate-200 bg-white px-5 py-12 text-center">
+            <div className="rounded-3xl border border-dashed border-[#D6C5A6] bg-[#FFFEFB] px-5 py-12 text-center">
 
               <div className="text-3xl">
                 🗓️
@@ -1328,7 +1327,7 @@ export default function ItineraryPage() {
               )
             }
 
-            className="mt-3 flex w-full items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-4 text-xs font-bold text-slate-500 transition active:scale-[0.99]"
+            className="mt-3 flex w-full items-center justify-center rounded-2xl border border-dashed border-[#D6AD51] bg-[#FFF8E8] px-4 py-4 text-xs font-bold text-[#8C5D00] transition active:scale-[0.99]"
           >
             ＋ 新增行程
           </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import KyotoScenery from "./KyotoScenery";
+import { TRAVEL_DAY_IMAGES } from "./travelDayImages";
 import {
   useEffect,
   useState,
@@ -545,27 +545,19 @@ export default function TripStatusCard() {
 
           {/* TODAY 與風景疊圖：固定精簡高度，不改動行程資料 */}
           <div className="relative -mx-4 -mt-3 h-[104px] overflow-hidden px-4 pt-3 sm:h-[112px]">
-            {/* 風景置於文字下方，靠左延伸；使用原始透明 PNG */}
-            <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-              {currentDay.day >= 1 && currentDay.day <= 7 ? (
+
+            {/* Day 1～7 共用圖片 */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+            >
+              {TRAVEL_DAY_IMAGES[currentDay.day] && (
                 <img
-                  src={
-                    {
-                      1: "/images/travel/day-01-arrival.png",
-                      2: "/images/travel/day-02-higashiyama.png",
-                      3: "/images/travel/day-03-arashiyama.png",
-                      4: "/images/travel/day-04-amanohashidate.png",
-                      5: "/images/travel/day-05-usj.png",
-                      6: "/images/travel/day-06-osaka.png",
-                      7: "/images/travel/day-07-departure.png",
-                    }[currentDay.day]
-                  }
+                  src={TRAVEL_DAY_IMAGES[currentDay.day]}
                   alt=""
                   draggable={false}
                   className="absolute bottom-[-1px] left-[-5%] h-[101%] w-[105%] max-w-none select-none"
                 />
-              ) : (
-                <KyotoScenery day={currentDay.day} style={{ opacity: 1 }} />
               )}
             </div>
             {/* 左側淡入深藍，保護文字可讀性；右上角留按鈕安全區 */}
@@ -778,8 +770,8 @@ function NextItem({
 
 
   return (
-    // 調整方框高度
-    <div className="mt-1.3 flex items-center gap-3">
+
+    <div className="mt-1.5 flex items-center gap-3">
 
 
       {/* =====================================

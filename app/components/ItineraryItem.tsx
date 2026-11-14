@@ -28,35 +28,35 @@ type Props = {
 
 const typeConfig = {
   sightseeing: {
-    label: "SIGHTSEEING",
+    label: "景點",
     icon: "⛩️",
-    dot: "bg-emerald-500",
+    dot: "bg-[#D6AD51]",
     badge:
-      "text-emerald-700 bg-emerald-50",
+      "text-[#805C17] bg-[#FFF0C7] border border-[#E9CE8B]",
   },
 
   food: {
-    label: "FOOD",
+    label: "餐飲",
     icon: "🍴",
-    dot: "bg-rose-500",
+    dot: "bg-[#D98B9E]",
     badge:
-      "text-rose-700 bg-rose-50",
+      "text-[#925568] bg-[#FBE8EE] border border-[#EFCBD5]",
   },
 
   transport: {
-    label: "TRANSPORT",
+    label: "交通",
     icon: "🚆",
-    dot: "bg-blue-500",
+    dot: "bg-[#8DB99B]",
     badge:
-      "text-blue-700 bg-blue-50",
+      "text-[#4C775A] bg-[#EAF4E9] border border-[#CFE2CF]",
   },
 
   hotel: {
-    label: "HOTEL",
+    label: "住宿",
     icon: "🏨",
-    dot: "bg-violet-500",
+    dot: "bg-[#B4A2C8]",
     badge:
-      "text-violet-700 bg-violet-50",
+      "text-[#75618C] bg-[#F1ECF6] border border-[#DCD0E8]",
   },
 };
 
@@ -150,7 +150,7 @@ export default function ItineraryItem({
 
     return (
 
-      <div className="grid grid-cols-[54px_24px_1fr]">
+      <div className="grid grid-cols-[55px_25px_minmax(0,1fr)]">
 
 
         {/* =================================
@@ -159,7 +159,7 @@ export default function ItineraryItem({
 
         <div className="pt-1 text-right">
 
-          <p className="text-sm font-bold text-slate-300">
+          <p className="text-sm font-bold text-[#B0A69B]">
 
             {item.startTime}
 
@@ -179,14 +179,14 @@ export default function ItineraryItem({
 
           {!isLast && (
 
-            <div className="absolute bottom-0 top-5 w-px bg-slate-200" />
+            <div className="absolute bottom-0 top-5 w-px bg-[#D9CBB5]" />
 
           )}
 
 
           {/* Completed check */}
 
-          <div className="relative z-10 mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[9px] font-bold text-white ring-4 ring-slate-50">
+          <div className="relative z-10 mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#D9CBB5] text-[9px] font-bold text-white ring-4 ring-[#FFFCF6]">
 
             ✓
 
@@ -206,7 +206,7 @@ export default function ItineraryItem({
             onClick={() =>
               setCompletedExpanded(true)
             }
-            className="group w-full rounded-2xl px-3 py-1 text-left transition active:bg-slate-100"
+            className="group w-full rounded-2xl px-3 py-1 text-left transition active:bg-[#F5F0E7]"
           >
 
             <div className="flex items-center gap-3">
@@ -218,14 +218,14 @@ export default function ItineraryItem({
 
                 <div className="flex items-center gap-2">
 
-                  <h3 className="truncate text-sm font-bold text-slate-400">
+                  <h3 className="truncate text-sm font-bold text-[#91877B]">
 
                     {item.name}
 
                   </h3>
 
 
-                  <span className="shrink-0 text-[9px] font-bold tracking-[0.12em] text-slate-300">
+                  <span className="shrink-0 text-[9px] font-bold tracking-[0.12em] text-[#B0A69B]">
 
                     DONE
 
@@ -234,7 +234,7 @@ export default function ItineraryItem({
                 </div>
 
 
-                <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-slate-300">
+                <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[#B0A69B]">
 
 
                   {/* Detail */}
@@ -281,7 +281,7 @@ export default function ItineraryItem({
 
               {/* Expand */}
 
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs text-slate-300 transition group-active:scale-95">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#F5F0E7] text-xs text-[#B0A69B] transition group-active:scale-95">
 
                 ›
 
@@ -307,7 +307,7 @@ export default function ItineraryItem({
   return (
 
     <div
-      className={`grid grid-cols-[54px_24px_1fr] transition ${
+      className={`grid grid-cols-[55px_25px_minmax(0,1fr)] transition ${
         isCompleted
           ? "opacity-60"
           : "opacity-100"
@@ -324,10 +324,10 @@ export default function ItineraryItem({
         <p
           className={`text-sm font-bold ${
             isNow
-              ? "text-blue-600"
+              ? "text-[#9C6D16]"
               : isCompleted
-              ? "text-slate-400"
-              : "text-slate-900"
+              ? "text-[#91877B]"
+              : "text-[#3E3A39]"
           }`}
         >
 
@@ -349,7 +349,7 @@ export default function ItineraryItem({
 
         {!isLast && (
 
-          <div className="absolute bottom-0 top-5 w-px bg-slate-200" />
+          <div className="absolute bottom-0 top-5 w-px bg-[#D9CBB5]" />
 
         )}
 
@@ -358,7 +358,7 @@ export default function ItineraryItem({
 
         {isCompleted ? (
 
-          <div className="relative z-10 mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-slate-300 text-[9px] font-bold text-white ring-4 ring-slate-50">
+          <div className="relative z-10 mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#B6AC9D] text-[9px] font-bold text-white ring-4 ring-[#FFFCF6]">
 
             ✓
 
@@ -371,9 +371,9 @@ export default function ItineraryItem({
 
           <div className="relative z-10 mt-1 flex h-4 w-4 items-center justify-center">
 
-            <span className="absolute h-4 w-4 animate-ping rounded-full bg-blue-400 opacity-40" />
+            <span className="absolute h-4 w-4 animate-ping rounded-full bg-[#E7C469] opacity-40" />
 
-            <span className="relative h-4 w-4 rounded-full bg-blue-500 ring-4 ring-blue-100" />
+            <span className="relative h-4 w-4 rounded-full bg-[#8DB99B] ring-4 ring-[#FFF0C7]" />
 
           </div>
 
@@ -382,7 +382,7 @@ export default function ItineraryItem({
 
           /* NEXT */
 
-          <div className="relative z-10 mt-1.5 h-3 w-3 rounded-full bg-slate-900 ring-4 ring-slate-200" />
+          <div className="relative z-10 mt-1.5 h-3 w-3 rounded-full bg-[#3E3A39] ring-4 ring-slate-200" />
 
 
         ) : (
@@ -390,7 +390,7 @@ export default function ItineraryItem({
           /* UPCOMING */
 
           <div
-            className={`relative z-10 mt-1.5 h-3 w-3 rounded-full ring-4 ring-slate-50 ${config.dot}`}
+            className={`relative z-10 mt-1.5 h-3 w-3 rounded-full ring-4 ring-[#FFFCF6] ${config.dot}`}
           />
 
         )}
@@ -405,12 +405,12 @@ export default function ItineraryItem({
       <div className="pb-7 pl-2">
 
         <article
-          className={`rounded-2xl bg-white p-4 transition ${
+          className={`rounded-[20px] bg-[#FFFEFB] p-4 transition ${
             isNow
-              ? "border-2 border-blue-500 shadow-md"
+              ? "border-2 border-[#E0B85D] shadow-[0_6px_20px_rgba(140,93,0,0.12)]"
               : isNext
-              ? "border-2 border-slate-900 shadow-md"
-              : "border border-slate-100 shadow-sm"
+              ? "border-2 border-[#D6AD51] shadow-[0_6px_20px_rgba(140,93,0,0.10)]"
+              : "border border-[#E8DFD1] shadow-[0_3px_12px_rgba(62,58,57,0.05)]"
           }`}
         >
 
@@ -425,13 +425,13 @@ export default function ItineraryItem({
 
               <div className="flex items-center gap-2">
 
-                <div className="flex h-4 w-4 items-center justify-center rounded-full bg-slate-300 text-[8px] font-bold text-white">
+                <div className="flex h-4 w-4 items-center justify-center rounded-full bg-[#B6AC9D] text-[8px] font-bold text-white">
 
                   ✓
 
                 </div>
 
-                <span className="text-[10px] font-bold tracking-[0.15em] text-slate-400">
+                <span className="text-[10px] font-bold tracking-[0.15em] text-[#91877B]">
 
                   COMPLETED
 
@@ -447,7 +447,7 @@ export default function ItineraryItem({
                 onClick={() =>
                   setCompletedExpanded(false)
                 }
-                className="rounded-lg bg-slate-100 px-2.5 py-1.5 text-[10px] font-bold text-slate-400 transition active:scale-95"
+                className="rounded-lg bg-[#F5F0E7] px-2.5 py-1.5 text-[10px] font-bold text-[#91877B] transition active:scale-95"
               >
 
                 收起 ↑
@@ -469,14 +469,14 @@ export default function ItineraryItem({
 
               <span className="relative flex h-2.5 w-2.5">
 
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#E7C469] opacity-75" />
 
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-blue-500" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#8DB99B]" />
 
               </span>
 
 
-              <span className="text-[10px] font-bold tracking-[0.15em] text-blue-600">
+              <span className="text-[10px] font-bold tracking-[0.15em] text-[#9C6D16]">
 
                 NOW
 
@@ -495,9 +495,9 @@ export default function ItineraryItem({
 
             <div className="mb-3 flex items-center gap-2">
 
-              <span className="h-2 w-2 rounded-full bg-slate-900" />
+              <span className="h-2 w-2 rounded-full bg-[#3E3A39]" />
 
-              <span className="text-[10px] font-bold tracking-[0.15em] text-slate-600">
+              <span className="text-[10px] font-bold tracking-[0.15em] text-[#74685D]">
 
                 NEXT
 
@@ -514,11 +514,18 @@ export default function ItineraryItem({
 
           <div className="relative flex items-center justify-between gap-2">
 
-            <span
-              className={`rounded-md px-2 py-1 text-[9px] font-bold tracking-wider ${config.badge}`}
-            >
-              {config.label}
-            </span>
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
+              <span
+                className={`shrink-0 rounded-md px-2.5 py-1 text-[11px] font-bold ${config.badge}`}
+              >
+                {config.label}
+              </span>
+              {item.endTime && (
+                <span className="inline-flex items-center rounded-lg bg-[#F8F4EC] px-2.5 py-1.5 text-[10px] font-medium text-[#82796F]">
+                  ◷ {item.startTime} - {item.endTime}
+                </span>
+              )}
+            </div>
 
             <div className="flex items-center gap-1">
               <span className="text-sm">{config.icon}</span>
@@ -526,7 +533,7 @@ export default function ItineraryItem({
               <button
                 type="button"
                 onClick={() => setMenuOpen((current) => !current)}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold text-slate-400 transition active:bg-slate-100"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold text-[#91877B] transition active:bg-[#F5F0E7]"
                 aria-label="行程選單"
               >
                 ⋮
@@ -542,14 +549,14 @@ export default function ItineraryItem({
                   className="fixed inset-0 z-40 cursor-default"
                 />
 
-                <div className="absolute right-0 top-9 z-50 w-36 overflow-hidden rounded-2xl border border-slate-100 bg-white p-1.5 shadow-xl">
+                <div className="absolute right-0 top-9 z-50 w-36 overflow-hidden rounded-2xl border border-[#E8DFD1] bg-white p-1.5 shadow-xl">
                   <button
                     type="button"
                     onClick={() => {
                       setMenuOpen(false);
                       onEdit(item);
                     }}
-                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-slate-700 transition active:bg-slate-100"
+                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-slate-700 transition active:bg-[#F5F0E7]"
                   >
                     <span>✏️</span>
                     編輯行程
@@ -577,7 +584,7 @@ export default function ItineraryItem({
               NAME
           ================================= */}
 
-          <h3 className="mt-3 text-lg font-bold text-slate-900">
+          <h3 className="mt-3 text-lg font-bold text-[#3E3A39]">
 
             {item.name}
 
@@ -590,30 +597,11 @@ export default function ItineraryItem({
 
           {item.detail && (
 
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-[#82796F]">
 
               {item.detail}
 
             </p>
-
-          )}
-
-
-          {/* =================================
-              DURATION
-          ================================= */}
-
-          {item.endTime && (
-
-            <div className="mt-3 inline-flex items-center rounded-lg bg-slate-50 px-2.5 py-1.5">
-
-              <span className="text-[10px] font-medium text-slate-500">
-
-                ◷ {item.startTime} - {item.endTime}
-
-              </span>
-
-            </div>
 
           )}
 
@@ -624,7 +612,7 @@ export default function ItineraryItem({
 
           {item.openingHours && (
 
-            <div className="mt-3 flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-800">
+            <div className="mt-3 flex items-center gap-2 rounded-xl bg-[#FFF4DC] px-3 py-2 text-xs text-[#8C5D00]">
 
               <span>◷</span>
 
@@ -646,7 +634,7 @@ export default function ItineraryItem({
             <button
               type="button"
               onClick={() => onOpenGuide(item)}
-              className="mt-3 w-full rounded-xl bg-slate-50 px-3 py-2.5 text-left transition active:scale-[0.99]"
+              className="mt-3 w-full rounded-xl bg-[#F8F4EC] px-3 py-2.5 text-left transition active:scale-[0.99]"
             >
 
               <div className="flex items-start gap-2">
@@ -655,17 +643,17 @@ export default function ItineraryItem({
 
                 <div className="min-w-0 flex-1">
 
-                  <p className="text-[10px] font-bold tracking-wider text-slate-400">
+                  <p className="text-[10px] font-bold tracking-wider text-[#91877B]">
                     我的景點備註
                   </p>
 
-                  <p className="mt-1 line-clamp-2 whitespace-pre-line text-xs leading-5 text-slate-600">
+                  <p className="mt-1 line-clamp-2 whitespace-pre-line text-xs leading-5 text-[#74685D]">
                     {note}
                   </p>
 
                 </div>
 
-                <span className="text-xs text-slate-300">›</span>
+                <span className="text-xs text-[#B0A69B]">›</span>
 
               </div>
 
@@ -680,7 +668,7 @@ export default function ItineraryItem({
 
           {item.location?.address && (
 
-            <div className="mt-3 flex gap-2 text-xs leading-5 text-slate-400">
+            <div className="mt-3 flex gap-2 text-xs leading-5 text-[#91877B]">
 
               <span>
                 ⌖
@@ -713,7 +701,7 @@ export default function ItineraryItem({
                   onClick={() =>
                     onOpenGuide(item)
                   }
-                  className="flex-1 rounded-xl bg-slate-900 px-3 py-2.5 text-xs font-bold text-white transition active:scale-[0.98]"
+                  className="flex-1 rounded-xl bg-[#3E3A39] px-3 py-2.5 text-xs font-bold text-white transition active:scale-[0.98]"
                 >
 
                   景點介紹
@@ -731,7 +719,7 @@ export default function ItineraryItem({
                 href={mapUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 rounded-xl bg-slate-100 px-3 py-2.5 text-center text-xs font-bold text-slate-700 transition active:scale-[0.98]"
+                className="flex-1 rounded-xl border border-[#E6C36C] bg-[#F6D27A] px-3 py-2.5 text-center text-xs font-bold text-[#554018] transition active:scale-[0.98]"
               >
 
                 導航 ↗
