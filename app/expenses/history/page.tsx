@@ -416,15 +416,15 @@ export default function ExpenseHistoryPage() {
 
     return (
 
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-[#FFFCF6]">
 
         <div className="mx-auto max-w-md px-5 pt-5">
 
-          <div className="h-16 animate-pulse rounded-2xl bg-slate-200" />
+          <div className="h-16 animate-pulse rounded-2xl bg-[#E8DFD1]" />
 
-          <div className="mt-5 h-12 animate-pulse rounded-2xl bg-slate-200" />
+          <div className="mt-5 h-12 animate-pulse rounded-2xl bg-[#E8DFD1]" />
 
-          <div className="mt-5 h-72 animate-pulse rounded-3xl bg-slate-200" />
+          <div className="mt-5 h-72 animate-pulse rounded-3xl bg-[#E8DFD1]" />
 
         </div>
 
@@ -441,20 +441,20 @@ export default function ExpenseHistoryPage() {
 
   return (
 
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#FFFCF6]">
 
 
       {/* =================================
           HEADER
       ================================= */}
 
-      <header className="sticky top-0 z-30 border-b border-slate-100 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-[#E8DFD1] bg-[#FFFCF6]/95 backdrop-blur">
 
         <div className="mx-auto flex max-w-md items-center justify-between px-5 py-4">
 
           <Link
             href="/expenses"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-600"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F5F0E7] text-lg text-[#6F6253]"
           >
             ‹
           </Link>
@@ -462,11 +462,11 @@ export default function ExpenseHistoryPage() {
 
           <div className="text-center">
 
-            <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
-              HISTORY
+            <p className="text-[10px] font-bold tracking-[0.18em] text-[#938674]">
+              EXPENSE JOURNAL
             </p>
 
-            <h1 className="text-sm font-bold text-slate-900">
+            <h1 className="text-sm font-bold text-[#3E3A39]">
               所有紀錄
             </h1>
 
@@ -491,7 +491,7 @@ export default function ExpenseHistoryPage() {
             FILTER
         ================================= */}
 
-        <div className="grid grid-cols-3 gap-1 rounded-2xl bg-slate-200/60 p-1">
+        <div className="grid grid-cols-3 gap-1 rounded-2xl bg-[#F1E8DA] p-1">
 
           <FilterButton
             active={
@@ -547,11 +547,11 @@ export default function ExpenseHistoryPage() {
 
           <div>
 
-            <p className="text-[10px] font-bold tracking-[0.16em] text-slate-400">
+            <p className="text-[10px] font-bold tracking-[0.16em] text-[#938674]">
               EXPENSE RECORDS
             </p>
 
-            <h2 className="mt-1 text-lg font-bold text-slate-900">
+            <h2 className="mt-1 text-lg font-bold text-[#3E3A39]">
 
               {filter === "all"
                 ? "全部支出"
@@ -565,7 +565,7 @@ export default function ExpenseHistoryPage() {
           </div>
 
 
-          <p className="text-[11px] font-bold text-slate-400">
+          <p className="text-[11px] font-bold text-[#938674]">
 
             {
               filteredExpenses.length
@@ -583,17 +583,17 @@ export default function ExpenseHistoryPage() {
         {filteredExpenses.length ===
         0 ? (
 
-          <section className="mt-4 rounded-3xl border border-dashed border-slate-200 bg-white px-5 py-12 text-center">
+          <section className="mt-4 rounded-3xl border border-dashed border-[#E8DFD1] bg-white px-5 py-12 text-center">
 
             <div className="text-3xl">
               🧾
             </div>
 
-            <p className="mt-3 text-sm font-bold text-slate-700">
+            <p className="mt-3 text-sm font-bold text-[#554A3C]">
               還沒有紀錄
             </p>
 
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-[#938674]">
 
               {filter === "private"
                 ? "目前沒有私人支出"
@@ -630,7 +630,7 @@ export default function ExpenseHistoryPage() {
 
                   <section
                     key={date}
-                    className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm"
+                    className="overflow-hidden rounded-3xl border border-[#E8DFD1] bg-white shadow-[0_2px_12px_rgba(62,58,57,0.04)]"
                   >
 
 
@@ -645,7 +645,7 @@ export default function ExpenseHistoryPage() {
                           date
                         )
                       }
-                      className="flex w-full items-center gap-3 px-4 py-4 text-left active:bg-slate-50"
+                      className="flex w-full items-center gap-3 px-4 py-4 text-left active:bg-[#FFFCF6]"
                     >
 
 
@@ -654,8 +654,8 @@ export default function ExpenseHistoryPage() {
                       <div
                         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition ${
                           expanded
-                            ? "bg-slate-900 text-white"
-                            : "bg-slate-100 text-slate-400"
+                            ? "bg-[#F6D27A] text-[#554018]"
+                            : "bg-[#F5F0E7] text-[#938674]"
                         }`}
                       >
 
@@ -676,11 +676,11 @@ export default function ExpenseHistoryPage() {
 
                       <div className="min-w-0 flex-1">
 
-                        <p className="text-[9px] font-bold tracking-[0.15em] text-slate-400">
+                        <p className="text-[9px] font-bold tracking-[0.15em] text-[#938674]">
                           DATE
                         </p>
 
-                        <h3 className="mt-0.5 text-sm font-bold text-slate-900">
+                        <h3 className="mt-0.5 text-sm font-bold text-[#3E3A39]">
 
                           {formatDisplayDate(
                             date
@@ -695,13 +695,13 @@ export default function ExpenseHistoryPage() {
 
                       <div className="shrink-0 text-right">
 
-                        <p className="text-xs font-bold text-slate-600">
+                        <p className="text-xs font-bold text-[#6F6253]">
 
                           {
                             dateExpenses.length
                           }
 
-                          <span className="ml-1 text-[10px] font-medium text-slate-400">
+                          <span className="ml-1 text-[10px] font-medium text-[#938674]">
                             筆
                           </span>
 
@@ -718,7 +718,7 @@ export default function ExpenseHistoryPage() {
 
                     {expanded && (
 
-                      <div className="border-t border-slate-100">
+                      <div className="border-t border-[#E8DFD1]">
 
                         {dateExpenses.map(
                           (
@@ -870,8 +870,8 @@ function FilterButton({
       onClick={onClick}
       className={`rounded-xl px-3 py-2.5 text-xs font-bold transition ${
         active
-          ? "bg-white text-slate-900 shadow-sm"
-          : "text-slate-500"
+          ? "bg-white text-[#8C5D00] shadow-sm"
+          : "text-[#857867]"
       }`}
     >
       {children}
@@ -932,23 +932,23 @@ function HistoryExpenseRow({
     <button
       type="button"
       onClick={onClick}
-      className={`flex w-full items-center gap-3 px-4 py-4 text-left transition active:bg-slate-50 ${
+      className={`flex w-full items-center gap-3 px-4 py-4 text-left transition active:bg-[#FFFCF6] ${
         !isLast
-          ? "border-b border-slate-100"
+          ? "border-b border-[#E8DFD1]"
           : ""
       }`}
     >
 
       {/* ICON */}
 
-      <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-lg">
+      <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#FFF1D8] text-lg">
 
         {category?.icon ??
           "💴"}
 
         {isPrivate && (
 
-          <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-slate-900 text-[9px]">
+          <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-[#554A3C] text-[9px]">
             🔒
           </div>
 
@@ -963,20 +963,20 @@ function HistoryExpenseRow({
 
         <div className="flex items-center gap-2">
 
-          <p className="truncate text-sm font-bold text-slate-900">
+          <p className="truncate text-sm font-bold text-[#3E3A39]">
             {expense.title}
           </p>
 
 
           {isPrivate ? (
 
-            <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-500">
+            <span className="shrink-0 rounded-full bg-[#F5F0E7] px-2 py-0.5 text-[9px] font-bold text-[#857867]">
               私人
             </span>
 
           ) : (
 
-            <span className="shrink-0 text-[9px] font-medium text-slate-400">
+            <span className="shrink-0 text-[9px] font-medium text-[#938674]">
 
               {category?.name ??
                 "未分類"}
@@ -988,7 +988,7 @@ function HistoryExpenseRow({
         </div>
 
 
-        <p className="mt-1 truncate text-[11px] text-slate-400">
+        <p className="mt-1 truncate text-[11px] text-[#938674]">
 
           {isPrivate ? (
             <>
@@ -1016,7 +1016,7 @@ function HistoryExpenseRow({
 
         {expense.time && (
 
-          <p className="mt-1 text-[10px] text-slate-300">
+          <p className="mt-1 text-[10px] text-[#B6A997]">
             {expense.time}
           </p>
 
@@ -1029,7 +1029,7 @@ function HistoryExpenseRow({
 
       <div className="shrink-0 text-right">
 
-        <p className="text-sm font-bold text-slate-900">
+        <p className="text-sm font-bold text-[#3E3A39]">
 
           {formatMoney(
             expense.amount,
@@ -1038,7 +1038,7 @@ function HistoryExpenseRow({
 
         </p>
 
-        <p className="mt-1 text-sm text-slate-300">
+        <p className="mt-1 text-sm text-[#B6A997]">
           ›
         </p>
 
@@ -1122,14 +1122,14 @@ function ExpenseDetailSheet({
         type="button"
         aria-label="關閉"
         onClick={onClose}
-        className="absolute inset-0 bg-slate-950/40 backdrop-blur-[1px]"
+        className="absolute inset-0 bg-[#2B2623]/40 backdrop-blur-[1px]"
       />
 
 
-      <section className="relative z-10 w-full max-w-md rounded-t-[32px] bg-white px-5 pb-7 shadow-2xl">
+      <section className="relative z-10 w-full max-w-md rounded-t-[32px] bg-[#FFFCF6] px-5 pb-7 shadow-2xl">
 
         <div className="flex justify-center pt-3">
-          <div className="h-1 w-10 rounded-full bg-slate-200" />
+          <div className="h-1 w-10 rounded-full bg-[#E8DFD1]" />
         </div>
 
 
@@ -1137,11 +1137,11 @@ function ExpenseDetailSheet({
 
           <div>
 
-            <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
+            <p className="text-[10px] font-bold tracking-[0.18em] text-[#938674]">
               EXPENSE DETAIL
             </p>
 
-            <h2 className="mt-1 text-xl font-bold text-slate-900">
+            <h2 className="mt-1 text-xl font-bold text-[#3E3A39]">
               支出詳情
             </h2>
 
@@ -1151,7 +1151,7 @@ function ExpenseDetailSheet({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-500"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F5F0E7] text-lg text-[#857867]"
           >
             ×
           </button>
@@ -1161,13 +1161,13 @@ function ExpenseDetailSheet({
 
         {/* MAIN CARD */}
 
-        <div className="mt-5 rounded-3xl bg-slate-900 px-5 py-5 text-white">
+        <div className="mt-5 rounded-3xl bg-[#FFF3DC] px-5 py-5 text-[#3E3A39]">
 
           <div className="flex items-start justify-between gap-4">
 
             <div className="flex min-w-0 items-center gap-3">
 
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-xl">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-xl">
 
                 {category?.icon ??
                   "💴"}
@@ -1181,7 +1181,7 @@ function ExpenseDetailSheet({
                   {expense.title}
                 </p>
 
-                <p className="mt-1 text-[11px] text-slate-400">
+                <p className="mt-1 text-[11px] text-[#938674]">
 
                   {category?.name ??
                     "未分類"}
@@ -1215,7 +1215,7 @@ function ExpenseDetailSheet({
 
         {/* INFO */}
 
-        <div className="mt-5 overflow-hidden rounded-2xl border border-slate-100 bg-slate-50">
+        <div className="mt-5 overflow-hidden rounded-2xl border border-[#E8DFD1] bg-white">
 
           <DetailRow
             label="日期"
@@ -1325,13 +1325,13 @@ function DetailRow({
 
   return (
 
-    <div className="flex items-start justify-between gap-5 border-b border-slate-200/70 px-4 py-3.5 last:border-b-0">
+    <div className="flex items-start justify-between gap-5 border-b border-[#E8DFD1] px-4 py-3.5 last:border-b-0">
 
-      <span className="shrink-0 text-xs font-medium text-slate-400">
+      <span className="shrink-0 text-xs font-medium text-[#938674]">
         {label}
       </span>
 
-      <span className="text-right text-xs font-bold text-slate-700">
+      <span className="text-right text-xs font-bold text-[#554A3C]">
         {value}
       </span>
 
@@ -1366,7 +1366,7 @@ function DeleteConfirmDialog({
         type="button"
         aria-label="取消"
         onClick={onCancel}
-        className="absolute inset-0 bg-slate-950/50 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-[#2B2623]/50 backdrop-blur-[2px]"
       />
 
 
@@ -1377,12 +1377,12 @@ function DeleteConfirmDialog({
         </div>
 
 
-        <h3 className="mt-4 text-lg font-bold text-slate-900">
+        <h3 className="mt-4 text-lg font-bold text-[#3E3A39]">
           確定要刪除？
         </h3>
 
 
-        <p className="mt-2 text-sm leading-6 text-slate-500">
+        <p className="mt-2 text-sm leading-6 text-[#857867]">
 
           「{expense.title}」{" "}
 
@@ -1401,7 +1401,7 @@ function DeleteConfirmDialog({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-2xl bg-slate-100 py-3.5 text-sm font-bold text-slate-600"
+            className="rounded-2xl bg-[#F5F0E7] py-3.5 text-sm font-bold text-[#6F6253]"
           >
             先不要
           </button>

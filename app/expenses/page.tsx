@@ -538,16 +538,32 @@ useEffect(() => {
         <section className="mt-7">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-base font-bold text-[#3E3A39]">💰 旅費總覽</h2>
-            <span className="text-[11px] text-[#938674]">我的累計分攤 · {expenses.length} 筆</span>
+            <Link
+              href="/expenses/history"
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-xs font-bold text-[#8C5D00] transition hover:bg-[#FFF2DD] active:bg-[#FFF2DD]"
+              aria-label="查看所有支出紀錄"
+            >
+              查看所有支出 <span aria-hidden="true">›</span>
+            </Link>
           </div>
-          <div className="grid grid-cols-2 gap-2.5">
-            <div className="min-w-0 rounded-[22px] bg-[#FFF2DD] px-4 py-5">
-              <p className="text-xs font-medium text-[#8A7964]">日圓 JPY</p>
-              <p className="mt-3 break-all text-[23px] font-bold tracking-tight text-[#493A2B]">{formatMoney(totalJPY, "JPY")}</p>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="min-w-0 rounded-[19px] bg-[#FFF2DD] px-2.5 py-2.5">
+              <div className="flex items-center justify-center gap-1.5 text-[#785E45]">
+                <span aria-hidden="true" className="text-base leading-none"> </span>
+                <p className="text-[11px] font-semibold sm:text-xs">日幣 JPY</p>
+              </div>
+              <p className="mt-1 whitespace-nowrap text-center text-[clamp(15px,3.7vw,21px)] font-extrabold tracking-tight tabular-nums text-[#493A2B]">
+                {formatMoney(totalJPY, "JPY")}
+              </p>
             </div>
-            <div className="min-w-0 rounded-[22px] bg-[#FFF2DD] px-4 py-5">
-              <p className="text-xs font-medium text-[#8A7964]">台幣 TWD</p>
-              <p className="mt-3 break-all text-[23px] font-bold tracking-tight text-[#493A2B]">{formatMoney(totalTWD, "TWD")}</p>
+            <div className="min-w-0 rounded-[19px] bg-[#FFF2DD] px-2.5 py-2.5">
+              <div className="flex items-center justify-center gap-1.5 text-[#785E45]">
+                <span aria-hidden="true" className="text-base leading-none"> </span>
+                <p className="text-[11px] font-semibold sm:text-xs">台幣 TWD</p>
+              </div>
+              <p className="mt-1 whitespace-nowrap text-center text-[clamp(15px,3.7vw,21px)] font-extrabold tracking-tight tabular-nums text-[#493A2B]">
+                {formatMoney(totalTWD, "TWD")}
+              </p>
             </div>
           </div>
         </section>
@@ -556,7 +572,6 @@ useEffect(() => {
         <section className="mt-7">
           <div className="mb-3 flex items-center justify-between gap-3">
             <h2 className="text-base font-bold text-[#3E3A39]">📋 最近支出</h2>
-            <span className="text-xs text-[#938674]">最近 {recentExpenses.length} 筆</span>
           </div>
           {recentExpenses.length ? (
             <div className="overflow-hidden rounded-[24px] border border-[#E8DFD1] bg-white px-3 shadow-[0_2px_12px_rgba(62,58,57,0.04)]">

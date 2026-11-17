@@ -10,6 +10,8 @@ import KyotoIcon from "./components/KyotoIcon";
 
 import { useChecklist } from "../hooks/useChecklist";
 import { useExpenseData } from "../hooks/useExpenseData";
+import type { Expense, ExpenseCurrency } from "../data/expenseData";
+import { allocateExpenseShares } from "../lib/expenseShareAllocation";
 
 import { tripData } from "../data/tripData";
 
@@ -63,6 +65,29 @@ function formatDateRange(
   return `${start[0]}/${start[1]}/${start[2]} - ${end[1]}/${end[2]}`;
 }
 
+
+// 與共同記帳頁相同的「我的累計分攤」計算方式。
+function calculateMyShare(
+  expenses: Expense[],
+  currentUserId: string,
+  currency: ExpenseCurrency
+): number {
+  return expenses
+    .filter((expense) => expense.currency === currency)
+    .reduce((total, expense) => {
+      if (expense.visibility === "private") {
+        return expense.paidBy === currentUserId
+          ? total + expense.amount
+          : total;
+      }
+      if (!expense.splitBetween.includes(currentUserId) || expense.splitBetween.length === 0) {
+        return total;
+      }
+      return total + (allocateExpenseShares(expense).find(
+        (share) => share.memberId === currentUserId
+      )?.amount ?? 0);
+    }, 0);
+}
 
 // ========================================
 // HOME
@@ -125,6 +150,8 @@ export default function Home() {
   const {
     loaded: expenseLoaded,
 
+    expenses,
+
     members,
 
     currentMember,
@@ -142,6 +169,14 @@ export default function Home() {
     loaded: tripSettingsLoaded,
     settings: tripSettings,
   } = useTripSettings();
+
+  // 首頁與記帳 V11 使用同一份支出資料與分攤規則。
+  const myJPY = currentMember
+    ? calculateMyShare(expenses, currentMember.id, "JPY")
+    : 0;
+  const myTWD = currentMember
+    ? calculateMyShare(expenses, currentMember.id, "TWD")
+    : 0;
 
   // ========================================
   // CHECKLIST STATUS
@@ -592,15 +627,26 @@ export default function Home() {
 
           <Link
             href="/expenses"
-            className="flex min-w-0 items-center gap-2 rounded-2xl border border-[#E8C3C0] bg-[#FFF0ED] p-2.5 shadow-sm transition active:scale-[0.98]"
+            className="flex min-w-0 items-center gap-2 rounded-2xl border border-[#E8C3C0] bg-[#FFF0ED] px-3 py-3 shadow-sm transition active:scale-[0.98]"
           >
-            <KyotoIcon name="money" size={23} />
-            <div className="min-w-0 flex-1">
-              <h3 className="text-sm font-bold text-[#3E3A39]">共同記帳</h3>
-              <p className="mt-1 text-base font-bold text-[#3E3A39]">¥ 24,580</p>
-              <p className="text-[10px] text-[#938B82]">目前旅費</p>
+            <div className="shrink-0">
+              <KyotoIcon name="money" size={25} />
             </div>
-            <span aria-hidden="true" className="text-lg text-[#655E56]">›</span>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <h3 className="text-[13px] font-bold text-[#3E3A39]">共同記帳</h3>
+                <span className="text-[9px] text-[#938B82]">我的累計分攤</span>
+              </div>
+              <div className="mt-1 flex min-w-0 items-center gap-2 text-[#3E3A39]">
+                <span className="min-w-0 truncate text-[clamp(11px,2.6vw,14px)] font-bold tabular-nums">
+                  {expenseLoaded ? `¥${Math.round(myJPY).toLocaleString()}` : "載入中..."}
+                </span>
+                <span className="min-w-0 truncate text-[clamp(11px,2.6vw,14px)] font-bold tabular-nums">
+                  {expenseLoaded ? `NT$${Math.round(myTWD).toLocaleString()}` : "載入中..."}
+                </span>
+              </div>
+            </div>
+            <span aria-hidden="true" className="shrink-0 text-lg text-[#655E56]">›</span>
           </Link>
 
           <div className="col-span-2 flex items-center gap-3 rounded-2xl border border-[#E8DFD1] bg-white px-4 py-3 shadow-sm">
