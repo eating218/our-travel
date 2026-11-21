@@ -16,7 +16,7 @@ import {
 } from "../../data/japaneseData";
 
 type CategoryFilter =
-  | "all"
+  | "favorites"
   | JapaneseCategory;
 
 const FAVORITES_KEY =
@@ -156,6 +156,16 @@ const peopleWords = [
   },
 ];
 
+type ShoppingCounter = "general" | "flat" | "bottle" | "cup" | "pair";
+
+const shoppingCounters: Record<ShoppingCounter, { label: string; chinese: string; japanese: string[]; reading: string[]; romaji: string[] }> = {
+  general: { label: "一般（個／份）", chinese: "個／份", japanese: quantityWords.map(w => w.japanese), reading: quantityWords.map(w => w.reading), romaji: quantityWords.map(w => w.romaji) },
+  flat: { label: "衣服／紙張（枚）", chinese: "件／張", japanese: ["一枚","二枚","三枚","四枚","五枚","六枚","七枚","八枚","九枚","十枚"], reading: ["いちまい","にまい","さんまい","よんまい","ごまい","ろくまい","ななまい","はちまい","きゅうまい","じゅうまい"], romaji: ["ichimai","nimai","sanmai","yonmai","gomai","rokumai","nanamai","hachimai","kyuumai","juumai"] },
+  bottle: { label: "瓶裝／細長物（本）", chinese: "瓶／支", japanese: ["一本","二本","三本","四本","五本","六本","七本","八本","九本","十本"], reading: ["いっぽん","にほん","さんぼん","よんほん","ごほん","ろっぽん","ななほん","はっぽん","きゅうほん","じゅっぽん"], romaji: ["ippon","nihon","sanbon","yonhon","gohon","roppon","nanahon","happon","kyuuhon","juppon"] },
+  cup: { label: "杯裝飲料（杯）", chinese: "杯", japanese: ["一杯","二杯","三杯","四杯","五杯","六杯","七杯","八杯","九杯","十杯"], reading: ["いっぱい","にはい","さんばい","よんはい","ごはい","ろっぱい","ななはい","はっぱい","きゅうはい","じゅっぱい"], romaji: ["ippai","nihai","sanbai","yonhai","gohai","roppai","nanahai","happai","kyuuhai","juppai"] },
+  pair: { label: "鞋子（足）", chinese: "雙", japanese: ["一足","二足","三足","四足","五足","六足","七足","八足","九足","十足"], reading: ["いっそく","にそく","さんぞく","よんそく","ごそく","ろくそく","ななそく","はっそく","きゅうそく","じゅっそく"], romaji: ["issoku","nisoku","sanzoku","yonsoku","gosoku","rokusoku","nanasoku","hassoku","kyuusoku","jussoku"] },
+};
+
 // ========================================
 // PAGE
 // ========================================
@@ -172,7 +182,7 @@ export default function JapanesePage() {
     setSelectedCategory,
   ] =
     useState<CategoryFilter>(
-      "all"
+      "favorites"
     );
 
   const [
@@ -217,6 +227,8 @@ export default function JapanesePage() {
   const [stationJapanese, setStationJapanese] = useState("");
   const [stationOpen, setStationOpen] = useState(false);
   const [speechMessage, setSpeechMessage] = useState("");
+  const [clothingSize, setClothingSize] = useState("M");
+  const [shoppingCounter, setShoppingCounter] = useState<ShoppingCounter>("general");
 
   function speakJapanese(text: string) {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
@@ -302,10 +314,8 @@ export default function JapanesePage() {
   // CURRENT WORDS
   // ========================================
 
-  const quantityWord =
-    quantityWords[
-      quantity - 1
-    ];
+  const counterWord = shoppingCounters[shoppingCounter];
+  const counterIndex = quantity - 1;
 
   const peopleWord =
     peopleWords[
@@ -325,21 +335,9 @@ export default function JapanesePage() {
 
       return japanesePhrases.filter(
         (phrase) => {
-          if (
-            selectedCategory !==
-              "all" &&
-            phrase.category !==
-              selectedCategory
-          ) {
-            return false;
-          }
-
-          if (
-            favoriteOnly &&
-            !favorites.includes(
-              phrase.id
-            )
-          ) {
+          if (selectedCategory === "favorites") {
+            if (!favorites.includes(phrase.id)) return false;
+          } else if (phrase.category !== selectedCategory) {
             return false;
           }
 
@@ -416,16 +414,16 @@ export default function JapanesePage() {
         ...phrase,
 
         japanese:
-          `これを${quantityWord.japanese}お願いします。`,
+          `これを${counterWord.japanese[counterIndex]}お願いします。`,
 
         reading:
-          `これを${quantityWord.reading}おねがいします。`,
+          `これを${counterWord.reading[counterIndex]}おねがいします。`,
 
         romaji:
-          `Kore o ${quantityWord.romaji} onegaishimasu.`,
+          `Kore o ${counterWord.romaji[counterIndex]} onegaishimasu.`,
 
         chinese:
-          `請給我 ${quantity} 份這個。`,
+          `請給我 ${quantity} ${counterWord.chinese}這個。`,
       };
     }
 
@@ -458,11 +456,7 @@ export default function JapanesePage() {
   function openPhrase(
     phrase: JapanesePhrase
   ) {
-    setSelectedPhrase(
-      getDisplayPhrase(
-        phrase
-      )
-    );
+    setSelectedPhrase(phrase);
   }
 
   // ========================================
@@ -499,14 +493,9 @@ export default function JapanesePage() {
 
           <button
             type="button"
-            onClick={() =>
-              setFavoriteOnly(
-                (current) =>
-                  !current
-              )
-            }
+            onClick={() => { setSelectedCategory("favorites"); setFavoriteOnly(false); }}
             className={`flex h-9 w-9 items-center justify-center rounded-full text-lg transition ${
-              favoriteOnly
+              selectedCategory === "favorites"
                 ? "bg-[#F6D27A] text-[#8C5D00]"
                 : "bg-[#F5F0E7] text-slate-500"
             }`}
@@ -589,9 +578,9 @@ export default function JapanesePage() {
 
               <button
                 type="button"
-                onClick={() => { setSelectedCategory("all"); setFavoriteOnly(false); }}
-                className={`rounded-full px-3.5 py-2 text-xs font-bold transition ${selectedCategory === "all" ? "bg-[#F6D27A] text-[#493A2B]" : "border border-[#E8DFD1] bg-white text-[#756756]"}`}
-              >全部</button>
+                onClick={() => { setSelectedCategory("favorites"); setFavoriteOnly(false); }}
+                className={`rounded-full px-3.5 py-2 text-xs font-bold transition ${selectedCategory === "favorites" ? "bg-[#F6D27A] text-[#493A2B]" : "border border-[#E8DFD1] bg-white text-[#756756]"}`}
+              >⭐ 常用</button>
               {japaneseCategories.map(
                 (
                   category
@@ -667,36 +656,11 @@ export default function JapanesePage() {
         )}
 
 
-        {/* FAVORITE MODE */}
-
-        {favoriteOnly && (
-          <div className="mt-4 flex items-center justify-between rounded-2xl bg-[#FFF3DE] px-4 py-3">
-
-            <div>
-
-              <p className="text-xs font-bold text-amber-800">
-                ★ 我的收藏
-              </p>
-
-              <p className="mt-0.5 text-[10px] text-amber-600">
-                旅行時最常用的句子
-              </p>
-
-            </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                setFavoriteOnly(
-                  false
-                )
-              }
-              className="text-[11px] font-bold text-amber-700"
-            >
-              顯示全部
-            </button>
-
-          </div>
+        {selectedCategory === "favorites" && favorites.length === 0 && (
+          <section className="mt-4 rounded-2xl border border-dashed border-[#D8C7A8] bg-white px-4 py-6 text-center">
+            <p className="text-sm font-bold text-[#493A2B]">常用清單還是空的</p>
+            <p className="mt-2 text-xs leading-5 text-[#756756]">到其他分類點選 ☆，就能將需要的句子加入這裡。</p>
+          </section>
         )}
 
         {/* VEGETARIAN CARD */}
@@ -786,8 +750,8 @@ export default function JapanesePage() {
             </p>
 
             <h2 className="mt-1 text-base font-bold text-[#3E3A39]">
-              {favoriteOnly
-                ? "我的收藏"
+              {selectedCategory === "favorites"
+                ? "我的常用句子"
                 : "實用句子"}
             </h2>
 
@@ -813,129 +777,6 @@ export default function JapanesePage() {
                 favorites.includes(
                   phrase.id
                 );
-
-              // ============================
-              // QUANTITY
-              // ============================
-
-              if (
-                phrase.interactiveType ===
-                "quantity"
-              ) {
-                return (
-                  <InteractivePhraseCard
-                    key={
-                      phrase.id
-                    }
-                    icon="🍜"
-                    label="點餐數量"
-                    number={
-                      quantity
-                    }
-                    japanese={`これを${quantityWord.japanese}お願いします。`}
-                    reading={
-                      quantityWord.reading
-                    }
-                    chinese={`請給我 ${quantity} 份這個。`}
-                    onDecrease={() =>
-                      setQuantity(
-                        (current) =>
-                          Math.max(
-                            1,
-                            current -
-                              1
-                          )
-                      )
-                    }
-                    onIncrease={() =>
-                      setQuantity(
-                        (current) =>
-                          Math.min(
-                            10,
-                            current +
-                              1
-                          )
-                      )
-                    }
-                    onSpeak={() => speakJapanese(getDisplayPhrase(phrase).japanese)}
-                    onShow={() =>
-                      openPhrase(
-                        phrase
-                      )
-                    }
-                    isFavorite={
-                      isFavorite
-                    }
-                    onFavorite={() =>
-                      toggleFavorite(
-                        phrase.id
-                      )
-                    }
-                  />
-                );
-              }
-
-              // ============================
-              // PEOPLE
-              // ============================
-
-              if (
-                phrase.interactiveType ===
-                "people"
-              ) {
-                return (
-                  <InteractivePhraseCard
-                    key={
-                      phrase.id
-                    }
-                    icon="👥"
-                    label="用餐人數"
-                    number={
-                      people
-                    }
-                    suffix="人"
-                    japanese={`${peopleWord.japanese}です。`}
-                    reading={
-                      peopleWord.reading
-                    }
-                    chinese={`我們 ${people} 位。`}
-                    onDecrease={() =>
-                      setPeople(
-                        (current) =>
-                          Math.max(
-                            1,
-                            current -
-                              1
-                          )
-                      )
-                    }
-                    onIncrease={() =>
-                      setPeople(
-                        (current) =>
-                          Math.min(
-                            10,
-                            current +
-                              1
-                          )
-                      )
-                    }
-                    onSpeak={() => speakJapanese(getDisplayPhrase(phrase).japanese)}
-                    onShow={() =>
-                      openPhrase(
-                        phrase
-                      )
-                    }
-                    isFavorite={
-                      isFavorite
-                    }
-                    onFavorite={() =>
-                      toggleFavorite(
-                        phrase.id
-                      )
-                    }
-                  />
-                );
-              }
 
               // ============================
               // NORMAL
@@ -975,19 +816,19 @@ export default function JapanesePage() {
 
                       <p className="mt-1 text-[17px] font-bold leading-6 text-[#3E3A39]">
                         {
-                          phrase.japanese
+                          getDisplayPhrase(phrase).japanese
                         }
                       </p>
 
                       <p className="mt-1 text-[10px] font-medium text-[#9A8C7B]">
                         {
-                          phrase.romaji
+                          getDisplayPhrase(phrase).romaji
                         }
                       </p>
 
                       <p className="mt-1 text-[13px] font-medium text-[#756756]">
                         {
-                          phrase.chinese
+                          getDisplayPhrase(phrase).chinese
                         }
                       </p>
 
@@ -1020,7 +861,7 @@ export default function JapanesePage() {
           {/* EMPTY */}
 
           {filteredPhrases.length ===
-            0 && (
+            0 && !(selectedCategory === "favorites" && !search.trim() && favorites.length === 0) && (
 
             <div className="rounded-[24px] border border-dashed border-[#E8DFD1] bg-white px-5 py-12 text-center">
 
@@ -1082,18 +923,60 @@ export default function JapanesePage() {
 
             </div>
 
-            <div className="my-8 text-center">
+            {(/サイズ|尺寸|尺碼/.test(selectedPhrase.japanese + selectedPhrase.chinese)) && (
+              <div className="mt-5">
+                <p className="mb-2 text-center text-xs font-bold text-[#756756]">👕 選擇衣服尺寸</p>
+                <div className="flex flex-wrap justify-center gap-2" aria-label="衣服尺寸">
+                  {["XS", "S", "M", "L", "XL", "XXL", "3XL"].map((size) => (
+                    <button key={size} type="button" aria-pressed={clothingSize === size}
+                      onClick={() => setClothingSize(size)}
+                      className={`rounded-xl px-3 py-2 text-xs font-bold ${clothingSize === size ? "bg-[#F6D27A] text-[#493A2B]" : "bg-[#F5F0E7] text-[#756756]"}`}>
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-              <p className="whitespace-pre-line text-[28px] font-bold leading-[1.65] tracking-wide text-slate-950">
-                {
-                  selectedPhrase.japanese
-                }
+            {(selectedPhrase.interactiveType === "people" || selectedPhrase.interactiveType === "quantity") && (
+              <div className="mt-5">
+                <p className="mb-2 text-center text-xs font-bold text-[#756756]">
+                  {selectedPhrase.interactiveType === "people" ? "👥 用餐人數" : "🛍️ 購買／點餐數量"}
+                </p>
+                <div className="mx-auto flex w-52 items-center overflow-hidden rounded-2xl border border-[#E8DFD1] bg-[#F5F0E7]">
+                  <button type="button" aria-label="減少數量" disabled={(selectedPhrase.interactiveType === "people" ? people : quantity) <= 1}
+                    onClick={() => selectedPhrase.interactiveType === "people" ? setPeople(n => Math.max(1, n - 1)) : setQuantity(n => Math.max(1, n - 1))}
+                    className="h-12 flex-1 text-xl font-bold text-[#756756] disabled:opacity-30">−</button>
+                  <span className="flex h-12 w-16 items-center justify-center border-x border-[#E8DFD1] bg-white text-lg font-bold text-[#3E3A39]">
+                    {selectedPhrase.interactiveType === "people" ? people : quantity}
+                  </span>
+                  <button type="button" aria-label="增加數量" disabled={(selectedPhrase.interactiveType === "people" ? people : quantity) >= 10}
+                    onClick={() => selectedPhrase.interactiveType === "people" ? setPeople(n => Math.min(10, n + 1)) : setQuantity(n => Math.min(10, n + 1))}
+                    className="h-12 flex-1 text-xl font-bold text-[#756756] disabled:opacity-30">＋</button>
+                </div>
+                {selectedPhrase.interactiveType === "quantity" && (
+                  <div className="mt-3">
+                    <label htmlFor="shopping-counter" className="mb-1 block text-center text-xs font-bold text-[#756756]">量詞（選填，預設一般）</label>
+                    <select id="shopping-counter" value={shoppingCounter} onChange={e => setShoppingCounter(e.target.value as ShoppingCounter)}
+                      className="w-full rounded-xl border border-[#E8DFD1] bg-[#FFF8E9] px-3 py-3 text-sm text-[#493A2B]">
+                      {(Object.keys(shoppingCounters) as ShoppingCounter[]).map(key => <option key={key} value={key}>{shoppingCounters[key].label}</option>)}
+                    </select>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="my-8 text-center">
+              <p className="whitespace-pre-line break-words text-[28px] font-bold leading-[1.5] tracking-wide text-slate-950">
+                {/サイズ|尺寸|尺碼/.test(selectedPhrase.japanese + selectedPhrase.chinese)
+                  ? `${clothingSize}サイズはありますか？`
+                  : getDisplayPhrase(selectedPhrase).japanese}
               </p>
 
-              {selectedPhrase.reading && (
+              {selectedPhrase.reading && !/サイズ|尺寸|尺碼/.test(selectedPhrase.japanese + selectedPhrase.chinese) && (
                 <p className="mt-3 text-sm font-bold text-[#9A7136]">
                   {
-                    selectedPhrase.reading
+                    getDisplayPhrase(selectedPhrase).reading
                   }
                 </p>
               )}
@@ -1103,7 +986,7 @@ export default function JapanesePage() {
 
                 <p className="mt-3 text-xs font-medium leading-5 text-[#9A8C7B]">
                   {
-                    selectedPhrase.romaji
+                    (/サイズ|尺寸|尺碼/.test(selectedPhrase.japanese + selectedPhrase.chinese) ? `${clothingSize} saizu wa arimasu ka?` : getDisplayPhrase(selectedPhrase).romaji)
                   }
                 </p>
 
@@ -1113,13 +996,13 @@ export default function JapanesePage() {
 
               <p className="mt-6 text-sm font-medium leading-6 text-slate-500">
                 {
-                  selectedPhrase.chinese
+                  (/サイズ|尺寸|尺碼/.test(selectedPhrase.japanese + selectedPhrase.chinese) ? `請問有 ${clothingSize} 號嗎？` : getDisplayPhrase(selectedPhrase).chinese)
                 }
               </p>
 
             </div>
 
-            <button type="button" onClick={() => speakJapanese(selectedPhrase.japanese)} className="mb-2 w-full rounded-2xl border border-[#E8DFD1] bg-[#FFF8E9] py-3 text-sm font-bold text-[#493A2B]">🔊 播放日文發音</button>
+            <button type="button" onClick={() => speakJapanese(/サイズ|尺寸|尺碼/.test(selectedPhrase.japanese + selectedPhrase.chinese) ? `${clothingSize}サイズはありますか？` : getDisplayPhrase(selectedPhrase).japanese)} className="mb-2 w-full rounded-2xl border border-[#E8DFD1] bg-[#FFF8E9] py-3 text-sm font-bold text-[#493A2B]">🔊 播放日文發音</button>
             {speechMessage && <p role="status" className="mb-2 text-xs text-[#756756]">{speechMessage}</p>}
             <button
               type="button"
