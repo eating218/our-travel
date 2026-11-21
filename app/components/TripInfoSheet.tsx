@@ -175,7 +175,7 @@ function FlightRow({
 
   return (
     <div className="flex items-start gap-3">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lg shadow-sm">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FFFCF7] text-lg shadow-sm">
         {outbound
           ? "🛫"
           : "🛬"}
@@ -185,14 +185,14 @@ function FlightRow({
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-sm font-bold text-slate-900">
+            <p className="text-sm font-bold text-[#403830]">
               {flight.from.city}
               {" → "}
               {flight.to.city}
             </p>
 
 
-            <p className="mt-0.5 text-xs text-slate-400">
+            <p className="mt-0.5 text-xs text-[#9D8E7C]">
               {formatDate(
                 flight.date
               )}
@@ -207,7 +207,7 @@ function FlightRow({
 
 
           {flight.flightNumber && (
-            <span className="shrink-0 rounded-full bg-slate-900 px-2.5 py-1 text-[10px] font-bold text-white">
+            <span className="shrink-0 rounded-full bg-[#EAD5AF] px-2.5 py-1 text-[10px] font-bold text-[#655038]">
               {
                 flight.flightNumber
               }
@@ -217,10 +217,10 @@ function FlightRow({
 
 
         {detailsAvailable ? (
-          <div className="mt-3 rounded-2xl bg-white px-3 py-3 shadow-sm">
+          <div className="mt-3 rounded-2xl border border-[#EDE0CD] bg-[#FFFCF7] px-3 py-3 shadow-sm">
 
             {flight.airline && (
-              <p className="mb-2 text-[10px] font-semibold text-slate-400">
+              <p className="mb-2 text-[10px] font-semibold text-[#9D8E7C]">
                 {
                   flight.airline
                 }
@@ -230,35 +230,35 @@ function FlightRow({
 
             <div className="flex items-center gap-2">
               <div>
-                <p className="text-sm font-bold text-slate-900">
+                <p className="text-sm font-bold text-[#403830]">
                   {flight.departureTime ??
                     "--:--"}
                 </p>
 
-                <p className="mt-0.5 text-[10px] font-semibold text-slate-500">
+                <p className="mt-0.5 text-[10px] font-semibold text-[#8A7B69]">
                   {fromLabel}
                 </p>
               </div>
 
 
               <div className="flex min-w-0 flex-1 items-center gap-2">
-                <div className="h-px flex-1 bg-slate-200" />
+                <div className="h-px flex-1 bg-[#E7DAC7]" />
 
-                <span className="text-[10px] text-slate-300">
+                <span className="text-[10px] text-[#B7A48D]">
                   ✈
                 </span>
 
-                <div className="h-px flex-1 bg-slate-200" />
+                <div className="h-px flex-1 bg-[#E7DAC7]" />
               </div>
 
 
               <div className="text-right">
-                <p className="text-sm font-bold text-slate-900">
+                <p className="text-sm font-bold text-[#403830]">
                   {flight.arrivalTime ??
                     "--:--"}
                 </p>
 
-                <p className="mt-0.5 text-[10px] font-semibold text-slate-500">
+                <p className="mt-0.5 text-[10px] font-semibold text-[#8A7B69]">
                   {toLabel}
                 </p>
               </div>
@@ -269,11 +269,11 @@ function FlightRow({
               .airportName ||
               flight.to
                 .airportName) && (
-              <div className="mt-3 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3">
+              <div className="mt-3 grid grid-cols-2 gap-3 border-t border-[#EFE5D6] pt-3">
                 <div>
                   {flight.from
                     .airportName && (
-                    <p className="text-[10px] leading-relaxed text-slate-400">
+                    <p className="text-[10px] leading-relaxed text-[#9D8E7C]">
                       {
                         flight.from
                           .airportName
@@ -290,7 +290,7 @@ function FlightRow({
                 <div className="text-right">
                   {flight.to
                     .airportName && (
-                    <p className="text-[10px] leading-relaxed text-slate-400">
+                    <p className="text-[10px] leading-relaxed text-[#9D8E7C]">
                       {
                         flight.to
                           .airportName
@@ -306,7 +306,7 @@ function FlightRow({
             )}
           </div>
         ) : (
-          <p className="mt-2 text-[10px] text-slate-400">
+          <p className="mt-2 text-[10px] text-[#9D8E7C]">
             航班資訊尚未設定
           </p>
         )}
@@ -341,7 +341,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="text-[10px] font-bold text-slate-500">
+      <span className="text-[10px] font-bold text-[#8A7B69]">
         {label}
       </span>
 
@@ -356,7 +356,7 @@ function Field({
         placeholder={
           placeholder
         }
-        className="mt-1.5 h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-900 outline-none transition placeholder:text-slate-300 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100"
+        className="mt-1.5 h-10 w-full rounded-xl border border-[#E7DAC7] bg-[#FAF6EF] px-3 text-sm font-medium text-[#403830] outline-none transition placeholder:text-[#B7A48D] focus:border-[#CDA35E] focus:bg-[#FFFCF7] focus:ring-2 focus:ring-[#F7E8CD]"
       />
     </label>
   );
@@ -383,16 +383,16 @@ function FlightEditor({
 
 
   return (
-    <div className="rounded-2xl border border-slate-200 p-4">
+    <div className="rounded-2xl border border-[#E7DAC7] p-4">
 
       <div className="flex items-center justify-between">
-        <p className="text-xs font-bold text-slate-900">
+        <p className="text-xs font-bold text-[#403830]">
           {outbound
             ? "🛫 去程"
             : "🛬 回程"}
         </p>
 
-        <span className="text-[10px] font-semibold text-slate-400">
+        <span className="text-[10px] font-semibold text-[#9D8E7C]">
           {flight.from.city}
           {" → "}
           {flight.to.city}
@@ -962,27 +962,27 @@ export default function TripInfoSheet({
   if (isEditing) {
     return (
       <div className="fixed inset-0 z-50">
-        <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-[#302820]/45 backdrop-blur-[2px]" />
 
 
-        <section className="absolute bottom-0 left-0 right-0 mx-auto max-h-[90vh] max-w-md overflow-y-auto rounded-t-[32px] bg-white px-5 pb-8 pt-3 shadow-2xl">
+        <section className="absolute bottom-0 left-0 right-0 mx-auto max-h-[90vh] max-w-md overflow-y-auto rounded-t-[32px] bg-[#FFFCF7] px-5 pb-8 pt-3 shadow-[0_-12px_45px_rgba(65,48,29,0.12)]">
 
-          <div className="mx-auto h-1.5 w-10 rounded-full bg-slate-200" />
+          <div className="mx-auto h-1.5 w-10 rounded-full bg-[#E7DAC7]" />
 
 
           {/* HEADER */}
 
           <div className="mt-6 flex items-start justify-between gap-4">
             <div>
-              <p className="text-[10px] font-bold tracking-[0.25em] text-blue-600">
+              <p className="text-[10px] font-bold tracking-[0.25em] text-[#916B30]">
                 EDIT TRIP
               </p>
 
-              <h2 className="mt-1 text-2xl font-bold text-slate-900">
+              <h2 className="mt-1 text-2xl font-bold text-[#403830]">
                 編輯旅程資訊
               </h2>
 
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="mt-1 text-xs text-[#9D8E7C]">
                 修改後會記住在這台裝置
               </p>
             </div>
@@ -993,7 +993,7 @@ export default function TripInfoSheet({
               onClick={
                 handleCancelEdit
               }
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-500"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F3EDE3] text-lg text-[#8A7B69]"
             >
               ×
             </button>
@@ -1002,8 +1002,8 @@ export default function TripInfoSheet({
 
           {/* BASIC */}
 
-          <div className="mt-6 rounded-3xl border border-slate-200 p-4">
-            <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
+          <div className="mt-6 rounded-3xl border border-[#E7DAC7] p-4">
+            <p className="text-[10px] font-bold tracking-[0.18em] text-[#9D8E7C]">
               TRIP
             </p>
 
@@ -1100,11 +1100,11 @@ export default function TripInfoSheet({
 
           <div className="mt-4">
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-[10px] font-bold tracking-[0.18em] text-slate-400">
+              <p className="text-[10px] font-bold tracking-[0.18em] text-[#9D8E7C]">
                 FLIGHTS
               </p>
 
-              <p className="text-[10px] text-slate-400">
+              <p className="text-[10px] text-[#9D8E7C]">
                 選填
               </p>
             </div>
@@ -1138,7 +1138,7 @@ export default function TripInfoSheet({
               onClick={
                 handleCancelEdit
               }
-              className="h-12 rounded-2xl bg-slate-100 text-sm font-bold text-slate-600"
+              className="h-12 rounded-2xl bg-[#F3EDE3] text-sm font-bold text-[#786958]"
             >
               取消
             </button>
@@ -1149,7 +1149,7 @@ export default function TripInfoSheet({
               onClick={
                 handleSaveEdit
               }
-              className="h-12 rounded-2xl bg-slate-900 text-sm font-bold text-white"
+              className="h-12 rounded-2xl bg-[#D9B878] text-sm font-bold text-[#403830]"
             >
               儲存
             </button>
@@ -1173,15 +1173,15 @@ export default function TripInfoSheet({
         type="button"
         aria-label="關閉旅程資訊"
         onClick={onClose}
-        className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-[#302820]/45 backdrop-blur-[2px]"
       />
 
 
       {/* SHEET */}
 
-      <section className="absolute bottom-0 left-0 right-0 mx-auto max-h-[85vh] max-w-md overflow-y-auto rounded-t-[32px] bg-white px-5 pb-8 pt-3 shadow-2xl">
+      <section className="absolute bottom-0 left-0 right-0 mx-auto max-h-[85vh] max-w-md overflow-y-auto rounded-t-[32px] bg-[#FFFCF7] px-5 pb-8 pt-3 shadow-[0_-12px_45px_rgba(65,48,29,0.12)]">
 
-        <div className="mx-auto h-1.5 w-10 rounded-full bg-slate-200" />
+        <div className="mx-auto h-1.5 w-10 rounded-full bg-[#E7DAC7]" />
 
 
         {/* ========================================
@@ -1190,12 +1190,12 @@ export default function TripInfoSheet({
 
         <div className="mt-6 flex items-start justify-between gap-4">
           <div>
-            <p className="text-[10px] font-bold tracking-[0.25em] text-blue-600">
+            <p className="text-[10px] font-bold tracking-[0.25em] text-[#916B30]">
               TRIP INFO
             </p>
 
 
-            <h2 className="mt-1 text-2xl font-bold text-slate-900">
+            <h2 className="mt-1 text-2xl font-bold text-[#403830]">
               🇯🇵{" "}
 
               {settingsLoaded
@@ -1204,7 +1204,7 @@ export default function TripInfoSheet({
             </h2>
 
 
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-[#9D8E7C]">
               {settingsLoaded
                 ? settings.country
                 : tripData.country}
@@ -1218,7 +1218,7 @@ export default function TripInfoSheet({
               onClick={
                 handleStartEdit
               }
-              className="h-9 rounded-full bg-blue-50 px-3 text-xs font-bold text-blue-600 transition active:scale-95"
+              className="h-9 rounded-full bg-[#F8E7C5] px-3 text-xs font-bold text-[#916B30] transition active:scale-95"
             >
               編輯
             </button>
@@ -1228,7 +1228,7 @@ export default function TripInfoSheet({
               type="button"
               onClick={onClose}
               aria-label="關閉"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-500 transition active:scale-95"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F3EDE3] text-lg text-[#8A7B69] transition active:scale-95"
             >
               ×
             </button>
@@ -1240,14 +1240,14 @@ export default function TripInfoSheet({
             TRAVEL PERIOD
         ======================================== */}
 
-        <div className="mt-6 rounded-3xl bg-slate-900 px-5 py-4 text-white">
+        <div className="mt-6 rounded-3xl border border-[#E9D5B3] bg-[#F5E5C6] px-5 py-4 text-[#403830]">
           <div className="flex items-center justify-between">
-            <p className="text-[10px] font-bold tracking-[0.2em] text-blue-300">
+            <p className="text-[10px] font-bold tracking-[0.2em] text-[#916B30]">
               TRAVEL PERIOD
             </p>
 
 
-            <p className="text-xs font-bold text-slate-300">
+            <p className="text-xs font-bold text-[#B7A48D]">
               {getTripDuration(
                 settings.startDate,
                 settings.endDate
@@ -1264,7 +1264,7 @@ export default function TripInfoSheet({
             </p>
 
 
-            <span className="text-slate-500">
+            <span className="text-[#8A7B69]">
               —
             </span>
 
@@ -1282,27 +1282,27 @@ export default function TripInfoSheet({
             TRAVELERS
         ======================================== */}
 
-        <div className="mt-4 rounded-2xl border border-slate-200 bg-white px-4 py-3.5">
+        <div className="mt-4 rounded-2xl border border-[#E7DAC7] bg-[#FFFCF7] px-4 py-3.5">
           <div className="flex items-start gap-3">
 
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F3EDE3] text-sm">
               👥
             </div>
 
 
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-bold tracking-[0.16em] text-slate-400">
+              <p className="text-[10px] font-bold tracking-[0.16em] text-[#9D8E7C]">
                 TRAVELERS
               </p>
 
 
               {!expenseLoaded ? (
-                <p className="mt-1 text-xs text-slate-400">
+                <p className="mt-1 text-xs text-[#9D8E7C]">
                   讀取中...
                 </p>
               ) : members.length >
                 0 ? (
-                <p className="mt-1 text-xs font-semibold leading-relaxed text-slate-700">
+                <p className="mt-1 text-xs font-semibold leading-relaxed text-[#65584B]">
                   {members
                     .map(
                       (member) =>
@@ -1311,7 +1311,7 @@ export default function TripInfoSheet({
                     .join(" · ")}
                 </p>
               ) : (
-                <p className="mt-1 text-xs text-slate-400">
+                <p className="mt-1 text-xs text-[#9D8E7C]">
                   尚未加入同行者
                 </p>
               )}
@@ -1324,14 +1324,14 @@ export default function TripInfoSheet({
             ROUTE
         ======================================== */}
 
-        <div className="mt-4 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+        <div className="mt-4 rounded-3xl border border-[#E7DAC7] bg-[#FAF6EF] p-5">
           <div className="flex items-center justify-between">
-            <p className="text-[10px] font-bold tracking-[0.2em] text-slate-400">
+            <p className="text-[10px] font-bold tracking-[0.2em] text-[#9D8E7C]">
               ROUTE
             </p>
 
 
-            <span className="text-[10px] font-semibold text-slate-400">
+            <span className="text-[10px] font-semibold text-[#9D8E7C]">
               往返
             </span>
           </div>
@@ -1350,7 +1350,7 @@ export default function TripInfoSheet({
 
             {outboundFlight &&
               returnFlight && (
-                <div className="my-2 ml-5 h-5 border-l border-dashed border-slate-300" />
+                <div className="my-2 ml-5 h-5 border-l border-dashed border-[#D8C8B2]" />
               )}
 
 
@@ -1365,7 +1365,7 @@ export default function TripInfoSheet({
 
             {!outboundFlight &&
               !returnFlight && (
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[#9D8E7C]">
                   尚未設定往返資訊
                 </p>
               )}
@@ -1377,15 +1377,15 @@ export default function TripInfoSheet({
             ITINERARY
         ======================================== */}
 
-        <div className="mt-4 rounded-3xl border border-slate-200 bg-white p-5">
+        <div className="mt-4 rounded-3xl border border-[#E7DAC7] bg-[#FFFCF7] p-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold tracking-[0.2em] text-slate-400">
+              <p className="text-[10px] font-bold tracking-[0.2em] text-[#9D8E7C]">
                 ITINERARY
               </p>
 
 
-              <p className="mt-1 text-sm font-bold text-slate-900">
+              <p className="mt-1 text-sm font-bold text-[#403830]">
                 {
                   tripData.days
                     .length
@@ -1410,7 +1410,7 @@ export default function TripInfoSheet({
                   }
                   className="flex items-start gap-3"
                 >
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-600">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#F3EDE3] text-[10px] font-bold text-[#786958]">
                     {
                       day.day
                     }
@@ -1418,14 +1418,14 @@ export default function TripInfoSheet({
 
 
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-800">
+                    <p className="text-xs font-bold text-[#4A4037]">
                       {
                         day.title
                       }
                     </p>
 
 
-                    <p className="mt-0.5 truncate text-[10px] text-slate-400">
+                    <p className="mt-0.5 truncate text-[10px] text-[#9D8E7C]">
                       {
                         day.subtitle
                       }
@@ -1442,7 +1442,7 @@ export default function TripInfoSheet({
             ACCOMMODATION
         ======================================== */}
 
-        <div className="mt-4 rounded-2xl bg-slate-50 p-4">
+        <div className="mt-4 rounded-2xl bg-[#FAF6EF] p-4">
           <div className="flex items-center gap-3">
             <span className="text-lg">
               🏨
@@ -1450,12 +1450,12 @@ export default function TripInfoSheet({
 
 
             <div>
-              <p className="text-xs font-bold text-slate-900">
+              <p className="text-xs font-bold text-[#403830]">
                 住宿
               </p>
 
 
-              <p className="mt-1 text-[10px] text-slate-400">
+              <p className="mt-1 text-[10px] text-[#9D8E7C]">
                 尚未設定
               </p>
             </div>
