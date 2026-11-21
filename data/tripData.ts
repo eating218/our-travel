@@ -328,8 +328,8 @@ export const tripData = {
     {
       day: 4,
       date: "2027-03-03",
-      title: "宇治",
-      subtitle: "平等院・宇治散策",
+      title: "天橋立",
+      subtitle: "天橋立・日本三景散策",
       items: [],
     },
 
