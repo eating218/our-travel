@@ -193,12 +193,6 @@ const dietOptions: { key: DietKey; zh: string; ja: string }[] = [
 
 export default function JapanesePage() {
   const [
-    search,
-    setSearch,
-  ] =
-    useState("");
-
-  const [
     selectedCategory,
     setSelectedCategory,
   ] =
@@ -403,7 +397,7 @@ export default function JapanesePage() {
   }, [phraseOrders, loaded]);
 
   function reorderPhrase(sourceId: string, targetId: string) {
-    if (sourceId === targetId || search.trim()) return;
+    if (sourceId === targetId) return;
     const visibleIds = filteredPhrases.map(phrase => phrase.id);
     const from = visibleIds.indexOf(sourceId);
     const to = visibleIds.indexOf(targetId);
@@ -425,7 +419,7 @@ export default function JapanesePage() {
 
   function beginLongPress(event: React.PointerEvent<HTMLElement>, id: string) {
     if (!isReordering) return;
-    if (search.trim() || filteredPhrases.length < 2) return;
+    if (filteredPhrases.length < 2) return;
     if (dragRef.current?.timer) clearTimeout(dragRef.current.timer);
     const pointerId = event.pointerId;
     const handle = event.currentTarget;
@@ -479,41 +473,10 @@ export default function JapanesePage() {
 
   const filteredPhrases =
     useMemo(() => {
-      const keyword =
-        search
-          .trim()
-          .toLowerCase();
-
-      const matching = japanesePhrases.filter(
-        (phrase) => {
-          if (selectedCategory === "favorites") {
-            if (!favorites.includes(phrase.id)) return false;
-          } else if (phrase.category !== selectedCategory) {
-            return false;
-          }
-
-          if (!keyword) {
-            return true;
-          }
-
-          const target = [
-            phrase.japanese,
-            phrase.reading ??
-              "",
-            phrase.romaji,
-            phrase.chinese,
-            ...(
-              phrase.keywords ??
-              []
-            ),
-          ]
-            .join(" ")
-            .toLowerCase();
-
-          return target.includes(
-            keyword
-          );
-        }
+      const matching = japanesePhrases.filter((phrase) =>
+        selectedCategory === "favorites"
+          ? favorites.includes(phrase.id)
+          : phrase.category === selectedCategory
       );
       const order = phraseOrders[selectedCategory] ?? [];
       const rank = new Map(order.map((id, index) => [id, index]));
@@ -523,7 +486,6 @@ export default function JapanesePage() {
       );
     }, [
       phraseOrders,
-      search,
       selectedCategory,
       favoriteOnly,
       favorites,
@@ -576,7 +538,7 @@ export default function JapanesePage() {
       
       // 固定句子的拼音一律保留；自訂名稱不要求手動輸入羅馬拼音。
       // 若沒有提供拼音，以日文名稱標示代入部分，避免整句消失。
-      const romaji = phrase.romaji.replace(
+      const romaji = (phrase.romaji || "").replace(
         /○○|〇〇/g,
         latin || `[${ja}]`
       );
@@ -686,18 +648,6 @@ export default function JapanesePage() {
 
       <div className="mx-auto max-w-md px-5 pb-28 pt-5">
 
-        {/* Compact search */}
-        <div className="flex items-center gap-3 rounded-2xl border border-[#E8DFD1] bg-white px-4 py-3">
-          <span aria-hidden="true">🔍</span>
-          <input
-            type="search"
-            value={search}
-            onChange={event => setSearch(event.target.value)}
-            placeholder="搜尋：廁所、素食、車站、結帳..."
-            className="min-w-0 flex-1 bg-transparent text-sm text-[#3E3A39] outline-none placeholder:text-[#9A8C7B]"
-          />
-        </div>
-
         {/* CATEGORY */}
 
         <section className="mt-5">
@@ -739,6 +689,103 @@ export default function JapanesePage() {
 
         </section>
 
+        {/* CUSTOM STATION: transport category only */}
+        {selectedCategory === "transport" && (
+        <section className="mt-4 rounded-[24px] border border-[#E8DFD1] bg-white p-4">
+          <button type="button" onClick={() => setStationOpen((current) => !current)} aria-expanded={stationOpen} className="flex w-full items-center justify-between text-left text-sm font-bold text-[#3E3A39]">
+            <span>🚉 自訂車站／目的地</span><span>{stationOpen ? "收合 −" : "展開 ＋"}</span>
+          </button>
+          {stationOpen && (<>
+          <p className="mt-1 text-xs text-[#756756]">輸入目的地；需要時開啟線上翻譯，確認日文名稱後貼回下方。已輸入的內容會儲存在本機。</p>
+          <label htmlFor="station-input" className="mt-3 block text-xs font-bold text-[#756756]">中文或原文地名</label>
+          <input id="station-input" value={stationInput} onChange={(e) => setStationInput(e.target.value)} placeholder="例如：新宿車站" className="mt-1 w-full rounded-xl border border-[#E8DFD1] p-3 text-sm" />
+          <a href={`https://translate.google.com/?sl=auto&tl=ja&text=${encodeURIComponent(stationInput)}&op=translate`} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block rounded-xl bg-[#F3E5CA] px-3 py-2 text-xs font-bold text-[#493A2B]">🌐 開啟線上日文翻譯（需網路）</a>
+          <label htmlFor="station-ja" className="mt-3 block text-xs font-bold text-[#756756]">確認後的日文地名（可離線保存）</label>
+          <input id="station-ja" value={stationJapanese} onChange={(e) => setStationJapanese(e.target.value)} placeholder="例如：新宿駅" className="mt-1 w-full rounded-xl border border-[#E8DFD1] p-3 text-sm" />
+          {stationJapanese.trim() && (
+            <p className="mt-3 rounded-xl bg-[#F6F4ED] px-3 py-3 text-xs font-semibold leading-5 text-[#493A2B]">✓ 已套用「{stationJapanese.trim()}」到下方所有含 ○○ 的交通句子，包含日文朗讀與大字顯示。</p>
+          )}
+          {stationJapanese.trim() && (
+            <button type="button" onClick={() => setSelectedPhrase({id:"custom-station", category:"transport" as JapaneseCategory, japanese:`${stationJapanese.trim()}まで行きたいです。`, romaji:"", chinese:`我想去${stationInput.trim() || stationJapanese.trim()}。`})} className="mt-3 w-full rounded-xl bg-[#F6D27A] px-4 py-3 text-sm font-bold text-[#493A2B]">大字顯示：{stationJapanese.trim()}まで行きたいです。</button>
+          )}
+          <p className="mt-2 text-[10px] text-[#9A8C7B]">請確認翻譯是否為正確站名；離線時不會自動翻譯。</p>
+          </>)}
+        </section>
+        )}
+
+
+        {/* Reusable custom term lookup for sightseeing and hotel placeholders. */}
+        {(selectedCategory === "sightseeing" || selectedCategory === "hotel") && (
+          <section className="mt-4 rounded-[24px] border border-[#E8DFD1] bg-white p-4">
+            <button type="button" className="flex w-full items-center justify-between text-left text-sm font-bold text-[#3E3A39]" aria-expanded={customTermOpen} onClick={() => setCustomTermOpen(value => !value)}>
+              <span>{selectedCategory === "hotel" ? "🏨 自訂房間設備／物品" : "📍 自訂景點／目的地"}</span><span>{customTermOpen ? "收合 −" : "展開 ＋"}</span>
+            </button>
+            {customTermOpen && <div className="mt-3 space-y-3">
+              <p className="text-xs text-[#756756]">輸入名稱並確認日文，會自動套入本分類下方含 ○○ 的句子，離線保留。</p>
+              <label className="block text-xs font-bold text-[#756756]">中文名稱
+                <input value={activeTerm.zh} onChange={e => updateActiveTerm("zh", e.target.value)} placeholder={selectedCategory === "hotel" ? "例如：冷氣" : "例如：清水寺"} className="mt-1 w-full rounded-xl border border-[#E8DFD1] p-3 text-sm" />
+              </label>
+              <a href={`https://translate.google.com/?sl=auto&tl=ja&text=${encodeURIComponent(activeTerm.zh)}&op=translate`} target="_blank" rel="noopener noreferrer" className="inline-block rounded-xl bg-[#F3E5CA] px-3 py-2 text-xs font-bold text-[#493A2B]">🌐 查詢日文（需網路）</a>
+              <label className="block text-xs font-bold text-[#756756]">確認後的日文
+                <input value={activeTerm.ja} onChange={e => updateActiveTerm("ja", e.target.value)} placeholder={selectedCategory === "hotel" ? "例如：エアコン" : "例如：清水寺"} className="mt-1 w-full rounded-xl border border-[#E8DFD1] p-3 text-sm" />
+              </label>
+              <label className="block text-xs font-bold text-[#756756]">羅馬拼音（可手動填寫）
+                <input value={activeTerm.romaji} onChange={e => updateActiveTerm("romaji", e.target.value)} placeholder={selectedCategory === "hotel" ? "例如：eakon" : "例如：Kiyomizu-dera"} className="mt-1 w-full rounded-xl border border-[#E8DFD1] p-3 text-sm" />
+              </label>
+              {activeTerm.ja.trim() && <p className="rounded-xl bg-[#F6F4ED] p-3 text-xs font-semibold text-[#493A2B]">✓ 已代入下方句子：{activeTerm.ja}</p>}
+            </div>}
+          </section>
+        )}
+
+        {selectedCategory === "favorites" && favorites.length === 0 && (
+          <section className="mt-4 rounded-2xl border border-dashed border-[#D8C7A8] bg-white px-4 py-6 text-center">
+            <p className="text-sm font-bold text-[#493A2B]">常用清單還是空的</p>
+            <p className="mt-2 text-xs leading-5 text-[#756756]">到其他分類點選 ☆，就能將需要的句子加入這裡。</p>
+          </section>
+        )}
+
+        {/* DIET PREFERENCES — saved on this device */}
+        {selectedCategory === "vegetarian" && (
+          <section className="mt-4 rounded-[24px] border border-[#D8D8B9] bg-[#F2F1DF] p-4">
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <p className="text-sm font-bold text-[#493A2B]">🌱 我的飲食限制</p>
+                <p className="mt-1 text-xs text-[#6B6049]">預設蛋奶素、不吃五辛；可依需要修改，離線保留設定。</p>
+              </div>
+              <button type="button" onClick={() => setDietEditing(v => !v)}
+                className="shrink-0 rounded-xl border border-[#D8C7A8] bg-white px-3 py-2 text-xs font-bold text-[#493A2B]">
+                {dietEditing ? "完成" : "⚙ 設定"}
+              </button>
+            </div>
+            {dietEditing && (
+              <div className="mt-4 space-y-2 rounded-2xl bg-white p-3">
+                <p className="text-xs text-[#756756]">選擇各項食材是否可以食用：</p>
+                {dietOptions.map(item => (
+                  <div key={item.key} className="flex items-center justify-between gap-2 border-b border-[#F0E9DF] py-2 last:border-0">
+                    <span className="min-w-0 flex-1 text-xs font-semibold text-[#493A2B]">{item.zh}</span>
+                    <div className="flex shrink-0 gap-1" role="group" aria-label={`${item.zh}飲食限制`}>
+                      {[true, false].map(value => (
+                        <button key={String(value)} type="button" aria-pressed={diet[item.key] === value}
+                          onClick={() => setDiet(current => ({ ...current, [item.key]: value }))}
+                          className={`rounded-lg px-2 py-2 text-xs font-bold ${diet[item.key] === value ? (value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800") : "bg-[#F5F0E7] text-[#756756]"}`}>
+                          {value ? "可吃" : "不吃"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                <button type="button" onClick={() => setDiet({ ...defaultDiet })}
+                  className="mt-2 w-full rounded-xl border border-[#E8DFD1] py-2 text-xs font-bold text-[#756756]">恢復預設（蛋奶素、不吃五辛）</button>
+              </div>
+            )}
+            <button type="button" onClick={openDietCard}
+              className="mt-3 w-full rounded-2xl bg-[#D6B56D] py-3 text-sm font-bold text-[#493A2B]">
+              🌱 顯示給店員看
+            </button>
+          </section>
+        )}
+
+
         <div className="mt-5 flex items-end justify-between">
 
           <div>
@@ -757,7 +804,7 @@ export default function JapanesePage() {
 
           <div className="flex items-center gap-3">
             <span className="text-[11px] font-medium text-[#9A8C7B]">{filteredPhrases.length} 句</span>
-            {!search.trim() && filteredPhrases.length > 1 && (
+            {filteredPhrases.length > 1 && (
               <button type="button" onClick={() => { stopDragging(); setIsReordering(value => !value); }}
                 className="rounded-full border border-[#E6D6B9] bg-white px-3 py-1.5 text-xs font-bold text-[#756756]">
                 {isReordering ? "完成" : "調整順序"}
@@ -769,7 +816,7 @@ export default function JapanesePage() {
 
         {/* PHRASES */}
 
-        {isReordering && !search.trim() && (
+        {isReordering && (
           <p className="mt-2 text-xs text-[#9A8C7B]">長按句子任意位置拖曳排序，完成後點「完成」。</p>
         )}
         <section className="mt-3 space-y-3">
@@ -866,7 +913,7 @@ export default function JapanesePage() {
           {/* EMPTY */}
 
           {filteredPhrases.length ===
-            0 && !(selectedCategory === "favorites" && !search.trim() && favorites.length === 0) && (
+            0 && selectedCategory !== "favorites" && (
 
             <div className="rounded-[24px] border border-dashed border-[#E8DFD1] bg-white px-5 py-12 text-center">
 
