@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -18,6 +19,8 @@ import {
 type CategoryFilter =
   | "favorites"
   | JapaneseCategory;
+
+const PHRASE_ORDER_KEY = "our-travel-japanese-phrase-order";
 
 const FAVORITES_KEY =
   "our-travel-japanese-favorites";
@@ -166,6 +169,24 @@ const shoppingCounters: Record<ShoppingCounter, { label: string; chinese: string
   pair: { label: "鞋子（足）", chinese: "雙", japanese: ["一足","二足","三足","四足","五足","六足","七足","八足","九足","十足"], reading: ["いっそく","にそく","さんぞく","よんそく","ごそく","ろくそく","ななそく","はっそく","きゅうそく","じゅっそく"], romaji: ["issoku","nisoku","sanzoku","yonsoku","gosoku","rokusoku","nanasoku","hassoku","kyuusoku","jussoku"] },
 };
 
+type DietKey = "egg" | "dairy" | "meat" | "seafood" | "animal" | "alliums" | "alcohol" | "honey";
+type DietSettings = Record<DietKey, boolean>;
+const DIET_STORAGE_KEY = "our-travel-diet-preferences-v1";
+const defaultDiet: DietSettings = {
+  egg: true, dairy: true, meat: false, seafood: false,
+  animal: false, alliums: false, alcohol: false, honey: true,
+};
+const dietOptions: { key: DietKey; zh: string; ja: string }[] = [
+  { key: "egg", zh: "蛋", ja: "卵" },
+  { key: "dairy", zh: "牛奶、乳製品", ja: "牛乳・乳製品" },
+  { key: "meat", zh: "肉類、禽類", ja: "肉・鶏肉などの鳥肉" },
+  { key: "seafood", zh: "魚、海鮮", ja: "魚・魚介類" },
+  { key: "animal", zh: "其他動物製品（不含蛋奶）", ja: "その他の動物性食品（卵・乳製品を除く）" },
+  { key: "alliums", zh: "洋蔥、蔥、蒜、韭菜、藠頭、阿魏", ja: "玉ねぎ・ねぎ・にんにく・にら・らっきょう・アサフェティダ" },
+  { key: "alcohol", zh: "酒精（含料理酒）", ja: "アルコール・料理酒" },
+  { key: "honey", zh: "蜂蜜", ja: "はちみつ" },
+];
+
 // ========================================
 // PAGE
 // ========================================
@@ -197,6 +218,13 @@ export default function JapanesePage() {
   ] =
     useState(false);
 
+  const [phraseOrders, setPhraseOrders] = useState<Record<string, string[]>>({});
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [isReordering, setIsReordering] = useState(false);
+  const [dropTargetId, setDropTargetId] = useState<string | null>(null);
+  const dragRef = useRef<{ id: string; startX: number; startY: number; active: boolean; timer: ReturnType<typeof setTimeout> | null } | null>(null);
+  const dropRef = useRef<string | null>(null);
+
   const [
     selectedPhrase,
     setSelectedPhrase,
@@ -226,9 +254,50 @@ export default function JapanesePage() {
   const [stationInput, setStationInput] = useState("");
   const [stationJapanese, setStationJapanese] = useState("");
   const [stationOpen, setStationOpen] = useState(false);
+  const [customTerms, setCustomTerms] = useState<Record<string, { zh: string; ja: string; romaji: string }>>({});
+  const [customTermOpen, setCustomTermOpen] = useState(false);
+  const activeTerm = customTerms[selectedCategory] ?? { zh: "", ja: "", romaji: "" };
+  const updateActiveTerm = (key: "zh" | "ja" | "romaji", value: string) => {
+    setCustomTerms(current => ({ ...current, [selectedCategory]: { ...(current[selectedCategory] ?? { zh: "", ja: "", romaji: "" }), [key]: value } }));
+  };
   const [speechMessage, setSpeechMessage] = useState("");
   const [clothingSize, setClothingSize] = useState("M");
   const [shoppingCounter, setShoppingCounter] = useState<ShoppingCounter>("general");
+  const [diet, setDiet] = useState<DietSettings>(defaultDiet);
+  const [dietLoaded, setDietLoaded] = useState(false);
+  const [dietEditing, setDietEditing] = useState(false);
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(DIET_STORAGE_KEY) || "null");
+      if (saved && typeof saved === "object" && !Array.isArray(saved)) {
+        const valid = { ...defaultDiet };
+        for (const item of dietOptions) {
+          if (typeof saved[item.key] === "boolean") valid[item.key] = saved[item.key];
+        }
+        setDiet(valid);
+      }
+    } catch { /* Invalid saved settings: use defaults */ }
+    setDietLoaded(true);
+  }, []);
+  useEffect(() => {
+    if (!dietLoaded) return;
+    try { localStorage.setItem(DIET_STORAGE_KEY, JSON.stringify(diet)); } catch { /* Storage unavailable */ }
+  }, [diet, dietLoaded]);
+
+  const dietAllowed = dietOptions.filter(item => diet[item.key]);
+  const dietBlocked = dietOptions.filter(item => !diet[item.key]);
+  const dietJapanese = [
+    "食事に制限があります。",
+    dietAllowed.length ? `【食べられるもの】\n${dietAllowed.map(item => item.ja).join("、")}。` : "",
+    dietBlocked.length ? `【食べられないもの】\n${dietBlocked.map(item => item.ja).join("、")}。` : "",
+    dietBlocked.length ? "食べられない食材は、だし・スープ・ソース・調味料にも使わないでください。" : "",
+    "この条件で食べられる料理はありますか？",
+  ].filter(Boolean).join("\n");
+  const openDietCard = () => setSelectedPhrase({
+    id: "vegetarian-card", category: "vegetarian", japanese: dietJapanese,
+    romaji: "", chinese: "我的飲食限制（依設定顯示）", important: true,
+  });
+
 
   function speakJapanese(text: string) {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
@@ -260,6 +329,16 @@ export default function JapanesePage() {
     localStorage.setItem("travel-station-draft", JSON.stringify({ input: stationInput, japanese: stationJapanese }));
   }, [stationInput, stationJapanese]);
 
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("travel-custom-phrase-terms") || "{}");
+      if (stored && typeof stored === "object" && !Array.isArray(stored)) setCustomTerms(stored);
+    } catch { /* ignore invalid saved data */ }
+  }, []);
+  useEffect(() => {
+    localStorage.setItem("travel-custom-phrase-terms", JSON.stringify(customTerms));
+  }, [customTerms]);
+
   // ========================================
   // LOAD FAVORITES
   // ========================================
@@ -287,6 +366,13 @@ export default function JapanesePage() {
       // ignore invalid data
     }
 
+    try {
+      const storedOrder = JSON.parse(localStorage.getItem(PHRASE_ORDER_KEY) || "{}");
+      if (storedOrder && typeof storedOrder === "object" && !Array.isArray(storedOrder)) {
+        setPhraseOrders(storedOrder);
+      }
+    } catch { /* Invalid saved order */ }
+
     setLoaded(true);
   }, []);
 
@@ -309,6 +395,71 @@ export default function JapanesePage() {
     favorites,
     loaded,
   ]);
+
+  useEffect(() => {
+    if (!loaded) return;
+    try { localStorage.setItem(PHRASE_ORDER_KEY, JSON.stringify(phraseOrders)); }
+    catch { /* Storage unavailable */ }
+  }, [phraseOrders, loaded]);
+
+  function reorderPhrase(sourceId: string, targetId: string) {
+    if (sourceId === targetId || search.trim()) return;
+    const visibleIds = filteredPhrases.map(phrase => phrase.id);
+    const from = visibleIds.indexOf(sourceId);
+    const to = visibleIds.indexOf(targetId);
+    if (from < 0 || to < 0) return;
+    visibleIds.splice(from, 1);
+    visibleIds.splice(to, 0, sourceId);
+    setPhraseOrders(current => ({ ...current, [selectedCategory]: visibleIds }));
+  }
+
+  function stopDragging() {
+    const current = dragRef.current;
+    if (current?.timer) clearTimeout(current.timer);
+    if (current?.active && dropRef.current) reorderPhrase(current.id, dropRef.current);
+    dragRef.current = null;
+    dropRef.current = null;
+    setDraggingId(null);
+    setDropTargetId(null);
+  }
+
+  function beginLongPress(event: React.PointerEvent<HTMLElement>, id: string) {
+    if (!isReordering) return;
+    if (search.trim() || filteredPhrases.length < 2) return;
+    if (dragRef.current?.timer) clearTimeout(dragRef.current.timer);
+    const pointerId = event.pointerId;
+    const handle = event.currentTarget;
+    dragRef.current = {
+      id, startX: event.clientX, startY: event.clientY, active: false,
+      timer: setTimeout(() => {
+        if (!dragRef.current || dragRef.current.id !== id) return;
+        dragRef.current.active = true;
+        dragRef.current.timer = null;
+        handle.setPointerCapture(pointerId);
+        setDraggingId(id);
+        if (navigator.vibrate) navigator.vibrate(20);
+      }, 350),
+    };
+  }
+
+  function moveLongPress(event: React.PointerEvent<HTMLElement>) {
+    const current = dragRef.current;
+    if (!current) return;
+    if (!current.active) {
+      if (Math.hypot(event.clientX - current.startX, event.clientY - current.startY) > 12) {
+        if (current.timer) clearTimeout(current.timer);
+        dragRef.current = null;
+      }
+      return;
+    }
+    const hovered = document.elementFromPoint(event.clientX, event.clientY)?.closest<HTMLElement>("[data-phrase-id]");
+    const target = hovered?.dataset.phraseId || null;
+    dropRef.current = target && target !== current.id ? target : null;
+    setDropTargetId(dropRef.current);
+    // Scroll the list when dragging near the viewport edges.
+    if (event.clientY < 90) window.scrollBy(0, -12);
+    if (event.clientY > window.innerHeight - 90) window.scrollBy(0, 12);
+  }
 
   // ========================================
   // CURRENT WORDS
@@ -333,7 +484,7 @@ export default function JapanesePage() {
           .trim()
           .toLowerCase();
 
-      return japanesePhrases.filter(
+      const matching = japanesePhrases.filter(
         (phrase) => {
           if (selectedCategory === "favorites") {
             if (!favorites.includes(phrase.id)) return false;
@@ -364,7 +515,14 @@ export default function JapanesePage() {
           );
         }
       );
+      const order = phraseOrders[selectedCategory] ?? [];
+      const rank = new Map(order.map((id, index) => [id, index]));
+      return matching.sort((a, b) =>
+        (rank.get(a.id) ?? Number.MAX_SAFE_INTEGER) -
+        (rank.get(b.id) ?? Number.MAX_SAFE_INTEGER)
+      );
     }, [
+      phraseOrders,
       search,
       selectedCategory,
       favoriteOnly,
@@ -406,6 +564,25 @@ export default function JapanesePage() {
   function getDisplayPhrase(
     phrase: JapanesePhrase
   ): JapanesePhrase {
+    // Category-specific placeholder substitution, preserving separate drafts.
+    const categoryTerm = customTerms[phrase.category];
+    const isTransport = phrase.category === "transport";
+    const ja = isTransport ? stationJapanese.trim() : categoryTerm?.ja?.trim();
+    const zh = isTransport ? stationInput.trim() : categoryTerm?.zh?.trim();
+    const latin = isTransport ? "" : categoryTerm?.romaji?.trim();
+    if (ja && /○○|〇〇/.test(phrase.japanese)) {
+      const japanese = phrase.japanese.replace(/○○|〇〇/g, ja);
+      const chinese = phrase.chinese.replace(/○○|〇〇/g, zh || ja);
+      
+      // 固定句子的拼音一律保留；自訂名稱不要求手動輸入羅馬拼音。
+      // 若沒有提供拼音，以日文名稱標示代入部分，避免整句消失。
+      const romaji = phrase.romaji.replace(
+        /○○|〇〇/g,
+        latin || `[${ja}]`
+      );
+
+      return { ...phrase, japanese, chinese, romaji, reading: phrase.reading?.replace(/○○|〇〇/g, ja) };
+    }
     if (
       phrase.interactiveType ===
       "quantity"
@@ -509,64 +686,17 @@ export default function JapanesePage() {
 
       <div className="mx-auto max-w-md px-5 pb-28 pt-5">
 
-        {/* HERO */}
-
-        <section className="rounded-[28px] border border-[#E6D6B9] bg-[#F3E5CA] p-5 text-[#493A2B]">
-
-          <p className="text-[10px] font-bold tracking-[0.18em] text-[#9B7948]">
-            JAPANESE PHRASEBOOK
-          </p>
-
-          <h2 className="mt-1.5 text-xl font-bold">
-            旅行日語隨身手帳
-          </h2>
-
-          <p className="mt-2 text-xs leading-5 text-[#A69988]">
-            想說的話，隨時找得到。
-            點一下放大給對方看。
-          </p>
-
-          {/* SEARCH */}
-
-          <div className="mt-4 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-[#3E3A39]">
-
-            <span className="text-sm">
-              🔍
-            </span>
-
-            <input
-              type="text"
-              value={
-                search
-              }
-              onChange={(
-                event
-              ) =>
-                setSearch(
-                  event
-                    .target
-                    .value
-                )
-              }
-              placeholder="搜尋：廁所、素食、車站、結帳..."
-              className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[#9A8C7B]"
-            />
-
-            {search && (
-              <button
-                type="button"
-                onClick={() =>
-                  setSearch("")
-                }
-                className="text-sm text-[#9A8C7B]"
-              >
-                ×
-              </button>
-            )}
-
-          </div>
-
-        </section>
+        {/* Compact search */}
+        <div className="flex items-center gap-3 rounded-2xl border border-[#E8DFD1] bg-white px-4 py-3">
+          <span aria-hidden="true">🔍</span>
+          <input
+            type="search"
+            value={search}
+            onChange={event => setSearch(event.target.value)}
+            placeholder="搜尋：廁所、素食、車站、結帳..."
+            className="min-w-0 flex-1 bg-transparent text-sm text-[#3E3A39] outline-none placeholder:text-[#9A8C7B]"
+          />
+        </div>
 
         {/* CATEGORY */}
 
@@ -609,113 +739,6 @@ export default function JapanesePage() {
 
         </section>
 
-        {/* CUSTOM STATION: transport category only */}
-        {selectedCategory === "transport" && !favoriteOnly && (
-        <section className="mt-4 rounded-[24px] border border-[#E8DFD1] bg-white p-4">
-          <button type="button" onClick={() => setStationOpen((current) => !current)} aria-expanded={stationOpen} className="flex w-full items-center justify-between text-left text-sm font-bold text-[#3E3A39]">
-            <span>🚉 自訂車站／目的地</span><span>{stationOpen ? "收合 −" : "展開 ＋"}</span>
-          </button>
-          {stationOpen && (<>
-          <p className="mt-1 text-xs text-[#756756]">輸入目的地；需要時開啟線上翻譯，確認日文名稱後貼回下方。已輸入的內容會儲存在本機。</p>
-          <label htmlFor="station-input" className="mt-3 block text-xs font-bold text-[#756756]">中文或原文地名</label>
-          <input id="station-input" value={stationInput} onChange={(e) => setStationInput(e.target.value)} placeholder="例如：新宿車站" className="mt-1 w-full rounded-xl border border-[#E8DFD1] p-3 text-sm" />
-          <a href={`https://translate.google.com/?sl=auto&tl=ja&text=${encodeURIComponent(stationInput)}&op=translate`} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block rounded-xl bg-[#F3E5CA] px-3 py-2 text-xs font-bold text-[#493A2B]">🌐 開啟線上日文翻譯（需網路）</a>
-          <label htmlFor="station-ja" className="mt-3 block text-xs font-bold text-[#756756]">確認後的日文地名（可離線保存）</label>
-          <input id="station-ja" value={stationJapanese} onChange={(e) => setStationJapanese(e.target.value)} placeholder="例如：新宿駅" className="mt-1 w-full rounded-xl border border-[#E8DFD1] p-3 text-sm" />
-          {stationJapanese.trim() && (
-            <button type="button" onClick={() => setSelectedPhrase({id:"custom-station", category:"transport" as JapaneseCategory, japanese:`${stationJapanese.trim()}まで行きたいです。`, romaji:"", chinese:`我想去${stationInput.trim() || stationJapanese.trim()}。`})} className="mt-3 w-full rounded-xl bg-[#F6D27A] px-4 py-3 text-sm font-bold text-[#493A2B]">大字顯示：{stationJapanese.trim()}まで行きたいです。</button>
-          )}
-          <p className="mt-2 text-[10px] text-[#9A8C7B]">請確認翻譯是否為正確站名；此功能不會在離線時自動翻譯。</p>
-          </>)}
-        </section>
-        )}
-
-
-        {selectedCategory === "favorites" && favorites.length === 0 && (
-          <section className="mt-4 rounded-2xl border border-dashed border-[#D8C7A8] bg-white px-4 py-6 text-center">
-            <p className="text-sm font-bold text-[#493A2B]">常用清單還是空的</p>
-            <p className="mt-2 text-xs leading-5 text-[#756756]">到其他分類點選 ☆，就能將需要的句子加入這裡。</p>
-          </section>
-        )}
-
-        {/* VEGETARIAN CARD */}
-
-        {selectedCategory ===
-          "vegetarian" && (
-
-          <section className="mt-4 rounded-[24px] border border-[#D8D8B9] bg-[#F2F1DF] p-4">
-
-            <div className="flex items-start gap-3">
-
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white text-xl">
-                🌱
-              </div>
-
-              <div>
-
-                <p className="text-sm font-bold text-[#493A2B]">
-                  素食點餐小提醒
-                </p>
-
-                <p className="mt-1 text-[11px] leading-5 text-[#6B6049]">
-                  只說「ベジタリアン」
-                  有時資訊不夠。
-                  蛋與奶可以，其他動物製品不行。
-                  洋蔥、蔥、蒜、韭菜、藠頭及阿魏也不吃；請特別確認高湯與調味料。
-                </p>
-
-              </div>
-
-            </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                setSelectedPhrase(
-                  {
-                    id:
-                      "vegetarian-card",
-
-                    category:
-                      "vegetarian",
-
-                    japanese:
-                      "私は台湾式の卵乳菜食で、五葷も食べません。\n卵と牛乳・乳製品は食べられます。\n肉、鶏肉、魚、魚介類、その他の動物性食品（卵・乳製品を除く）は食べられません。\n玉ねぎ、長ねぎ・青ねぎ、にんにく、にら、らっきょう、アサフェティダも食べられません。\nかつおだし、魚醤、オイスターソース、ゼラチン、ラードなども使わないでください。\n調味料やスープのだしも確認していただけますか。",
-
-                    romaji:
-                      "Watashi wa bejitarian desu.",
-
-                    chinese:
-                      "台灣蛋奶素（不吃五辛）：可以吃蛋、牛奶與乳製品；不吃肉、禽類、魚、海鮮及其他動物製品。也不吃洋蔥、青蔥、大蒜、韭菜、藠頭、阿魏。請確認柴魚高湯、魚露、蠔油、明膠、豬油等調味料與配料。",
-
-                    important:
-                      true,
-                  }
-                )
-              }
-              className="mt-3 w-full rounded-2xl bg-[#D6B56D] py-3 text-xs font-bold text-[#493A2B]"
-            >
-              🌱 顯示給店員看
-            </button>
-
-          </section>
-        )}
-
-        {/* EMERGENCY CONTACTS — stored locally for offline use */}
-        {selectedCategory === "emergency" && !favoriteOnly && (
-          <section className="mt-4 rounded-[24px] border border-[#E8C5BC] bg-[#FFF1EC] p-4">
-            <p className="text-sm font-bold text-[#844B3F]">🆘 日本緊急聯絡</p>
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              <a href="tel:110" className="rounded-2xl bg-white px-3 py-3 text-center text-sm font-bold text-[#844B3F]">警察 110</a>
-              <a href="tel:119" className="rounded-2xl bg-white px-3 py-3 text-center text-sm font-bold text-[#844B3F]">消防／救護 119</a>
-            </div>
-            <a href="tel:05038162787" className="mt-2 block rounded-2xl bg-white px-3 py-3 text-center text-xs font-bold text-[#844B3F]">Japan Visitor Hotline · 050-3816-2787</a>
-            <p className="mt-2 text-[10px] leading-5 text-[#98736B]">號碼可離線查看；撥打電話仍需通訊服務。旅客熱線資訊建議出發前再次確認。</p>
-          </section>
-        )}
-
-        {/* COUNT */}
-
         <div className="mt-5 flex items-end justify-between">
 
           <div>
@@ -732,17 +755,23 @@ export default function JapanesePage() {
 
           </div>
 
-          <p className="text-[11px] font-medium text-[#9A8C7B]">
-            {
-              filteredPhrases.length
-            }{" "}
-            句
-          </p>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-medium text-[#9A8C7B]">{filteredPhrases.length} 句</span>
+            {!search.trim() && filteredPhrases.length > 1 && (
+              <button type="button" onClick={() => { stopDragging(); setIsReordering(value => !value); }}
+                className="rounded-full border border-[#E6D6B9] bg-white px-3 py-1.5 text-xs font-bold text-[#756756]">
+                {isReordering ? "完成" : "調整順序"}
+              </button>
+            )}
+          </div>
 
         </div>
 
         {/* PHRASES */}
 
+        {isReordering && !search.trim() && (
+          <p className="mt-2 text-xs text-[#9A8C7B]">長按句子任意位置拖曳排序，完成後點「完成」。</p>
+        )}
         <section className="mt-3 space-y-3">
 
           {filteredPhrases.map(
@@ -762,18 +791,23 @@ export default function JapanesePage() {
                   key={
                     phrase.id
                   }
-                  className="rounded-[18px] border border-[#E8DFD1] bg-white px-3.5 py-3 shadow-sm shadow-[#D8C7A8]/25"
+                  data-phrase-id={phrase.id}
+                  onPointerDown={event => { if (isReordering) beginLongPress(event, phrase.id); }}
+                  onPointerMove={event => { if (isReordering) moveLongPress(event); }}
+                  onPointerUp={() => { if (isReordering) stopDragging(); }}
+                  onPointerCancel={() => { if (isReordering) stopDragging(); }}
+                  onContextMenu={event => { if (isReordering) event.preventDefault(); }}
+                  style={isReordering ? { touchAction: "none", userSelect: "none" } : undefined}
+                  className={`rounded-[18px] border bg-white px-3.5 py-3 shadow-sm shadow-[#D8C7A8]/25 transition-colors ${draggingId === phrase.id ? "border-[#D6AE5B] opacity-60" : dropTargetId === phrase.id ? "border-[#D6AE5B] bg-[#FFF8E9]" : "border-[#E8DFD1]"}`}
                 >
 
                   <div className="flex items-start gap-3">
 
                     <button
                       type="button"
-                      onClick={() =>
-                        openPhrase(
-                          phrase
-                        )
-                      }
+                      onClick={() => {
+                        if (!isReordering) openPhrase(phrase);
+                      }}
                       className="min-w-0 flex-1 text-left"
                     >
 
@@ -809,14 +843,10 @@ export default function JapanesePage() {
 
                     </button>
 
-                    <button type="button" aria-label="朗讀日文" title="朗讀日文" onClick={() => speakJapanese(getDisplayPhrase(phrase).japanese)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F5F0E7] text-base text-[#756756]">🔊</button>
+                    <button type="button" aria-label="朗讀日文" title="朗讀日文" onClick={() => { if (!isReordering) speakJapanese(getDisplayPhrase(phrase).japanese); }} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F5F0E7] text-base text-[#756756]">🔊</button>
                     <button
                       type="button"
-                      onClick={() =>
-                        toggleFavorite(
-                          phrase.id
-                        )
-                      }
+                      onClick={() => { if (!isReordering) toggleFavorite(phrase.id); }}
                       className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg ${
                         isFavorite
                           ? "bg-[#FFF3DE] text-[#B5852B]"
@@ -941,6 +971,37 @@ export default function JapanesePage() {
               </div>
             )}
 
+            {selectedPhrase.id === "vegetarian-card" ? (
+              <div className="mt-4 space-y-3" lang="ja">
+                <p className="text-center text-lg font-bold text-slate-950">食事に制限があります。</p>
+                {dietAllowed.length > 0 && (
+                  <div className="rounded-xl border border-green-200 bg-green-50 p-3">
+                    <p className="mb-1 text-sm font-bold text-green-800">✓ 食べられるもの</p>
+                    <p className="break-words text-[15px] font-semibold leading-7 text-slate-950">{dietAllowed.map(item => item.ja).join("・")}</p>
+                  </div>
+                )}
+                {dietBlocked.length > 0 && (
+                  <div className="rounded-xl border border-red-200 bg-red-50 p-3">
+                    <p className="mb-1 text-sm font-bold text-red-800">✕ 食べられないもの</p>
+                    <p className="break-words text-[15px] font-semibold leading-7 text-slate-950">{dietBlocked.map(item => item.ja).join("・")}</p>
+                  </div>
+                )}
+                {dietBlocked.length > 0 && (
+                  <div className="rounded-xl bg-amber-50 p-3 text-[13px] font-medium leading-6 text-slate-900">
+                    食べられない食材は、だし・スープ・ソース・調味料にも使わないでください。
+                  </div>
+                )}
+                <p className="text-center text-[15px] font-bold leading-7 text-slate-950">この条件で食べられる料理はありますか？</p>
+                <div lang="zh-Hant" className="mt-4 border-t border-[#E8DFD1] pt-3 text-left text-xs leading-6 text-[#756756]">
+                  <p className="mb-2 font-bold">中文翻譯（供自己確認）</p>
+                  <p>我有飲食限制。</p>
+                  {dietAllowed.length > 0 && <p>✓ 可以吃：{dietAllowed.map(item => item.zh).join("、")}。</p>}
+                  {dietBlocked.length > 0 && <p>✕ 不能吃：{dietBlocked.map(item => item.zh).join("、")}。</p>}
+                  {dietBlocked.length > 0 && <p>高湯、湯品、醬料及調味料也請不要使用上述不能吃的食材。</p>}
+                  <p>請問有符合這些條件、我可以吃的料理嗎？</p>
+                </div>
+              </div>
+            ) : (
             <div className="my-8 text-center">
               <p className="whitespace-pre-line break-words text-[28px] font-bold leading-[1.5] tracking-wide text-slate-950">
                 {/サイズ|尺寸|尺碼/.test(selectedPhrase.japanese + selectedPhrase.chinese)
@@ -956,8 +1017,7 @@ export default function JapanesePage() {
                 </p>
               )}
 
-              {selectedPhrase.id !==
-                "vegetarian-card" && selectedPhrase.id !== "custom-station" && (
+              {selectedPhrase.id !== "vegetarian-card" && (
 
                 <p className="mt-3 text-xs font-medium leading-5 text-[#9A8C7B]">
                   {
@@ -977,7 +1037,9 @@ export default function JapanesePage() {
 
             </div>
 
-            <button type="button" onClick={() => speakJapanese(/サイズ|尺寸|尺碼/.test(selectedPhrase.japanese + selectedPhrase.chinese) ? `${clothingSize}サイズはありますか？` : getDisplayPhrase(selectedPhrase).japanese)} className="mb-2 w-full rounded-2xl border border-[#E8DFD1] bg-[#FFF8E9] py-3 text-sm font-bold text-[#493A2B]">🔊 播放日文發音</button>
+            )}
+
+            <button type="button" onClick={() => speakJapanese(/サイズ|尺寸|尺碼/.test(selectedPhrase.japanese + selectedPhrase.chinese) ? `${clothingSize}サイズはありますか？` : (selectedPhrase.id === "vegetarian-card" ? dietJapanese : getDisplayPhrase(selectedPhrase).japanese))} className="mb-2 w-full rounded-2xl border border-[#E8DFD1] bg-[#FFF8E9] py-3 text-sm font-bold text-[#493A2B]">🔊 播放日文發音</button>
             {speechMessage && <p role="status" className="mb-2 text-xs text-[#756756]">{speechMessage}</p>}
             <button
               type="button"

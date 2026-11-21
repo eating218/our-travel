@@ -329,22 +329,6 @@ export const japanesePhrases: JapanesePhrase[] = [
     "important": false
   },
   {
-    "id": "restaurant-01",
-    "category": "restaurant",
-    "japanese": "二人です",
-    "romaji": "Futari desu",
-    "chinese": "兩位",
-    "important": false
-  },
-  {
-    "id": "restaurant-02",
-    "category": "restaurant",
-    "japanese": "一人です",
-    "romaji": "Hitori desu",
-    "chinese": "一位",
-    "important": false
-  },
-  {
     "id": "restaurant-03",
     "category": "restaurant",
     "japanese": "席はありますか？",
@@ -460,7 +444,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "vegetarian-01",
     "category": "vegetarian",
     "japanese": "肉は入っていますか？",
-    "romaji": "",
+    "romaji": "Niku wa haitte imasu ka?",
     "chinese": "這裡面有肉嗎？",
     "important": false
   },
@@ -468,7 +452,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "vegetarian-02",
     "category": "vegetarian",
     "japanese": "魚は入っていますか？",
-    "romaji": "",
+    "romaji": "Sakana wa haitte imasu ka?",
     "chinese": "有魚嗎？",
     "important": false
   },
@@ -476,7 +460,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "vegetarian-03",
     "category": "vegetarian",
     "japanese": "魚介類は入っていますか？",
-    "romaji": "",
+    "romaji": "Gyokairui wa haitte imasu ka?",
     "chinese": "有海鮮嗎？",
     "important": false
   },
@@ -484,7 +468,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "vegetarian-04",
     "category": "vegetarian",
     "japanese": "卵は入っていますか？",
-    "romaji": "",
+    "romaji": "Tamago wa haitte imasu ka?",
     "chinese": "有蛋嗎？",
     "important": false
   },
@@ -492,7 +476,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "vegetarian-05",
     "category": "vegetarian",
     "japanese": "乳製品は入っていますか？",
-    "romaji": "",
+    "romaji": "Nyuuseihin wa haitte imasu ka?",
     "chinese": "有牛奶／乳製品嗎？",
     "important": false
   },
@@ -500,7 +484,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "vegetarian-06",
     "category": "vegetarian",
     "japanese": "魚のだしは入っていますか？",
-    "romaji": "",
+    "romaji": "Sakana no dashi wa haitte imasu ka?",
     "chinese": "有魚高湯嗎？",
     "important": false
   },
@@ -508,7 +492,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "vegetarian-07",
     "category": "vegetarian",
     "japanese": "かつお節は入っていますか？",
-    "romaji": "",
+    "romaji": "Katsuobushi wa haitte imasu ka?",
     "chinese": "有柴魚嗎？",
     "important": false
   },
@@ -516,7 +500,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "vegetarian-08",
     "category": "vegetarian",
     "japanese": "肉抜きにできますか？",
-    "romaji": "",
+    "romaji": "Niku nuki ni dekimasu ka?",
     "chinese": "可以不放肉嗎？",
     "important": false
   },
@@ -524,7 +508,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "vegetarian-09",
     "category": "vegetarian",
     "japanese": "魚抜きにできますか？",
-    "romaji": "",
+    "romaji": "Sakana nuki ni dekimasu ka?",
     "chinese": "可以不放魚嗎？",
     "important": false
   },
@@ -532,7 +516,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "vegetarian-10",
     "category": "vegetarian",
     "japanese": "ベジタリアン料理はありますか？",
-    "romaji": "",
+    "romaji": "Bejitarian ryouri wa arimasu ka?",
     "chinese": "有素食料理嗎？",
     "important": false
   },
@@ -540,7 +524,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "vegetarian-11",
     "category": "vegetarian",
     "japanese": "ヴィーガン料理はありますか？",
-    "romaji": "",
+    "romaji": "Viigan ryouri wa arimasu ka?",
     "chinese": "有純素料理嗎？",
     "important": false
   },
@@ -652,7 +636,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-01",
     "category": "hotel",
     "japanese": "チェックインをお願いします",
-    "romaji": "",
+    "romaji": "Chekkuin o onegaishimasu.",
     "chinese": "我要辦理入住",
     "important": false
   },
@@ -660,7 +644,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-02",
     "category": "hotel",
     "japanese": "チェックアウトをお願いします",
-    "romaji": "",
+    "romaji": "Chekkuauto o onegaishimasu.",
     "chinese": "我要退房",
     "important": false
   },
@@ -668,7 +652,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-03",
     "category": "hotel",
     "japanese": "予約しています",
-    "romaji": "",
+    "romaji": "Yoyaku shite imasu.",
     "chinese": "我有預約",
     "important": false
   },
@@ -676,7 +660,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-04",
     "category": "hotel",
     "japanese": "名前は○○です",
-    "romaji": "",
+    "romaji": "Namae wa ○○ desu.",
     "chinese": "我的名字是○○",
     "important": false
   },
@@ -684,7 +668,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-05",
     "category": "hotel",
     "japanese": "荷物を預かってもらえますか？",
-    "romaji": "",
+    "romaji": "Nimotsu o azukatte moraemasu ka?",
     "chinese": "可以寄放行李嗎？",
     "important": false
   },
@@ -692,7 +676,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-06",
     "category": "hotel",
     "japanese": "チェックイン前に荷物を預けられますか？",
-    "romaji": "",
+    "romaji": "Chekkuin mae ni nimotsu o azukeraremasu ka?",
     "chinese": "入住前可以寄放行李嗎？",
     "important": false
   },
@@ -700,7 +684,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-07",
     "category": "hotel",
     "japanese": "チェックアウト後に荷物を預けられますか？",
-    "romaji": "",
+    "romaji": "Chekkuauto go ni nimotsu o azukeraremasu ka?",
     "chinese": "退房後可以寄放行李嗎？",
     "important": false
   },
@@ -708,7 +692,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-08",
     "category": "hotel",
     "japanese": "朝食は何時からですか？",
-    "romaji": "",
+    "romaji": "Choushoku wa nanji kara desu ka?",
     "chinese": "早餐幾點開始？",
     "important": false
   },
@@ -716,7 +700,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-09",
     "category": "hotel",
     "japanese": "朝食会場はどこですか？",
-    "romaji": "",
+    "romaji": "Choushoku kaijou wa doko desu ka?",
     "chinese": "早餐在哪裡？",
     "important": false
   },
@@ -724,7 +708,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-10",
     "category": "hotel",
     "japanese": "Wi-Fiのパスワードは何ですか？",
-    "romaji": "",
+    "romaji": "Wai-fai no pasuwaado wa nan desu ka?",
     "chinese": "Wi-Fi 密碼是什麼？",
     "important": false
   },
@@ -732,7 +716,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-11",
     "category": "hotel",
     "japanese": "部屋の○○が壊れています",
-    "romaji": "",
+    "romaji": "Heya no ○○ ga kowarete imasu.",
     "chinese": "房間的○○壞了",
     "important": false
   },
@@ -740,7 +724,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-12",
     "category": "hotel",
     "japanese": "お湯が出ません",
-    "romaji": "",
+    "romaji": "Oyu ga demasen.",
     "chinese": "沒有熱水",
     "important": false
   },
@@ -748,7 +732,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-13",
     "category": "hotel",
     "japanese": "エアコンが使えません",
-    "romaji": "",
+    "romaji": "Eakon ga tsukaemasen.",
     "chinese": "冷氣不能用",
     "important": false
   },
@@ -756,7 +740,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-14",
     "category": "hotel",
     "japanese": "部屋を変えてもらえますか？",
-    "romaji": "",
+    "romaji": "Heya o kaete moraemasu ka?",
     "chinese": "可以換房間嗎？",
     "important": false
   },
@@ -764,7 +748,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "hotel-15",
     "category": "hotel",
     "japanese": "充電器を借りられますか？",
-    "romaji": "",
+    "romaji": "Juudenki o kariraremasu ka?",
     "chinese": "可以借充電器嗎？",
     "important": false
   },
@@ -772,7 +756,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-01",
     "category": "sightseeing",
     "japanese": "○○はどこですか？",
-    "romaji": "",
+    "romaji": "○○ wa doko desu ka?",
     "chinese": "○○在哪裡？",
     "important": false
   },
@@ -780,7 +764,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-02",
     "category": "sightseeing",
     "japanese": "○○にはどうやって行きますか？",
-    "romaji": "",
+    "romaji": "○○ ni wa dou yatte ikimasu ka?",
     "chinese": "要怎麼去○○？",
     "important": false
   },
@@ -788,7 +772,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-03",
     "category": "sightseeing",
     "japanese": "歩いて行けますか？",
-    "romaji": "",
+    "romaji": "Aruite ikemasu ka?",
     "chinese": "走路可以到嗎？",
     "important": false
   },
@@ -796,7 +780,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-04",
     "category": "sightseeing",
     "japanese": "どのくらいかかりますか？",
-    "romaji": "",
+    "romaji": "Dono kurai kakarimasu ka?",
     "chinese": "大概要多久？",
     "important": false
   },
@@ -804,7 +788,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-05",
     "category": "sightseeing",
     "japanese": "この方向で合っていますか？",
-    "romaji": "",
+    "romaji": "Kono houkou de atte imasu ka?",
     "chinese": "是這個方向嗎？",
     "important": false
   },
@@ -812,7 +796,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-06",
     "category": "sightseeing",
     "japanese": "地図で教えてもらえますか？",
-    "romaji": "",
+    "romaji": "Chizu de oshiete moraemasu ka?",
     "chinese": "可以在地圖上指給我看嗎？",
     "important": false
   },
@@ -820,7 +804,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-07",
     "category": "sightseeing",
     "japanese": "入口はどこですか？",
-    "romaji": "",
+    "romaji": "Iriguchi wa doko desu ka?",
     "chinese": "入口在哪裡？",
     "important": false
   },
@@ -828,7 +812,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-08",
     "category": "sightseeing",
     "japanese": "出口はどこですか？",
-    "romaji": "",
+    "romaji": "Deguchi wa doko desu ka?",
     "chinese": "出口在哪裡？",
     "important": false
   },
@@ -836,7 +820,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-09",
     "category": "sightseeing",
     "japanese": "チケット売り場はどこですか？",
-    "romaji": "",
+    "romaji": "Chiketto uriba wa doko desu ka?",
     "chinese": "售票處在哪裡？",
     "important": false
   },
@@ -844,7 +828,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-10",
     "category": "sightseeing",
     "japanese": "入場料はいくらですか？",
-    "romaji": "",
+    "romaji": "Nyuujouryou wa ikura desu ka?",
     "chinese": "門票多少錢？",
     "important": false
   },
@@ -852,7 +836,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-11",
     "category": "sightseeing",
     "japanese": "今日は開いていますか？",
-    "romaji": "",
+    "romaji": "Kyou wa aite imasu ka?",
     "chinese": "今天有開嗎？",
     "important": false
   },
@@ -860,7 +844,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-12",
     "category": "sightseeing",
     "japanese": "何時に閉まりますか？",
-    "romaji": "",
+    "romaji": "Nanji ni shimarimasu ka?",
     "chinese": "幾點關門？",
     "important": false
   },
@@ -868,7 +852,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-13",
     "category": "sightseeing",
     "japanese": "写真を撮ってもいいですか？",
-    "romaji": "",
+    "romaji": "Shashin o totte mo ii desu ka?",
     "chinese": "可以拍照嗎？",
     "important": false
   },
@@ -876,7 +860,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "sightseeing-14",
     "category": "sightseeing",
     "japanese": "写真を撮ってもらえますか？",
-    "romaji": "",
+    "romaji": "Shashin o totte moraemasu ka?",
     "chinese": "可以幫我拍照嗎？",
     "important": false
   },
@@ -884,7 +868,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "facilities-01",
     "category": "facilities",
     "japanese": "トイレはどこですか？",
-    "romaji": "",
+    "romaji": "Toire wa doko desu ka?",
     "chinese": "廁所在哪裡？",
     "important": true
   },
@@ -892,7 +876,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "facilities-02",
     "category": "facilities",
     "japanese": "トイレを使ってもいいですか？",
-    "romaji": "",
+    "romaji": "Toire o tsukatte mo ii desu ka?",
     "chinese": "可以使用廁所嗎？",
     "important": false
   },
@@ -900,7 +884,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "facilities-03",
     "category": "facilities",
     "japanese": "コインロッカーはありますか？",
-    "romaji": "",
+    "romaji": "Koin rokkaa wa arimasu ka?",
     "chinese": "有置物櫃嗎？",
     "important": false
   },
@@ -908,7 +892,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "facilities-04",
     "category": "facilities",
     "japanese": "コインロッカーはどこですか？",
-    "romaji": "",
+    "romaji": "Koin rokkaa wa doko desu ka?",
     "chinese": "置物櫃在哪裡？",
     "important": false
   },
@@ -916,7 +900,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "facilities-05",
     "category": "facilities",
     "japanese": "ゴミ箱はありますか？",
-    "romaji": "",
+    "romaji": "Gomibako wa arimasu ka?",
     "chinese": "有垃圾桶嗎？",
     "important": false
   },
@@ -924,7 +908,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "facilities-06",
     "category": "facilities",
     "japanese": "充電できる場所はありますか？",
-    "romaji": "",
+    "romaji": "Juuden dekiru basho wa arimasu ka?",
     "chinese": "有充電的地方嗎？",
     "important": false
   },
@@ -932,7 +916,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "facilities-07",
     "category": "facilities",
     "japanese": "Wi-Fiはありますか？",
-    "romaji": "",
+    "romaji": "Wai-fai wa arimasu ka?",
     "chinese": "有 Wi-Fi 嗎？",
     "important": false
   },
@@ -940,7 +924,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "facilities-08",
     "category": "facilities",
     "japanese": "エレベーターはどこですか？",
-    "romaji": "",
+    "romaji": "Erebeetaa wa doko desu ka?",
     "chinese": "電梯在哪裡？",
     "important": false
   },
@@ -948,7 +932,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "facilities-09",
     "category": "facilities",
     "japanese": "エスカレーターはどこですか？",
-    "romaji": "",
+    "romaji": "Esukareetaa wa doko desu ka?",
     "chinese": "自動扶梯在哪裡？",
     "important": false
   },
@@ -956,7 +940,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-01",
     "category": "emergency",
     "japanese": "助けてください",
-    "romaji": "",
+    "romaji": "Tasukete kudasai.",
     "chinese": "請幫幫我",
     "important": true
   },
@@ -964,7 +948,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-02",
     "category": "emergency",
     "japanese": "警察を呼んでください",
-    "romaji": "",
+    "romaji": "Keisatsu o yonde kudasai.",
     "chinese": "請叫警察",
     "important": false
   },
@@ -972,7 +956,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-03",
     "category": "emergency",
     "japanese": "救急車を呼んでください",
-    "romaji": "",
+    "romaji": "Kyuukyuusha o yonde kudasai.",
     "chinese": "請叫救護車",
     "important": true
   },
@@ -980,7 +964,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-04",
     "category": "emergency",
     "japanese": "道に迷いました",
-    "romaji": "",
+    "romaji": "Michi ni mayoimashita.",
     "chinese": "我迷路了",
     "important": false
   },
@@ -988,7 +972,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-05",
     "category": "emergency",
     "japanese": "気分が悪いです",
-    "romaji": "",
+    "romaji": "Kibun ga warui desu.",
     "chinese": "我不舒服",
     "important": false
   },
@@ -996,7 +980,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-06",
     "category": "emergency",
     "japanese": "けがをしました",
-    "romaji": "",
+    "romaji": "Kega o shimashita.",
     "chinese": "我受傷了",
     "important": false
   },
@@ -1004,7 +988,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-07",
     "category": "emergency",
     "japanese": "お腹が痛いです",
-    "romaji": "",
+    "romaji": "Onaka ga itai desu.",
     "chinese": "我肚子痛",
     "important": false
   },
@@ -1012,7 +996,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-08",
     "category": "emergency",
     "japanese": "熱があります",
-    "romaji": "",
+    "romaji": "Netsu ga arimasu.",
     "chinese": "我發燒了",
     "important": false
   },
@@ -1020,7 +1004,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-09",
     "category": "emergency",
     "japanese": "持ち物をなくしました",
-    "romaji": "",
+    "romaji": "Mochimono o nakushimashita.",
     "chinese": "我的東西不見了",
     "important": false
   },
@@ -1028,7 +1012,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-10",
     "category": "emergency",
     "japanese": "財布をなくしました",
-    "romaji": "",
+    "romaji": "Saifu o nakushimashita.",
     "chinese": "我的錢包不見了",
     "important": false
   },
@@ -1036,7 +1020,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-11",
     "category": "emergency",
     "japanese": "携帯電話をなくしました",
-    "romaji": "",
+    "romaji": "Keitai denwa o nakushimashita.",
     "chinese": "我的手機不見了",
     "important": false
   },
@@ -1044,7 +1028,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-12",
     "category": "emergency",
     "japanese": "パスポートをなくしました",
-    "romaji": "",
+    "romaji": "Pasupooto o nakushimashita.",
     "chinese": "我的護照不見了",
     "important": false
   },
@@ -1052,7 +1036,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-13",
     "category": "emergency",
     "japanese": "一番近い病院はどこですか？",
-    "romaji": "",
+    "romaji": "Ichiban chikai byouin wa doko desu ka?",
     "chinese": "最近的醫院在哪？",
     "important": false
   },
@@ -1060,7 +1044,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-14",
     "category": "emergency",
     "japanese": "中国語を話せる人はいますか？",
-    "romaji": "",
+    "romaji": "Chuugokugo o hanaseru hito wa imasu ka?",
     "chinese": "有會說中文的人嗎？",
     "important": false
   },
@@ -1068,7 +1052,7 @@ export const japanesePhrases: JapanesePhrase[] = [
     "id": "emergency-15",
     "category": "emergency",
     "japanese": "英語を話せる人はいますか？",
-    "romaji": "",
+    "romaji": "Eigo o hanaseru hito wa imasu ka?",
     "chinese": "有會說英文的人嗎？",
     "important": false
   },
