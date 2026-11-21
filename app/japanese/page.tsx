@@ -581,52 +581,27 @@ export default function JapanesePage() {
                 onClick={() => { setSelectedCategory("favorites"); setFavoriteOnly(false); }}
                 className={`rounded-full px-3.5 py-2 text-xs font-bold transition ${selectedCategory === "favorites" ? "bg-[#F6D27A] text-[#493A2B]" : "border border-[#E8DFD1] bg-white text-[#756756]"}`}
               >⭐ 常用</button>
-              {japaneseCategories.map(
-                (
-                  category
-                ) => {
-                  const active =
-                    selectedCategory ===
-                    category.id;
-
-                  return (
-                    <button
-                      key={
-                        category.id
-                      }
-                      type="button"
-                      onClick={() => {
-                        setSelectedCategory(
-                          category.id
-                        );
-
-                        setFavoriteOnly(
-                          false
-                        );
-                      }}
-                      className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold transition ${
-                        active
-                          ? "bg-[#F6D27A] text-[#493A2B]"
-                          : "border border-[#E8DFD1] bg-white text-[#756756]"
-                      }`}
-                    >
-
-                      <span>
-                        {
-                          category.icon
-                        }
-                      </span>
-
-                      <span>
-                        {
-                          category.label
-                        }
-                      </span>
-
-                    </button>
-                  );
-                }
-              )}
+              {japaneseCategories.map((category) => {
+                const active = selectedCategory === category.id;
+                return (
+                  <button
+                    key={category.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedCategory(category.id);
+                      setFavoriteOnly(false);
+                    }}
+                    className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold transition ${
+                      active
+                        ? "bg-[#F6D27A] text-[#493A2B]"
+                        : "border border-[#E8DFD1] bg-white text-[#756756]"
+                    }`}
+                  >
+                    <span>{category.icon}</span>
+                    <span>{category.label}</span>
+                  </button>
+                );
+              })}
 
             </div>
 
