@@ -159,6 +159,18 @@ const peopleWords = [
   },
 ];
 
+const reservationHours = ["rei", "ichi", "ni", "san", "yo", "go", "roku", "shichi", "hachi", "ku", "juu", "juuichi", "juuni", "juusan", "juuyo", "juugo", "juuroku", "juushichi", "juuhachi", "juuku", "nijuu", "nijuuichi", "nijuuni", "nijuusan"];
+const reservationNumbers = ["", "ichi", "ni", "san", "yon", "go", "roku", "nana", "hachi", "kyuu", "juu"];
+const minuteUnits = ["", "ippun", "nifun", "sanpun", "yonpun", "gofun", "roppun", "nanafun", "happun", "kyuufun"];
+function minuteRomaji(n: number) {
+  if (n < 10) return minuteUnits[n];
+  const tens = n < 20 ? "juu" : reservationNumbers[Math.floor(n / 10)] + "juu";
+  return n % 10 === 0 ? tens.slice(0, -1) + "ppun" : tens + minuteUnits[n % 10];
+}
+function isReservationTime(phrase: JapanesePhrase) {
+  return phrase.id === "restaurant-reservation-time" || phrase.id === "restaurant-reservation-request";
+}
+
 type ShoppingCounter = "general" | "flat" | "bottle" | "cup" | "pair";
 
 const shoppingCounters: Record<ShoppingCounter, { label: string; chinese: string; japanese: string[]; reading: string[]; romaji: string[] }> = {
@@ -244,6 +256,12 @@ export default function JapanesePage() {
     setLoaded,
   ] =
     useState(false);
+
+  const [reservationHour, setReservationHour] = useState(18);
+  const [reservationMinute, setReservationMinute] = useState(0);
+  const [reservationPeople, setReservationPeople] = useState(2);
+  const [reservationName, setReservationName] = useState("");
+  const [reservationNameRomaji, setReservationNameRomaji] = useState("");
 
   const [stationInput, setStationInput] = useState("");
   const [stationJapanese, setStationJapanese] = useState("");
@@ -526,6 +544,23 @@ export default function JapanesePage() {
   function getDisplayPhrase(
     phrase: JapanesePhrase
   ): JapanesePhrase {
+    if (isReservationTime(phrase)) {
+      const request = phrase.id === "restaurant-reservation-request";
+      const time = `${reservationHour}時${reservationMinute ? `${reservationMinute}分` : ""}`;
+      const latinTime = `${reservationHours[reservationHour]}-ji${reservationMinute ? ` ${minuteRomaji(reservationMinute)}` : ""}`;
+      const name = reservationName.trim();
+      const nameLatin = reservationNameRomaji.trim() || `[${name}]`;
+      return {
+        ...phrase,
+        japanese: `${time}から${reservationPeople}名で予約${request ? "したいです" : "しています"}。${!request && name ? `${name}の名前で予約しています。` : ""}`,
+        romaji: `${capitalize(latinTime)} kara ${reservationNumbers[reservationPeople]}-mei de yoyaku ${request ? "shitai desu" : "shite imasu"}.${!request && name ? ` ${nameLatin} no namae de yoyaku shite imasu.` : ""}`,
+        chinese: `我${request ? "想預約" : "有預約"}${reservationHour}:${String(reservationMinute).padStart(2, "0")}、${reservationPeople} 位的位子。${!request && name ? `我是用 ${name} 的名字預約的。` : ""}`,
+      };
+    }
+    if (phrase.id === "restaurant-reservation-name") {
+      const name = reservationName.trim();
+      return name ? { ...phrase, japanese: `${name}の名前で予約しています。`, romaji: `${reservationNameRomaji.trim() || `[${name}]`} no namae de yoyaku shite imasu.`, chinese: `我是用 ${name} 的名字預約的。` } : phrase;
+    }
     // Category-specific placeholder substitution, preserving separate drafts.
     const categoryTerm = customTerms[phrase.category];
     const isTransport = phrase.category === "transport";
@@ -987,6 +1022,36 @@ export default function JapanesePage() {
                     </button>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {(isReservationTime(selectedPhrase) || selectedPhrase.id === "restaurant-reservation-name") && (
+              <div className="mt-5 space-y-3 rounded-2xl bg-[#F5F0E7] p-3">
+                {isReservationTime(selectedPhrase) && <>
+                  <p className="text-center text-xs font-bold text-[#756756]">預約時間（24 小時制）</p>
+                  <div className="flex gap-2">
+                    <select aria-label="預約小時" value={reservationHour} onChange={e => setReservationHour(Number(e.target.value))} className="w-1/2 rounded-xl border border-[#E8DFD1] bg-white p-3 text-sm">
+                      {Array.from({length:24}, (_, i) => <option key={i} value={i}>{String(i).padStart(2,"0")} 時</option>)}
+                    </select>
+                    <select aria-label="預約分鐘" value={reservationMinute} onChange={e => setReservationMinute(Number(e.target.value))} className="w-1/2 rounded-xl border border-[#E8DFD1] bg-white p-3 text-sm">
+                      {Array.from({length:60}, (_, i) => <option key={i} value={i}>{String(i).padStart(2,"0")} 分</option>)}
+                    </select>
+                  </div>
+                  <p className="text-center text-xs font-bold text-[#756756]">預約人數</p>
+                  <div className="mx-auto flex w-52 items-center overflow-hidden rounded-2xl border border-[#E8DFD1] bg-white">
+                    <button type="button" aria-label="減少預約人數" disabled={reservationPeople <= 1} onClick={() => setReservationPeople(n => Math.max(1,n-1))} className="h-12 flex-1 text-xl font-bold disabled:opacity-30">−</button>
+                    <span className="flex h-12 w-16 items-center justify-center border-x border-[#E8DFD1] font-bold">{reservationPeople} 名</span>
+                    <button type="button" aria-label="增加預約人數" disabled={reservationPeople >= 10} onClick={() => setReservationPeople(n => Math.min(10,n+1))} className="h-12 flex-1 text-xl font-bold disabled:opacity-30">＋</button>
+                  </div>
+                </>}
+                {selectedPhrase.id !== "restaurant-reservation-request" && <>
+                  <label className="block text-xs font-bold text-[#756756]">預約姓名（選填）
+                    <input value={reservationName} onChange={e => setReservationName(e.target.value)} placeholder="輸入預約時使用的姓名" className="mt-1 w-full rounded-xl border border-[#E8DFD1] bg-white p-3 text-sm" />
+                  </label>
+                  <label className="block text-xs font-bold text-[#756756]">姓名羅馬拼音（選填）
+                    <input value={reservationNameRomaji} onChange={e => setReservationNameRomaji(e.target.value)} placeholder="姓名的讀音" className="mt-1 w-full rounded-xl border border-[#E8DFD1] bg-white p-3 text-sm" />
+                  </label>
+                </>}
               </div>
             )}
 
