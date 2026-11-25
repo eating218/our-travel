@@ -339,17 +339,49 @@ export const japanesePhrases: JapanesePhrase[] = [
   {
     "id": "restaurant-04",
     "category": "restaurant",
-    "japanese": "予約しています",
-    "romaji": "Yoyaku shiteimasu",
-    "chinese": "有預約",
+    "japanese": "予約しています。",
+    "romaji": "Yoyaku shite imasu.",
+    "chinese": "我已經有預約了。",
     "important": false
   },
   {
     "id": "restaurant-05",
     "category": "restaurant",
-    "japanese": "予約していません",
-    "romaji": "Yoyaku shiteimasen",
-    "chinese": "沒有預約",
+    "japanese": "予約していません。",
+    "romaji": "Yoyaku shite imasen.",
+    "chinese": "我沒有預約。",
+    "important": false
+  },
+  {
+    "id": "restaurant-reservation-time",
+    "category": "restaurant",
+    "japanese": "○時から○名で予約しています。",
+    "romaji": "○-ji kara ○-mei de yoyaku shite imasu.",
+    "chinese": "我有預約○點、○位的位子。",
+    "important": false
+  },
+  {
+    "id": "restaurant-reservation-name",
+    "category": "restaurant",
+    "japanese": "○○の名前で予約しています。",
+    "romaji": "○○ no namae de yoyaku shite imasu.",
+    "chinese": "我是用○○的名字預約的。",
+    "important": false
+  },
+  {
+    "id": "restaurant-reservation-ask",
+    "category": "restaurant",
+    "japanese": "予約できますか？",
+    "romaji": "Yoyaku dekimasu ka?",
+    "chinese": "請問可以預約嗎？",
+    "important": false
+  },
+  {
+    "id": "restaurant-reservation-request",
+    "category": "restaurant",
+    "japanese": "○時から○名で予約したいです。",
+    "romaji": "○-ji kara ○-mei de yoyaku shitai desu.",
+    "chinese": "我想預約○點、○位的位子。",
     "important": false
   },
   {
